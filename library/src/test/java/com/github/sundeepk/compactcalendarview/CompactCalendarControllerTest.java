@@ -59,6 +59,7 @@ public class CompactCalendarControllerTest {
 
         //Scroll enough to push calender to next month
         underTest.onScroll(motionEvent, motionEvent, 600, 0);
+        underTest.onDraw(canvas);
         underTest.onTouch(motionEvent);
         verify(listener).onMonthScroll(expectedDateOnScroll);
     }

@@ -209,7 +209,6 @@ public class CompactCalendarController {
         }
 
         this.distanceX = distanceX;
-        calculateXPositionOffset();
         return true;
     }
 
