@@ -24,23 +24,23 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class CompactCalenderControllerTest {
+public class CompactCalendarControllerTest {
 
     @Mock private Paint paint;
     @Mock private OverScroller overScroller;
     @Mock private Canvas canvas;
     @Mock private Rect rect;
     @Mock private Calendar calendar;
-    @Mock private CompactCalenderView.CompactCalenderViewListener listener;
+    @Mock private CompactCalendarView.CompactCalenderViewListener listener;
     @Mock private MotionEvent motionEvent;
 
     private static final String[] dayColumnNames = {"M", "T", "W", "T", "F", "S", "S"};
 
-    CompactCalenderController underTest;
+    CompactCalendarController underTest;
 
     @Before
     public void setUp(){
-        underTest = new CompactCalenderController(paint, overScroller, rect, null, null, 0, 0, 0);
+        underTest = new CompactCalendarController(paint, overScroller, rect, null, null, 0, 0, 0);
         underTest.setListener(listener);
     }
 

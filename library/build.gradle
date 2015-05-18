@@ -13,8 +13,6 @@ idea {
 
 repositories {
     mavenCentral()
-    jcenter()
-
 }
 
 
@@ -45,7 +43,6 @@ dependencies {
     testCompile files('libs/dexmaker-1.0.jar')
     testCompile 'junit:junit:4.12'
     testCompile 'org.mockito:mockito-core:1.9.0'
-
-    compile 'com.android.support:cardview-v7:21.0.3'
-
 }
+
+apply from: 'https://raw.github.com/chrisbanes/gradle-mvn-push/master/gradle-mvn-push.gradle'

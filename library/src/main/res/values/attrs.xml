@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <declare-styleable name="CompactCalenderView">
+    <declare-styleable name="CompactCalendarView">
         <attr name="textSize" format="dimension"/>
         <attr name="calenderBackgroundColor" format="color"/>
         <attr name="currentDayBackgroundColor" format="color"/>
