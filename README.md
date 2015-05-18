@@ -16,8 +16,8 @@ It is possible to change the apreance of the view via a few properties. This inc
             android:paddingLeft="10dp"
             android:layout_height="250dp"
             app:textSize="12sp"
-            app:calenderBackgroundColor="#ffe95451"
-            app:calenderTextColor="#fff"
+            app:calendarBackgroundColor="#ffe95451"
+            app:calendarTextColor="#fff"
             app:firstDayOfMonthBackgroundColor="#E57373"
             app:currentDayBackgroundColor="#B71C1C" 
             />
