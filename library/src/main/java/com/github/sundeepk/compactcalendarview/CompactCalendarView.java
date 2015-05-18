@@ -1,4 +1,4 @@
-package com.github.sundeepk.compactcalenderview;
+package com.github.sundeepk.compactcalendarview;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -19,7 +19,7 @@ public class CompactCalendarView extends View {
     private CompactCalendarController compactCalendarController;
     private GestureDetectorCompat gestureDetector;
 
-    public interface CompactCalenderViewListener{
+    public interface CompactCalendarViewListener {
         public void onDayClick(Date dateClicked);
         public void onMonthScroll(Date firstDayOfNewMonth);
     }
@@ -70,7 +70,7 @@ public class CompactCalendarView extends View {
         gestureDetector = new GestureDetectorCompat(getContext(), gestureListener);
     }
 
-    public void setListener(CompactCalenderViewListener listener){
+    public void setListener(CompactCalendarViewListener listener){
         compactCalendarController.setListener(listener);
     }
 

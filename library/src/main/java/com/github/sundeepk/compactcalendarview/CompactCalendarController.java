@@ -1,4 +1,4 @@
-package com.github.sundeepk.compactcalenderview;
+package com.github.sundeepk.compactcalendarview;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -17,9 +17,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-import sundeepk.github.com.compactcalenderview.R;
 
-public class CompactCalenderController {
+public class CompactCalendarController {
 
     private static final int PADDING = 40;
     private Paint dayPaint = new Paint();
@@ -43,7 +42,7 @@ public class CompactCalenderController {
     private int firstDayBackgroundColor;
     private int calenderBackgroundColor = Color.WHITE;
     private int textSize = 30;
-    private CompactCalenderView.CompactCalenderViewListener compactCalenderViewListener;
+    private CompactCalendarView.CompactCalendarViewListener compactCalendarViewListener;
     private int width;
     private int height;
     private int paddingRight;
@@ -53,26 +52,26 @@ public class CompactCalenderController {
         NONE, HORIZONTAL, VERTICAL
     }
 
-    CompactCalenderController(Paint dayPaint, OverScroller scroller, Rect rect, AttributeSet attrs, Context context, int currentDayBackgroundColor, int calenderTextColor, int firstDayBackgroundColor){
+    CompactCalendarController(Paint dayPaint, OverScroller scroller, Rect rect, AttributeSet attrs, Context context, int currentDayBackgroundColor, int calenderTextColor, int firstDayBackgroundColor){
         this.dayPaint = dayPaint;
         this.scroller = scroller;
         this.rect = rect;
+        loadAttributes(attrs, context);
+        init();
         this.currentDayBackgroundColor = currentDayBackgroundColor;
         this.calenderTextColor = calenderTextColor;
         this.firstDayBackgroundColor = firstDayBackgroundColor;
-        loadAttributes(attrs, context);
-        init();
     }
 
     private void loadAttributes(AttributeSet attrs, Context context) {
         if(attrs != null && context != null){
-            TypedArray typedArray = context.getTheme().obtainStyledAttributes(attrs,  R.styleable.CompactCalenderView, 0, 0);
+            TypedArray typedArray = context.getTheme().obtainStyledAttributes(attrs,  R.styleable.CompactCalendarView, 0, 0);
             try{
-                currentDayBackgroundColor = typedArray.getColor(R.styleable.CompactCalenderView_currentDayBackgroundColor, currentDayBackgroundColor);
-                calenderTextColor = typedArray.getColor(R.styleable.CompactCalenderView_calenderTextColor, calenderTextColor);
-                firstDayBackgroundColor = typedArray.getColor(R.styleable.CompactCalenderView_firstDayOfMonthBackgroundColor, firstDayBackgroundColor);
-                calenderBackgroundColor = typedArray.getColor(R.styleable.CompactCalenderView_calenderBackgroundColor, calenderBackgroundColor);
-                textSize = typedArray.getDimensionPixelSize(R.styleable.CompactCalenderView_textSize,
+                currentDayBackgroundColor = typedArray.getColor(R.styleable.CompactCalendarView_currentDayBackgroundColor, currentDayBackgroundColor);
+                calenderTextColor = typedArray.getColor(R.styleable.CompactCalendarView_calenderTextColor, calenderTextColor);
+                firstDayBackgroundColor = typedArray.getColor(R.styleable.CompactCalendarView_firstDayOfMonthBackgroundColor, firstDayBackgroundColor);
+                calenderBackgroundColor = typedArray.getColor(R.styleable.CompactCalendarView_calenderBackgroundColor, calenderBackgroundColor);
+                textSize = typedArray.getDimensionPixelSize(R.styleable.CompactCalendarView_textSize,
                         (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, textSize, context.getResources().getDisplayMetrics()));
             }finally{
                 typedArray.recycle();
@@ -114,8 +113,8 @@ public class CompactCalenderController {
         this.paddingLeft = paddingLeft;
     }
 
-    void setListener(CompactCalenderView.CompactCalenderViewListener listener){
-        this.compactCalenderViewListener = listener;
+    void setListener(CompactCalendarView.CompactCalendarViewListener listener){
+        this.compactCalendarViewListener = listener;
     }
 
     void onDraw(Canvas canvas) {
@@ -133,9 +132,9 @@ public class CompactCalenderController {
                 float remainingScrollAfterFingerLifted = (accumulatedScrollOffset.x - monthsScrolledSoFar * width);
                 scroller.startScroll((int) accumulatedScrollOffset.x, 0, (int) -remainingScrollAfterFingerLifted, 0);
                 currentDirection = Direction.NONE;
-                if(compactCalenderViewListener != null){
+                if(compactCalendarViewListener != null){
                     setCalenderToFirstDayOfMonth(calendarWithFirstDayOfMonth, currentDate, 0);
-                    compactCalenderViewListener.onMonthScroll(calendarWithFirstDayOfMonth.getTime());
+                    compactCalendarViewListener.onMonthScroll(calendarWithFirstDayOfMonth.getTime());
                 }
                 return true;
             }
@@ -183,8 +182,8 @@ public class CompactCalenderController {
         calendarWithFirstDayOfMonth.add(Calendar.DATE, dayOfMonth);
 
         if(dayOfMonth >= 0){
-            if(compactCalenderViewListener != null){
-                compactCalenderViewListener.onDayClick(calendarWithFirstDayOfMonth.getTime());
+            if(compactCalendarViewListener != null){
+                compactCalendarViewListener.onDayClick(calendarWithFirstDayOfMonth.getTime());
             }
         }
         return true;

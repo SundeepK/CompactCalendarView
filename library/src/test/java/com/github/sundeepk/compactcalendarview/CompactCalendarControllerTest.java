@@ -1,4 +1,4 @@
-package com.github.sundeepk.compactcalenderview;
+package com.github.sundeepk.compactcalendarview;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -31,7 +31,7 @@ public class CompactCalendarControllerTest {
     @Mock private Canvas canvas;
     @Mock private Rect rect;
     @Mock private Calendar calendar;
-    @Mock private CompactCalendarView.CompactCalenderViewListener listener;
+    @Mock private CompactCalendarView.CompactCalendarViewListener listener;
     @Mock private MotionEvent motionEvent;
 
     private static final String[] dayColumnNames = {"M", "T", "W", "T", "F", "S", "S"};
