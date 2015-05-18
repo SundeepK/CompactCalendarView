@@ -56,11 +56,11 @@ public class CompactCalendarController {
         this.dayPaint = dayPaint;
         this.scroller = scroller;
         this.rect = rect;
-        loadAttributes(attrs, context);
-        init();
         this.currentDayBackgroundColor = currentDayBackgroundColor;
         this.calenderTextColor = calenderTextColor;
         this.firstDayBackgroundColor = firstDayBackgroundColor;
+        loadAttributes(attrs, context);
+        init();
     }
 
     private void loadAttributes(AttributeSet attrs, Context context) {
