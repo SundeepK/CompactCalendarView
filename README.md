@@ -8,7 +8,7 @@ CompactCalendarView is a simple calender view which provides scrolling between m
 It is possible to change the apreance of the view via a few properties. This includes the background color, text color, textsize color of the current day and the color of the first day of the month.
 
 ```xml
-<com.github.sundeepk.CompactCalendarView
+    <com.github.sundeepk.compactcalendarview.CompactCalendarView
             xmlns:app="http://schemas.android.com/apk/res-auto"
             android:id="@+id/compactcalendar_view"
             android:layout_width="fill_parent"
