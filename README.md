@@ -7,7 +7,7 @@ It is possible to change the apreance of the view via a few properties. This inc
 ```xml
 <com.github.sundeepk.CompactCalendarView
             xmlns:app="http://schemas.android.com/apk/res-auto"
-            android:id="@+id/compactcalender_view"
+            android:id="@+id/compactcalendar_view"
             android:layout_width="fill_parent"
             android:paddingRight="10dp"
             android:paddingLeft="10dp"
