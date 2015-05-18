@@ -2,9 +2,9 @@
 <resources>
     <declare-styleable name="CompactCalendarView">
         <attr name="textSize" format="dimension"/>
-        <attr name="calenderBackgroundColor" format="color"/>
+        <attr name="calendarBackgroundColor" format="color"/>
         <attr name="currentDayBackgroundColor" format="color"/>
         <attr name="firstDayOfMonthBackgroundColor" format="color"/>
-        <attr name="calenderTextColor" format="color"/>
+        <attr name="calendarTextColor" format="color"/>
     </declare-styleable>
 </resources>

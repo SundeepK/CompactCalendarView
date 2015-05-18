@@ -68,9 +68,9 @@ public class CompactCalendarController {
             TypedArray typedArray = context.getTheme().obtainStyledAttributes(attrs,  R.styleable.CompactCalendarView, 0, 0);
             try{
                 currentDayBackgroundColor = typedArray.getColor(R.styleable.CompactCalendarView_currentDayBackgroundColor, currentDayBackgroundColor);
-                calenderTextColor = typedArray.getColor(R.styleable.CompactCalendarView_calenderTextColor, calenderTextColor);
+                calenderTextColor = typedArray.getColor(R.styleable.CompactCalendarView_calendarTextColor, calenderTextColor);
                 firstDayBackgroundColor = typedArray.getColor(R.styleable.CompactCalendarView_firstDayOfMonthBackgroundColor, firstDayBackgroundColor);
-                calenderBackgroundColor = typedArray.getColor(R.styleable.CompactCalendarView_calenderBackgroundColor, calenderBackgroundColor);
+                calenderBackgroundColor = typedArray.getColor(R.styleable.CompactCalendarView_calendarBackgroundColor, calenderBackgroundColor);
                 textSize = typedArray.getDimensionPixelSize(R.styleable.CompactCalendarView_textSize,
                         (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, textSize, context.getResources().getDisplayMetrics()));
             }finally{
