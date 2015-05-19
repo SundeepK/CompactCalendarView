@@ -18,7 +18,7 @@ import java.util.Date;
 import java.util.Locale;
 
 
-public class CompactCalendarController {
+class CompactCalendarController {
 
     private static final int PADDING = 40;
     private Paint dayPaint = new Paint();
@@ -294,7 +294,7 @@ public class CompactCalendarController {
                 }
                 if(day <= currentMonthToDrawCalender.getActualMaximum(Calendar.DAY_OF_MONTH) && day > 0){
                     if(day == 1){
-                        drawCircle(canvas, xPosition - widthPerDay / 55, yPosition - textHeight / 6, firstDayBackgroundColor);
+                        drawCircle(canvas, xPosition - widthPerDay / 54, yPosition - textHeight / 6, firstDayBackgroundColor);
                     }
                     canvas.drawText(String.valueOf(day), xPosition, yPosition, dayPaint);
                 }
