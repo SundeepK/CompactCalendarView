@@ -24,7 +24,7 @@ It is possible to change the apreance of the view via a few properties. This inc
 ```
 ```gradle
 dependencies {
-    compile 'com.github.sundeepk:compact-calendar-view:1.1'
+    compile 'com.github.sundeepk:compact-calendar-view:1.2'
 }
 
 ```
