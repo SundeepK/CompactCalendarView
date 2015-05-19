@@ -22,3 +22,8 @@ It is possible to change the apreance of the view via a few properties. This inc
             app:currentDayBackgroundColor="#B71C1C" 
             />
 ```
+```gradle
+dependencies {
+    compile 'com.github.sundeepk:compact-calendar-view:1.0'
+}
+```
