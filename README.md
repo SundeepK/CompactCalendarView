@@ -33,7 +33,7 @@ TODO:
 * Make drawing calendar more efficient by drawing all in one loop (currently requires 3).
 * Make drawing circles on current/first day based on width/height for each cell and remove any magic numbers there.
 * Benchmark code and add results on readme. 
-* 
+ 
 ```
 The MIT License (MIT)
 
