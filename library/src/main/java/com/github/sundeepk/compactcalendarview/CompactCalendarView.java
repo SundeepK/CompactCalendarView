@@ -12,6 +12,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.OverScroller;
 
+import com.github.sundeepk.compactcalendarview.domain.CalendarDayEvent;
+
 import java.util.Date;
 
 public class CompactCalendarView extends View {
@@ -70,6 +72,10 @@ public class CompactCalendarView extends View {
         gestureDetector = new GestureDetectorCompat(getContext(), gestureListener);
     }
 
+    public int getHeightPerDay(){
+        return compactCalendarController.getHeightPerDay();
+    }
+
     public void setListener(CompactCalendarViewListener listener){
         compactCalendarController.setListener(listener);
     }
@@ -83,14 +89,33 @@ public class CompactCalendarView extends View {
         invalidate();
     }
 
+    public int getWeekNumberForCurrentMonth(){
+        return compactCalendarController.getWeekNumberForCurrentMonth();
+    }
+
+    public void setShouldDrawDaysHeader(boolean shouldDrawDaysHeader){
+        compactCalendarController.setShouldDrawDaysHeader(shouldDrawDaysHeader);
+    }
+
+   public void addEvent(CalendarDayEvent event){
+        compactCalendarController.addEvent(event);
+   }
+
+   public void removeEvent(CalendarDayEvent event){
+       compactCalendarController.removeEvent(event);
+   }
+
     @Override
     protected void onMeasure(int parentWidth, int parentHeight) {
         super.onMeasure(parentWidth, parentHeight);
-        compactCalendarController.onMeasure(getWidth(), getHeight(), getPaddingRight(), getPaddingLeft());
+        if(getWidth() > 0 && getHeight() > 0) {
+            compactCalendarController.onMeasure(getWidth(), getHeight(), getPaddingRight(), getPaddingLeft());
+        }
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
+       // compactCalendarController.onMeasure(getWidth(), getHeight(), getPaddingRight(), getPaddingLeft());
         compactCalendarController.onDraw(canvas);
     }
 

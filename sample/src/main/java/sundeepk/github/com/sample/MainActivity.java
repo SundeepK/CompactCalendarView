@@ -1,17 +1,32 @@
 package sundeepk.github.com.sample;
 
-import android.support.v7.app.ActionBarActivity;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.github.sundeepk.compactcalendarview.CompactCalendarView;
+import com.github.sundeepk.compactcalendarview.domain.CalendarDayEvent;
+
+import java.util.Calendar;
+import java.util.Locale;
+
 
 public class MainActivity extends ActionBarActivity {
+
+    private Calendar currentCalender = Calendar.getInstance(Locale.getDefault());
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        currentCalender.setTimeInMillis(System.currentTimeMillis());
+        currentCalender.add(Calendar.DATE, 21);
+        CompactCalendarView compactCalendarView = (CompactCalendarView) findViewById(R.id.compactcalendar_view);
+        compactCalendarView.addEvent(new CalendarDayEvent(currentCalender.getTimeInMillis(), Color.BLUE));
+
     }
 
 
