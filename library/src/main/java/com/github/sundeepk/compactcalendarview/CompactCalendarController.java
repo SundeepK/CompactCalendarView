@@ -9,18 +9,19 @@ import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
+import android.util.SparseArray;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.widget.OverScroller;
 
 import com.github.sundeepk.compactcalendarview.domain.CalendarDayEvent;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.GregorianCalendar;
+import java.util.List;
 import java.util.Locale;
-import java.util.Set;
 
 
 class CompactCalendarController {
@@ -40,7 +41,7 @@ class CompactCalendarController {
     private Date currentDate = new Date();
     private Calendar currentCalender = Calendar.getInstance(Locale.getDefault());
     private Calendar calendarWithFirstDayOfMonth = Calendar.getInstance(Locale.getDefault());
-    private Calendar eventsCalendar = Calendar.getInstance(Locale.getDefault());
+    private GregorianCalendar eventsCalendar = new GregorianCalendar();
     private Direction currentDirection = Direction.NONE;
     private int heightPerDay;
     private int currentDayBackgroundColor;
@@ -54,7 +55,7 @@ class CompactCalendarController {
     private int paddingRight;
     private int paddingLeft;
     private boolean shouldDrawDaysHeader = true;
-    private HashMap<String, Set<CalendarDayEvent>> events = new HashMap<>();
+    private SparseArray<List<CalendarDayEvent>> events = new SparseArray<>();
 
     private enum Direction {
         NONE, HORIZONTAL, VERTICAL
@@ -190,10 +191,10 @@ class CompactCalendarController {
 
     void addEvent(CalendarDayEvent event){
         eventsCalendar.setTimeInMillis(event.getTimeInMillis());
-        String key = getKeyForEvent(eventsCalendar);
-        Set<CalendarDayEvent> uniqCalendarDayEvents = events.get(key);
+        int key = getKeyForCalendarEvent(eventsCalendar);
+        List<CalendarDayEvent> uniqCalendarDayEvents = events.get(key);
         if(uniqCalendarDayEvents == null){
-            uniqCalendarDayEvents = new HashSet<>();
+            uniqCalendarDayEvents = new ArrayList<>();
         }
         uniqCalendarDayEvents.add(event);
         events.put(key, uniqCalendarDayEvents);
@@ -201,15 +202,17 @@ class CompactCalendarController {
 
     void removeEvent(CalendarDayEvent event){
         eventsCalendar.setTimeInMillis(event.getTimeInMillis());
-        String key = getKeyForEvent(eventsCalendar);
-        Set<CalendarDayEvent> uniqCalendarDayEvents = events.get(key);
+        int key = getKeyForCalendarEvent(eventsCalendar);
+        List<CalendarDayEvent> uniqCalendarDayEvents = events.get(key);
         if(uniqCalendarDayEvents != null){
             uniqCalendarDayEvents.remove(event);
         }
     }
 
-    private String getKeyForEvent(Calendar cal) {
-        return String.valueOf(cal.get(Calendar.MONTH) + "_" + cal.get(Calendar.YEAR));
+    //Hack to prevent GC from occurring
+    //E.g. 04 2016 becomes 201604 where 0 should be the delimiter between year and month
+    private int getKeyForCalendarEvent(Calendar cal) {
+        return (cal.get(Calendar.YEAR) * 100) + cal.get(Calendar.MONTH);
     }
 
     boolean onSingleTapConfirmed(MotionEvent e) {
@@ -306,10 +309,11 @@ class CompactCalendarController {
     }
 
     void drawEvents(Canvas canvas, Calendar currentMonthToDrawCalender, int offset){
-        Set<CalendarDayEvent> uniqCalendarDayEvents =
-                events.get(getKeyForEvent(currentMonthToDrawCalender));
+        List<CalendarDayEvent> uniqCalendarDayEvents =
+                events.get(getKeyForCalendarEvent(currentMonthToDrawCalender));
         if(uniqCalendarDayEvents != null){
-            for(CalendarDayEvent event : uniqCalendarDayEvents){
+            for(int i = 0; i < uniqCalendarDayEvents.size() ; i++){
+                CalendarDayEvent event = uniqCalendarDayEvents.get(i);
                 long timeMillis = event.getTimeInMillis();
                 eventsCalendar.setTimeInMillis(timeMillis);
 

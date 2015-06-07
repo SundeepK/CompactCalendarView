@@ -28,7 +28,7 @@ public class MainActivity extends ActionBarActivity {
     }
 
     private void addEvents(CompactCalendarView compactCalendarView) {
-        for(int i = -20; i < 50; i++){
+        for(int i = -20; i < 400; i++){
             currentCalender.setTimeInMillis(System.currentTimeMillis());
             currentCalender.add(Calendar.DATE, i);
             compactCalendarView.addEvent(new CalendarDayEvent(currentCalender.getTimeInMillis(), Color.BLUE));
