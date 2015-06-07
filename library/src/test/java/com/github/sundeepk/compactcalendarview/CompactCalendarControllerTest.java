@@ -1,10 +1,15 @@
 package com.github.sundeepk.compactcalendarview;
 
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.view.MotionEvent;
 import android.widget.OverScroller;
+
+import com.github.sundeepk.compactcalendarview.domain.CalendarDayEvent;
+
+import junit.framework.Assert;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -13,8 +18,11 @@ import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.anyInt;
@@ -138,6 +146,59 @@ public class CompactCalendarControllerTest {
                 }
             }
         }
+    }
+
+    @Test
+    public void testItAddsEvents(){
+        //Sun, 01 Feb 2015 00:00:00 GMT
+        List<CalendarDayEvent> events = getEvents(0, 30, 1422748800000L);
+        for(CalendarDayEvent event : events){
+            underTest.addEvent(event);
+        }
+
+        events = getEvents(0, 28, 1422748800000L);
+
+        List<CalendarDayEvent> actualEvents = underTest.getEvents(new Date(1422748800000L));
+        Assert.assertEquals(events, actualEvents);
+    }
+
+
+    @Test
+    public void testItRemovesEvents(){
+        //Sun, 01 Feb 2015 00:00:00 GMT
+        List<CalendarDayEvent> events = getEvents(0, 30, 1422748800000L);
+        for(CalendarDayEvent event : events){
+            underTest.addEvent(event);
+        }
+
+        underTest.removeEvent(events.get(0));
+        underTest.removeEvent(events.get(1));
+        underTest.removeEvent(events.get(5));
+        underTest.removeEvent(events.get(20));
+
+        List<CalendarDayEvent> expectedEvents = getEvents(0, 28, 1422748800000L);
+        expectedEvents.remove(events.get(0));
+        expectedEvents.remove(events.get(1));
+        expectedEvents.remove(events.get(5));
+        expectedEvents.remove(events.get(20));
+
+        List<CalendarDayEvent> actualEvents = underTest.getEvents(new Date(1422748800000L));
+        Assert.assertEquals(expectedEvents, actualEvents);
+    }
+
+    private List<CalendarDayEvent> getEvents(int start, int days, long timeStamp) {
+        Calendar currentCalender = Calendar.getInstance(Locale.getDefault());
+        List<CalendarDayEvent> eventList = new ArrayList<>();
+        for(int i = start; i < days; i++){
+            currentCalender.setTimeInMillis(timeStamp);
+            currentCalender.add(Calendar.DATE, i);
+            currentCalender.set(Calendar.HOUR_OF_DAY, 0);
+            currentCalender.set(Calendar.MINUTE, 0);
+            currentCalender.set(Calendar.SECOND, 0);
+            currentCalender.set(Calendar.MILLISECOND, 0);
+            eventList.add(new CalendarDayEvent(currentCalender.getTimeInMillis(), Color.BLUE));
+        }
+        return eventList;
     }
 
 }

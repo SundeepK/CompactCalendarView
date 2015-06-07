@@ -9,7 +9,6 @@ import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
-import android.util.SparseArray;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.widget.OverScroller;
@@ -20,8 +19,10 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 
 class CompactCalendarController {
@@ -55,14 +56,15 @@ class CompactCalendarController {
     private int paddingRight;
     private int paddingLeft;
     private boolean shouldDrawDaysHeader = true;
-    private SparseArray<List<CalendarDayEvent>> events = new SparseArray<>();
+    private Map<String, List<CalendarDayEvent>> events = new HashMap<>();
     private boolean showSmallIndicator;
 
     private enum Direction {
         NONE, HORIZONTAL, VERTICAL
     }
 
-    CompactCalendarController(Paint dayPaint, OverScroller scroller, Rect rect, AttributeSet attrs, Context context, int currentDayBackgroundColor, int calenderTextColor, int firstDayBackgroundColor){
+    CompactCalendarController(Paint dayPaint, OverScroller scroller, Rect rect, AttributeSet attrs,
+                              Context context, int currentDayBackgroundColor, int calenderTextColor, int firstDayBackgroundColor){
         this.dayPaint = dayPaint;
         this.scroller = scroller;
         this.rect = rect;
@@ -196,7 +198,7 @@ class CompactCalendarController {
 
     void addEvent(CalendarDayEvent event){
         eventsCalendar.setTimeInMillis(event.getTimeInMillis());
-        int key = getKeyForCalendarEvent(eventsCalendar);
+        String key = getKeyForCalendarEvent(eventsCalendar);
         List<CalendarDayEvent> uniqCalendarDayEvents = events.get(key);
         if(uniqCalendarDayEvents == null){
             uniqCalendarDayEvents = new ArrayList<>();
@@ -211,17 +213,27 @@ class CompactCalendarController {
 
     void removeEvent(CalendarDayEvent event){
         eventsCalendar.setTimeInMillis(event.getTimeInMillis());
-        int key = getKeyForCalendarEvent(eventsCalendar);
+        String key = getKeyForCalendarEvent(eventsCalendar);
         List<CalendarDayEvent> uniqCalendarDayEvents = events.get(key);
         if(uniqCalendarDayEvents != null){
             uniqCalendarDayEvents.remove(event);
         }
     }
 
-    //Hack to prevent GC from occurring
-    //E.g. 04 2016 becomes 201604 where 0 should be the delimiter between year and month
-    private int getKeyForCalendarEvent(Calendar cal) {
-        return (cal.get(Calendar.YEAR) * 100) + cal.get(Calendar.MONTH);
+    List<CalendarDayEvent> getEvents(Date date){
+        eventsCalendar.setTimeInMillis(date.getTime());
+        String key = getKeyForCalendarEvent(eventsCalendar);
+        List<CalendarDayEvent> uniqEvents = events.get(key);
+        if(events != null){
+            return uniqEvents;
+        }else{
+            return new ArrayList<>();
+        }
+    }
+
+    //E.g. 4 2016 becomes 2016_4
+    private String getKeyForCalendarEvent(Calendar cal) {
+        return cal.get(Calendar.YEAR) + "_" + cal.get(Calendar.MONTH);
     }
 
     boolean onSingleTapConfirmed(MotionEvent e) {
@@ -321,7 +333,6 @@ class CompactCalendarController {
         List<CalendarDayEvent> uniqCalendarDayEvents =
                 events.get(getKeyForCalendarEvent(currentMonthToDrawCalender));
         boolean shouldDrawCurrentDayCircle = currentMonthToDrawCalender.get(Calendar.MONTH) == currentCalender.get(Calendar.MONTH);
-
         if(uniqCalendarDayEvents != null){
             for(int i = 0; i < uniqCalendarDayEvents.size() ; i++){
                 CalendarDayEvent event = uniqCalendarDayEvents.get(i);
@@ -340,6 +351,7 @@ class CompactCalendarController {
                 boolean isSameDayAsCurrentDay = (currentCalender.get(Calendar.DAY_OF_MONTH) == dayOfMonth && shouldDrawCurrentDayCircle);
                 if(!isSameDayAsCurrentDay && dayOfMonth != 1){
                     if(showSmallIndicator){
+                        //draw small indicators below the day in the calendar
                         drawSmallIndicatorCircle(canvas, xPosition , yPosition + (textHeight / 3), event.getColor());
                     }else{
                         drawCircle(canvas, xPosition - widthPerDay / 55, yPosition - textHeight / 6, event.getColor());
