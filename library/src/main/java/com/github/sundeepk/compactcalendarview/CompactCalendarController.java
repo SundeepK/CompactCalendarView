@@ -178,22 +178,23 @@ class CompactCalendarController {
         calendar.setTime(currentDate);
         calendar.add(Calendar.MONTH, -monthsScrolledSoFar);
         calendar.set(Calendar.DAY_OF_MONTH, 1);
-        calendar.set(Calendar.HOUR_OF_DAY, 0);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
+        setToMidnight(calendar);
         return calendar.getTime();
     }
 
     void setMonth(Date dateTimeMonth){
         currentDate = new Date(dateTimeMonth.getTime());
         currentCalender.setTime(currentDate);
-        currentCalender.set(Calendar.HOUR_OF_DAY, 0);
-        currentCalender.set(Calendar.MINUTE, 0);
-        currentCalender.set(Calendar.SECOND, 0);
-        currentCalender.set(Calendar.MILLISECOND, 0);
+        setToMidnight(currentCalender);
         monthsScrolledSoFar = 0;
         accumulatedScrollOffset.x = 0;
+    }
+
+    private void setToMidnight(Calendar calendar) {
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
     }
 
     void addEvent(CalendarDayEvent event){
@@ -203,11 +204,10 @@ class CompactCalendarController {
         if(uniqCalendarDayEvents == null){
             uniqCalendarDayEvents = new ArrayList<>();
         }else{
-            if(uniqCalendarDayEvents.contains(event)){
-                uniqCalendarDayEvents.remove(event);
+            if(!uniqCalendarDayEvents.contains(event)){
+                uniqCalendarDayEvents.add(event);
             }
         }
-        uniqCalendarDayEvents.add(event);
         events.put(key, uniqCalendarDayEvents);
     }
 

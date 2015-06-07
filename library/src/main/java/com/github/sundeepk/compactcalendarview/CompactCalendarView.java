@@ -72,10 +72,12 @@ public class CompactCalendarView extends View {
         gestureDetector = new GestureDetectorCompat(getContext(), gestureListener);
     }
 
-    public void showDrawSmallIndicator(boolean shouldDrawDaysHeader){
+    /*
+    Will drawn the indicator for events as a small dot under the day rather than a circle behind the day.
+     */
+    public void drawSmallIndicatorForEvents(boolean shouldDrawDaysHeader){
         compactCalendarController.showSmallIndicator(shouldDrawDaysHeader);
     }
-
 
     public int getHeightPerDay(){
         return compactCalendarController.getHeightPerDay();
@@ -102,6 +104,10 @@ public class CompactCalendarView extends View {
         compactCalendarController.setShouldDrawDaysHeader(shouldDrawDaysHeader);
     }
 
+   /*
+   Adds an event to be drawn as an indicator in the calendar. The code assume only one event per a day and makes no effort to remove duplicates.
+   It is the clients responsibility to add unique events, not doing so will cause the calendar to draw events for the same day multiple times.
+    */
    public void addEvent(CalendarDayEvent event){
         compactCalendarController.addEvent(event);
    }
@@ -120,7 +126,6 @@ public class CompactCalendarView extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
-       // compactCalendarController.onMeasure(getWidth(), getHeight(), getPaddingRight(), getPaddingLeft());
         compactCalendarController.onDraw(canvas);
     }
 
