@@ -23,15 +23,15 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_main);
 
         CompactCalendarView compactCalendarView = (CompactCalendarView) findViewById(R.id.compactcalendar_view);
-        compactCalendarView.showDrawSmallIndicator(true);
+        compactCalendarView.drawSmallIndicatorForEvents(true);
         addEvents(compactCalendarView);
     }
 
     private void addEvents(CompactCalendarView compactCalendarView) {
-        for(int i = -20; i < 400; i++){
+        for(int i = 0; i < 6; i++){
             currentCalender.setTimeInMillis(System.currentTimeMillis());
             currentCalender.add(Calendar.DATE, i);
-            compactCalendarView.addEvent(new CalendarDayEvent(currentCalender.getTimeInMillis(), Color.BLUE));
+            compactCalendarView.addEvent(new CalendarDayEvent(currentCalender.getTimeInMillis(),  Color.argb(255, 169, 68, 65)));
         }
     }
 
