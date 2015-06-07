@@ -203,10 +203,9 @@ class CompactCalendarController {
         List<CalendarDayEvent> uniqCalendarDayEvents = events.get(key);
         if(uniqCalendarDayEvents == null){
             uniqCalendarDayEvents = new ArrayList<>();
-        }else{
-            if(!uniqCalendarDayEvents.contains(event)){
-                uniqCalendarDayEvents.add(event);
-            }
+        }
+        if(!uniqCalendarDayEvents.contains(event)){
+            uniqCalendarDayEvents.add(event);
         }
         events.put(key, uniqCalendarDayEvents);
     }
