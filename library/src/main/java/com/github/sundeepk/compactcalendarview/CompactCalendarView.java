@@ -72,6 +72,11 @@ public class CompactCalendarView extends View {
         gestureDetector = new GestureDetectorCompat(getContext(), gestureListener);
     }
 
+    public void showDrawSmallIndicator(boolean shouldDrawDaysHeader){
+        compactCalendarController.showSmallIndicator(shouldDrawDaysHeader);
+    }
+
+
     public int getHeightPerDay(){
         return compactCalendarController.getHeightPerDay();
     }

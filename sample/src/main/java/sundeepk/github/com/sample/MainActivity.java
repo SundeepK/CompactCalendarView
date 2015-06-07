@@ -23,7 +23,7 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_main);
 
         CompactCalendarView compactCalendarView = (CompactCalendarView) findViewById(R.id.compactcalendar_view);
-
+        compactCalendarView.showDrawSmallIndicator(true);
         addEvents(compactCalendarView);
     }
 

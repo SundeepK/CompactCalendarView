@@ -56,6 +56,7 @@ class CompactCalendarController {
     private int paddingLeft;
     private boolean shouldDrawDaysHeader = true;
     private SparseArray<List<CalendarDayEvent>> events = new SparseArray<>();
+    private boolean showSmallIndicator;
 
     private enum Direction {
         NONE, HORIZONTAL, VERTICAL
@@ -115,6 +116,10 @@ class CompactCalendarController {
 
     void setShouldDrawDaysHeader(boolean shouldDrawDaysHeader){
         this.shouldDrawDaysHeader = shouldDrawDaysHeader;
+    }
+
+    void showSmallIndicator(boolean showSmallindicator){
+        this.showSmallIndicator = showSmallindicator;
     }
 
     void onMeasure(int width, int height, int paddingRight, int paddingLeft) {
@@ -195,6 +200,10 @@ class CompactCalendarController {
         List<CalendarDayEvent> uniqCalendarDayEvents = events.get(key);
         if(uniqCalendarDayEvents == null){
             uniqCalendarDayEvents = new ArrayList<>();
+        }else{
+            if(uniqCalendarDayEvents.contains(event)){
+                uniqCalendarDayEvents.remove(event);
+            }
         }
         uniqCalendarDayEvents.add(event);
         events.put(key, uniqCalendarDayEvents);
@@ -311,6 +320,8 @@ class CompactCalendarController {
     void drawEvents(Canvas canvas, Calendar currentMonthToDrawCalender, int offset){
         List<CalendarDayEvent> uniqCalendarDayEvents =
                 events.get(getKeyForCalendarEvent(currentMonthToDrawCalender));
+        boolean shouldDrawCurrentDayCircle = currentMonthToDrawCalender.get(Calendar.MONTH) == currentCalender.get(Calendar.MONTH);
+
         if(uniqCalendarDayEvents != null){
             for(int i = 0; i < uniqCalendarDayEvents.size() ; i++){
                 CalendarDayEvent event = uniqCalendarDayEvents.get(i);
@@ -325,7 +336,16 @@ class CompactCalendarController {
                 float xPosition = widthPerDay * dayOfWeek + PADDING + accumulatedScrollOffset.x + offset + paddingRight;
                 float yPosition = weekNumberForMonth * heightPerDay + PADDING;
 
-                drawCircle(canvas, xPosition - widthPerDay / 55, yPosition - textHeight / 6, event.getColor());
+                int dayOfMonth = eventsCalendar.get(Calendar.DAY_OF_MONTH);
+                boolean isSameDayAsCurrentDay = (currentCalender.get(Calendar.DAY_OF_MONTH) == dayOfMonth && shouldDrawCurrentDayCircle);
+                if(!isSameDayAsCurrentDay && dayOfMonth != 1){
+                    if(showSmallIndicator){
+                        drawSmallIndicatorCircle(canvas, xPosition , yPosition + (textHeight / 3), event.getColor());
+                    }else{
+                        drawCircle(canvas, xPosition - widthPerDay / 55, yPosition - textHeight / 6, event.getColor());
+                    }
+                }
+
             }
         }
     }
@@ -381,12 +401,17 @@ class CompactCalendarController {
     // Draw Circle on certain days to highlight them
     private void drawCircle(Canvas canvas, float x, float y, int color) {
         dayPaint.setColor(color);
-        drawCircle(canvas, x, y);
+        drawCircle(canvas, widthPerDay/3.5f, x, y);
     }
 
-    private void drawCircle(Canvas canvas, float x, float y) {
+    private void drawSmallIndicatorCircle(Canvas canvas, float x, float y, int color) {
+        dayPaint.setColor(color);
+        drawCircle(canvas, 5.0f, x, y);
+    }
+
+    private void drawCircle(Canvas canvas, float radius, float x, float y) {
         dayPaint.setStyle(Paint.Style.FILL);
-        canvas.drawCircle(x, y, widthPerDay/3.5f, dayPaint);
+        canvas.drawCircle(x, y, radius, dayPaint);
         dayPaint.setStyle(Paint.Style.STROKE);
         dayPaint.setColor(calenderTextColor);
     }
