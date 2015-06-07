@@ -25,9 +25,11 @@ import java.util.List;
 import java.util.Locale;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.anyFloat;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -186,16 +188,34 @@ public class CompactCalendarControllerTest {
         Assert.assertEquals(expectedEvents, actualEvents);
     }
 
+    @Test
+    public void testItDrawsEventDaysOnCalendar(){
+        //Sun, 07 Jun 2015 18:20:51 GMT
+        List<CalendarDayEvent> events = getEvents(0, 30, 1433701251000L);
+        for(CalendarDayEvent event : events){
+            underTest.addEvent(event);
+        }
+
+        when(calendar.get(Calendar.MONTH)).thenReturn(5);
+        when(calendar.get(Calendar.YEAR)).thenReturn(2015);
+
+        underTest.drawEvents(canvas, calendar, 0);
+
+        verify(canvas, times(28)).drawCircle(anyFloat(), anyFloat(), anyFloat(), eq(paint));
+    }
+
+
     private List<CalendarDayEvent> getEvents(int start, int days, long timeStamp) {
         Calendar currentCalender = Calendar.getInstance(Locale.getDefault());
         List<CalendarDayEvent> eventList = new ArrayList<>();
         for(int i = start; i < days; i++){
             currentCalender.setTimeInMillis(timeStamp);
-            currentCalender.add(Calendar.DATE, i);
+            currentCalender.set(Calendar.DATE, 1);
             currentCalender.set(Calendar.HOUR_OF_DAY, 0);
             currentCalender.set(Calendar.MINUTE, 0);
             currentCalender.set(Calendar.SECOND, 0);
             currentCalender.set(Calendar.MILLISECOND, 0);
+            currentCalender.add(Calendar.DATE, i);
             eventList.add(new CalendarDayEvent(currentCalender.getTimeInMillis(), Color.BLUE));
         }
         return eventList;
