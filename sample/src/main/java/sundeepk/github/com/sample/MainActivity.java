@@ -22,11 +22,17 @@ public class MainActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        currentCalender.setTimeInMillis(System.currentTimeMillis());
-        currentCalender.add(Calendar.DATE, 21);
         CompactCalendarView compactCalendarView = (CompactCalendarView) findViewById(R.id.compactcalendar_view);
-        compactCalendarView.addEvent(new CalendarDayEvent(currentCalender.getTimeInMillis(), Color.BLUE));
 
+        addEvents(compactCalendarView);
+    }
+
+    private void addEvents(CompactCalendarView compactCalendarView) {
+        for(int i = -20; i < 50; i++){
+            currentCalender.setTimeInMillis(System.currentTimeMillis());
+            currentCalender.add(Calendar.DATE, i);
+            compactCalendarView.addEvent(new CalendarDayEvent(currentCalender.getTimeInMillis(), Color.BLUE));
+        }
     }
 
 

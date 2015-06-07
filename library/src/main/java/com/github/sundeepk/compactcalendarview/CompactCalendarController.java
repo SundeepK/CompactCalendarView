@@ -17,6 +17,7 @@ import com.github.sundeepk.compactcalendarview.domain.CalendarDayEvent;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
@@ -53,7 +54,7 @@ class CompactCalendarController {
     private int paddingRight;
     private int paddingLeft;
     private boolean shouldDrawDaysHeader = true;
-    private Set<CalendarDayEvent> events = new HashSet<>();
+    private HashMap<String, Set<CalendarDayEvent>> events = new HashMap<>();
 
     private enum Direction {
         NONE, HORIZONTAL, VERTICAL
@@ -188,11 +189,27 @@ class CompactCalendarController {
     }
 
     void addEvent(CalendarDayEvent event){
-        events.add(event);
+        eventsCalendar.setTimeInMillis(event.getTimeInMillis());
+        String key = getKeyForEvent(eventsCalendar);
+        Set<CalendarDayEvent> uniqCalendarDayEvents = events.get(key);
+        if(uniqCalendarDayEvents == null){
+            uniqCalendarDayEvents = new HashSet<>();
+        }
+        uniqCalendarDayEvents.add(event);
+        events.put(key, uniqCalendarDayEvents);
     }
 
     void removeEvent(CalendarDayEvent event){
-        events.remove(event);
+        eventsCalendar.setTimeInMillis(event.getTimeInMillis());
+        String key = getKeyForEvent(eventsCalendar);
+        Set<CalendarDayEvent> uniqCalendarDayEvents = events.get(key);
+        if(uniqCalendarDayEvents != null){
+            uniqCalendarDayEvents.remove(event);
+        }
+    }
+
+    private String getKeyForEvent(Calendar cal) {
+        return String.valueOf(cal.get(Calendar.MONTH) + "_" + cal.get(Calendar.YEAR));
     }
 
     boolean onSingleTapConfirmed(MotionEvent e) {
@@ -252,8 +269,6 @@ class CompactCalendarController {
     private void drawScrollableCalender(Canvas canvas) {
         monthsScrolledSoFar = (int) (accumulatedScrollOffset.x / width);
 
-        drawEvents(canvas);
-
         drawPreviousMonth(canvas);
 
         drawCurrentMonth(canvas);
@@ -290,29 +305,30 @@ class CompactCalendarController {
         dayPaint.setColor(calenderTextColor);
     }
 
-    void drawEvents(Canvas canvas){
-        setCalenderToFirstDayOfMonth(calendarWithFirstDayOfMonth, currentDate, -1);
-        for(CalendarDayEvent event : events){
-            long timeMillis = event.getTimeInMillis();
-            eventsCalendar.setTimeInMillis(timeMillis);
+    void drawEvents(Canvas canvas, Calendar currentMonthToDrawCalender, int offset){
+        Set<CalendarDayEvent> uniqCalendarDayEvents =
+                events.get(getKeyForEvent(currentMonthToDrawCalender));
+        if(uniqCalendarDayEvents != null){
+            for(CalendarDayEvent event : uniqCalendarDayEvents){
+                long timeMillis = event.getTimeInMillis();
+                eventsCalendar.setTimeInMillis(timeMillis);
 
-            if(eventsCalendar.get(Calendar.MONTH) == calendarWithFirstDayOfMonth.get(Calendar.MONTH)
-                    && eventsCalendar.get(Calendar.YEAR) == calendarWithFirstDayOfMonth.get(Calendar.YEAR)){
                 int dayOfWeek = eventsCalendar.get(Calendar.DAY_OF_WEEK) - 1;
                 dayOfWeek = dayOfWeek <= 0 ? 7 : dayOfWeek;
                 dayOfWeek = dayOfWeek - 1;
 
                 int weekNumberForMonth = eventsCalendar.get(Calendar.WEEK_OF_MONTH);
-                float xPosition = widthPerDay * dayOfWeek + PADDING + accumulatedScrollOffset.x + (width * -monthsScrolledSoFar) + paddingRight;
+                float xPosition = widthPerDay * dayOfWeek + PADDING + accumulatedScrollOffset.x + offset + paddingRight;
                 float yPosition = weekNumberForMonth * heightPerDay + PADDING;
 
                 drawCircle(canvas, xPosition - widthPerDay / 55, yPosition - textHeight / 6, event.getColor());
             }
-
         }
     }
 
     void drawMonth(Canvas canvas, Calendar currentMonthToDrawCalender, int offset) {
+        drawEvents(canvas, currentMonthToDrawCalender, offset);
+
         //offset by one because we want to start from Monday
         int firstDayOfMonth = currentMonthToDrawCalender.get(Calendar.DAY_OF_WEEK) - 1;
         firstDayOfMonth = firstDayOfMonth <= 0 ? 7 : firstDayOfMonth;
