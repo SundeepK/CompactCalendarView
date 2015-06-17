@@ -25,6 +25,8 @@ public class MainActivity extends ActionBarActivity {
         CompactCalendarView compactCalendarView = (CompactCalendarView) findViewById(R.id.compactcalendar_view);
         compactCalendarView.drawSmallIndicatorForEvents(true);
         addEvents(compactCalendarView);
+        String[] dayNames = {"Mon", "Tue", "Wed", "Thur", "Fri", "Sat", "Sun"};
+        compactCalendarView.setDayColumnNames(dayNames);
     }
 
     private void addEvents(CompactCalendarView compactCalendarView) {

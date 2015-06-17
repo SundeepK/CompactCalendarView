@@ -116,6 +116,14 @@ class CompactCalendarController {
         calendarWithFirstDayOfMonth.set(Calendar.DAY_OF_MONTH, 1);
     }
 
+    void setDayColumnNames(String[] dayColumnNames){
+        if(dayColumnNames == null || dayColumnNames.length != 7){
+            throw new IllegalArgumentException("Column names cannot be null and must contain a value for each dao of the week");
+        }
+        this.dayColumnNames = dayColumnNames;
+    }
+
+
     void setShouldDrawDaysHeader(boolean shouldDrawDaysHeader){
         this.shouldDrawDaysHeader = shouldDrawDaysHeader;
     }

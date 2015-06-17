@@ -54,6 +54,33 @@ public class CompactCalendarControllerTest {
         underTest.setListener(listener);
     }
 
+    @Test(expected=IllegalArgumentException.class)
+    public void testItThrowsWhenDayColumnsIsNotLengthSeven(){
+        String[] dayNames = {"Mon", "Tue", "Wed", "Thur", "Fri"};
+        underTest.setDayColumnNames(dayNames);
+    }
+
+    @Test
+    public void testItSetsDayColumns(){
+        //simulate Feb month
+        when(calendar.get(Calendar.DAY_OF_WEEK)).thenReturn(1);
+        when(calendar.get(Calendar.MONTH)).thenReturn(1);
+        when(calendar.getActualMaximum(Calendar.DAY_OF_MONTH)).thenReturn(28);
+
+        String[] dayNames = {"Mon", "Tue", "Wed", "Thur", "Fri", "Sat", "Sun"};
+        underTest.setDayColumnNames(dayNames);
+        underTest.drawMonth(canvas, calendar, 0);
+
+        InOrder inOrder = inOrder(canvas);
+        inOrder.verify(canvas).drawText(eq("Mon"), anyInt(), anyInt(), eq(paint));
+        inOrder.verify(canvas).drawText(eq("Tue"), anyInt(), anyInt(), eq(paint));
+        inOrder.verify(canvas).drawText(eq("Wed"), anyInt(), anyInt(), eq(paint));
+        inOrder.verify(canvas).drawText(eq("Thur"), anyInt(), anyInt(), eq(paint));
+        inOrder.verify(canvas).drawText(eq("Fri"), anyInt(), anyInt(), eq(paint));
+        inOrder.verify(canvas).drawText(eq("Sat"), anyInt(), anyInt(), eq(paint));
+        inOrder.verify(canvas).drawText(eq("Sun"), anyInt(), anyInt(), eq(paint));
+    }
+
     @Test
     public void testListenerIsCalledOnMonthScroll(){
         //Sun, 01 Mar 2015 00:00:00 GMT
