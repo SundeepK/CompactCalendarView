@@ -29,6 +29,8 @@ dependencies {
 
 ```
 
+Please let me know if you are using this in your app so that I can add you as a list of users in the readme :).
+
 TODO:
 * Make drawing calendar more efficient by drawing all in one loop (currently requires 3).
 * Make drawing circles on current/first day based on width/height for each cell and remove any magic numbers there.
