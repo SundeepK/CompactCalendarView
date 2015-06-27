@@ -18,7 +18,6 @@ import com.github.sundeepk.compactcalendarview.domain.CalendarDayEvent;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -42,7 +41,7 @@ class CompactCalendarController {
     private Date currentDate = new Date();
     private Calendar currentCalender = Calendar.getInstance(Locale.getDefault());
     private Calendar calendarWithFirstDayOfMonth = Calendar.getInstance(Locale.getDefault());
-    private GregorianCalendar eventsCalendar = new GregorianCalendar();
+    private Calendar eventsCalendar = Calendar.getInstance(Locale.getDefault());
     private Direction currentDirection = Direction.NONE;
     private int heightPerDay;
     private int currentDayBackgroundColor;
@@ -78,11 +77,11 @@ class CompactCalendarController {
         if(attrs != null && context != null){
             TypedArray typedArray = context.getTheme().obtainStyledAttributes(attrs,  R.styleable.CompactCalendarView, 0, 0);
             try{
-                currentDayBackgroundColor = typedArray.getColor(R.styleable.CompactCalendarView_currentDayBackgroundColor, currentDayBackgroundColor);
-                calenderTextColor = typedArray.getColor(R.styleable.CompactCalendarView_calendarTextColor, calenderTextColor);
-                firstDayBackgroundColor = typedArray.getColor(R.styleable.CompactCalendarView_firstDayOfMonthBackgroundColor, firstDayBackgroundColor);
-                calenderBackgroundColor = typedArray.getColor(R.styleable.CompactCalendarView_calendarBackgroundColor, calenderBackgroundColor);
-                textSize = typedArray.getDimensionPixelSize(R.styleable.CompactCalendarView_textSize,
+                currentDayBackgroundColor = typedArray.getColor(R.styleable.CompactCalendarView_compactCalendarCurrentDayBackgroundColor, currentDayBackgroundColor);
+                calenderTextColor = typedArray.getColor(R.styleable.CompactCalendarView_compactCalendarTextColor, calenderTextColor);
+                firstDayBackgroundColor = typedArray.getColor(R.styleable.CompactCalendarView_compactCalendarFirstDayOfMonthBackgroundColor, firstDayBackgroundColor);
+                calenderBackgroundColor = typedArray.getColor(R.styleable.CompactCalendarView_compactCalendarBackgroundColor, calenderBackgroundColor);
+                textSize = typedArray.getDimensionPixelSize(R.styleable.CompactCalendarView_compactCalendarTextSize,
                         (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, textSize, context.getResources().getDisplayMetrics()));
             }finally{
                 typedArray.recycle();
@@ -103,6 +102,8 @@ class CompactCalendarController {
 
         currentCalender.setTime(currentDate);
         setCalenderToFirstDayOfMonth(calendarWithFirstDayOfMonth, currentDate, 0);
+
+        eventsCalendar.setFirstDayOfWeek(Calendar.MONDAY);
     }
 
     private void setCalenderToFirstDayOfMonth(Calendar calendarWithFirstDayOfMonth, Date currentDate, int monthOffset) {

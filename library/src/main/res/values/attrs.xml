@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="CompactCalendarView">
-        <attr name="textSize" format="dimension"/>
-        <attr name="calendarBackgroundColor" format="color"/>
-        <attr name="currentDayBackgroundColor" format="color"/>
-        <attr name="firstDayOfMonthBackgroundColor" format="color"/>
-        <attr name="calendarTextColor" format="color"/>
+        <attr name="compactCalendarTextSize" format="dimension"/>
+        <attr name="compactCalendarBackgroundColor" format="color"/>
+        <attr name="compactCalendarCurrentDayBackgroundColor" format="color"/>
+        <attr name="compactCalendarFirstDayOfMonthBackgroundColor" format="color"/>
+        <attr name="compactCalendarTextColor" format="color"/>
     </declare-styleable>
 </resources>
