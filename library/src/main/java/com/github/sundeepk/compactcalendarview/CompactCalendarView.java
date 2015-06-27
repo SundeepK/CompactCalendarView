@@ -91,7 +91,6 @@ public class CompactCalendarView extends View {
        compactCalendarController.setDayColumnNames(dayColumnNames);
     }
 
-
     public int getHeightPerDay(){
         return compactCalendarController.getHeightPerDay();
     }
@@ -104,8 +103,8 @@ public class CompactCalendarView extends View {
         return compactCalendarController.getFirstDayOfCurrentMonth();
     }
 
-    public void setMonth(Date dateTimeMonth){
-        compactCalendarController.setMonth(dateTimeMonth);
+    public void setCurrentDate(Date dateTimeMonth){
+        compactCalendarController.setCurrentDate(dateTimeMonth);
         invalidate();
     }
 

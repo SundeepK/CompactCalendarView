@@ -182,7 +182,7 @@ class CompactCalendarController {
         return calendar.getTime();
     }
 
-    void setMonth(Date dateTimeMonth){
+    void setCurrentDate(Date dateTimeMonth){
         currentDate = new Date(dateTimeMonth.getTime());
         currentCalender.setTime(currentDate);
         setToMidnight(currentCalender);

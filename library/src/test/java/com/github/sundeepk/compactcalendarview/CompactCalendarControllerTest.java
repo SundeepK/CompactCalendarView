@@ -90,7 +90,7 @@ public class CompactCalendarControllerTest {
         underTest.onMeasure(720, 1080, 0, 0);
 
         //Sun, 08 Feb 2015 00:00:00 GMT
-        underTest.setMonth(new Date(1423353600000L));
+        underTest.setCurrentDate(new Date(1423353600000L));
 
         //Scroll enough to push calender to next month
         underTest.onScroll(motionEvent, motionEvent, 600, 0);
@@ -105,7 +105,7 @@ public class CompactCalendarControllerTest {
         Date expectedDate = new Date(1422748800000L);
 
         //Sun, 08 Feb 2015 00:00:00 GMT
-        underTest.setMonth(new Date(1423353600000L));
+        underTest.setCurrentDate(new Date(1423353600000L));
 
         Date actualDate = underTest.getFirstDayOfCurrentMonth();
         assertEquals(expectedDate, actualDate);
