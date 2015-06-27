@@ -57,7 +57,6 @@ class CompactCalendarController {
     private boolean shouldDrawDaysHeader = true;
     private Map<String, List<CalendarDayEvent>> events = new HashMap<>();
     private boolean showSmallIndicator;
-    private boolean drawNewDaySelected = false;
 
     private enum Direction {
         NONE, HORIZONTAL, VERTICAL
@@ -250,7 +249,6 @@ class CompactCalendarController {
         int dayOfMonth = ((dayRow - 1) * 7 + dayColumn + 1) - firstDayOfMonth;
 
         calendarWithFirstDayOfMonth.add(Calendar.DATE, dayOfMonth);
-        drawNewDaySelected = true;
 
         currentCalender.setTimeInMillis(calendarWithFirstDayOfMonth.getTimeInMillis());
         return currentCalender.getTime();
@@ -290,17 +288,11 @@ class CompactCalendarController {
     private void drawScrollableCalender(Canvas canvas) {
         monthsScrolledSoFar = (int) (accumulatedScrollOffset.x / width);
 
-        if(drawNewDaySelected){
-            drawNewDaySelected = false;
-            drawCurrentMonth(canvas);
-        }else{
-            drawPreviousMonth(canvas);
+        drawPreviousMonth(canvas);
 
-            drawCurrentMonth(canvas);
+        drawCurrentMonth(canvas);
 
-            drawNextMonth(canvas);
-        }
-
+        drawNextMonth(canvas);
     }
 
     private void drawNextMonth(Canvas canvas) {
