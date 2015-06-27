@@ -50,7 +50,6 @@ class CompactCalendarController {
     private int firstDayBackgroundColor;
     private int calenderBackgroundColor = Color.WHITE;
     private int textSize = 30;
-    private CompactCalendarView.CompactCalendarViewListener compactCalendarViewListener;
     private int width;
     private int height;
     private int paddingRight;
@@ -58,6 +57,7 @@ class CompactCalendarController {
     private boolean shouldDrawDaysHeader = true;
     private Map<String, List<CalendarDayEvent>> events = new HashMap<>();
     private boolean showSmallIndicator;
+    private boolean drawNewDaySelected = false;
 
     private enum Direction {
         NONE, HORIZONTAL, VERTICAL
@@ -118,7 +118,7 @@ class CompactCalendarController {
 
     void setDayColumnNames(String[] dayColumnNames){
         if(dayColumnNames == null || dayColumnNames.length != 7){
-            throw new IllegalArgumentException("Column names cannot be null and must contain a value for each dao of the week");
+            throw new IllegalArgumentException("Column names cannot be null and must contain a value for each day of the week");
         }
         this.dayColumnNames = dayColumnNames;
     }
@@ -141,10 +141,6 @@ class CompactCalendarController {
             this.paddingLeft = paddingLeft;
     }
 
-    void setListener(CompactCalendarView.CompactCalendarViewListener listener){
-        this.compactCalendarViewListener = listener;
-    }
-
     void onDraw(Canvas canvas) {
         calculateXPositionOffset();
 
@@ -160,10 +156,7 @@ class CompactCalendarController {
                 float remainingScrollAfterFingerLifted = (accumulatedScrollOffset.x - monthsScrolledSoFar * width);
                 scroller.startScroll((int) accumulatedScrollOffset.x, 0, (int) -remainingScrollAfterFingerLifted, 0);
                 currentDirection = Direction.NONE;
-                if(compactCalendarViewListener != null){
-                    setCalenderToFirstDayOfMonth(calendarWithFirstDayOfMonth, currentDate, 0);
-                    compactCalendarViewListener.onMonthScroll(calendarWithFirstDayOfMonth.getTime());
-                }
+                setCalenderToFirstDayOfMonth(calendarWithFirstDayOfMonth, currentDate, 0);
                 return true;
             }
             currentDirection = Direction.NONE;
@@ -243,7 +236,7 @@ class CompactCalendarController {
         return cal.get(Calendar.YEAR) + "_" + cal.get(Calendar.MONTH);
     }
 
-    boolean onSingleTapConfirmed(MotionEvent e) {
+    Date onSingleTapConfirmed(MotionEvent e) {
         monthsScrolledSoFar = Math.round(accumulatedScrollOffset.x / width);
         int dayColumn = Math.round((e.getX() - PADDING - paddingRight) / widthPerDay);
         int dayRow = Math.round((e.getY() - PADDING) / heightPerDay);
@@ -257,13 +250,10 @@ class CompactCalendarController {
         int dayOfMonth = ((dayRow - 1) * 7 + dayColumn + 1) - firstDayOfMonth;
 
         calendarWithFirstDayOfMonth.add(Calendar.DATE, dayOfMonth);
+        drawNewDaySelected = true;
 
-        if(dayOfMonth >= 0){
-            if(compactCalendarViewListener != null){
-                compactCalendarViewListener.onDayClick(calendarWithFirstDayOfMonth.getTime());
-            }
-        }
-        return true;
+        currentCalender.setTimeInMillis(calendarWithFirstDayOfMonth.getTimeInMillis());
+        return currentCalender.getTime();
     }
 
     boolean onDown(MotionEvent e) {
@@ -300,11 +290,17 @@ class CompactCalendarController {
     private void drawScrollableCalender(Canvas canvas) {
         monthsScrolledSoFar = (int) (accumulatedScrollOffset.x / width);
 
-        drawPreviousMonth(canvas);
+        if(drawNewDaySelected){
+            drawNewDaySelected = false;
+            drawCurrentMonth(canvas);
+        }else{
+            drawPreviousMonth(canvas);
 
-        drawCurrentMonth(canvas);
+            drawCurrentMonth(canvas);
 
-        drawNextMonth(canvas);
+            drawNextMonth(canvas);
+        }
+
     }
 
     private void drawNextMonth(Canvas canvas) {

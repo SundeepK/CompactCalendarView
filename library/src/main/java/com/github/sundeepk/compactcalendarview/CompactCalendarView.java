@@ -20,6 +20,7 @@ public class CompactCalendarView extends View {
 
     private CompactCalendarController compactCalendarController;
     private GestureDetectorCompat gestureDetector;
+    private CompactCalendarViewListener listener;
 
     public interface CompactCalendarViewListener {
         public void onDayClick(Date dateClicked);
@@ -33,8 +34,11 @@ public class CompactCalendarView extends View {
 
         @Override
         public boolean onSingleTapConfirmed(MotionEvent e) {
-            compactCalendarController.onSingleTapConfirmed(e);
+            Date onDateClicked = compactCalendarController.onSingleTapConfirmed(e);
             invalidate();
+            if(listener != null){
+                listener.onDayClick(onDateClicked);
+            }
             return super.onSingleTapConfirmed(e);
         }
 
@@ -93,7 +97,7 @@ public class CompactCalendarView extends View {
     }
 
     public void setListener(CompactCalendarViewListener listener){
-        compactCalendarController.setListener(listener);
+        this.listener = listener;
     }
 
     public Date getFirstDayOfCurrentMonth(){
@@ -149,6 +153,9 @@ public class CompactCalendarView extends View {
     public boolean onTouchEvent(MotionEvent event) {
         if(compactCalendarController.onTouch(event)){
             invalidate();
+            if(listener != null){
+                listener.onMonthScroll(compactCalendarController.getFirstDayOfCurrentMonth());
+            }
             return true;
         }
         return gestureDetector.onTouchEvent(event);

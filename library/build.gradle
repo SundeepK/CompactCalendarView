@@ -45,4 +45,4 @@ dependencies {
     testCompile 'org.mockito:mockito-core:1.9.0'
 }
 
-apply from: 'https://raw.github.com/chrisbanes/gradle-mvn-push/master/gradle-mvn-push.gradle'
+//apply from: 'https://raw.github.com/chrisbanes/gradle-mvn-push/master/gradle-mvn-push.gradle'

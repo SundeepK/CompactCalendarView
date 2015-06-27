@@ -41,7 +41,6 @@ public class CompactCalendarControllerTest {
     @Mock private Canvas canvas;
     @Mock private Rect rect;
     @Mock private Calendar calendar;
-    @Mock private CompactCalendarView.CompactCalendarViewListener listener;
     @Mock private MotionEvent motionEvent;
 
     private static final String[] dayColumnNames = {"M", "T", "W", "T", "F", "S", "S"};
@@ -51,7 +50,6 @@ public class CompactCalendarControllerTest {
     @Before
     public void setUp(){
         underTest = new CompactCalendarController(paint, overScroller, rect, null, null, 0, 0, 0);
-        underTest.setListener(listener);
     }
 
     @Test(expected=IllegalArgumentException.class)
@@ -98,7 +96,7 @@ public class CompactCalendarControllerTest {
         underTest.onScroll(motionEvent, motionEvent, 600, 0);
         underTest.onDraw(canvas);
         underTest.onTouch(motionEvent);
-        verify(listener).onMonthScroll(expectedDateOnScroll);
+        assertEquals(expectedDateOnScroll, underTest.getFirstDayOfCurrentMonth());
     }
 
     @Test
