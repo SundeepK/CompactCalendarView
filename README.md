@@ -9,18 +9,18 @@ It is possible to change the apreance of the view via a few properties. This inc
 
 ```xml
     <com.github.sundeepk.compactcalendarview.CompactCalendarView
-            xmlns:app="http://schemas.android.com/apk/res-auto"
-            android:id="@+id/compactcalendar_view"
-            android:layout_width="fill_parent"
-            android:paddingRight="10dp"
-            android:paddingLeft="10dp"
-            android:layout_height="250dp"
-            app:textSize="12sp"
-            app:calendarBackgroundColor="#ffe95451"
-            app:calendarTextColor="#fff"
-            app:firstDayOfMonthBackgroundColor="#E57373"
-            app:currentDayBackgroundColor="#B71C1C" 
-            />
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/compactcalendar_view"
+        android:layout_width="fill_parent"
+        android:paddingRight="10dp"
+        android:paddingLeft="10dp"
+        android:layout_height="250dp"
+        app:compactCalendarTextSize="12sp"
+        app:compactCalendarBackgroundColor="#ffe95451"
+        app:compactCalendarTextColor="#fff"
+        app:compactCalendarFirstDayOfMonthBackgroundColor="#E57373"
+        app:compactCalendarCurrentDayBackgroundColor="#B71C1C"
+        />
 ```
 ```gradle
 dependencies {
