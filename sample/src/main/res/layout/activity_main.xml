@@ -18,4 +18,11 @@
         app:compactCalendarCurrentDayBackgroundColor="#B71C1C"
         />
 
+    <ListView
+        android:id="@+id/bookings_listview"
+        android:layout_below="@+id/compactcalendar_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+    </ListView>
+
 </RelativeLayout>
