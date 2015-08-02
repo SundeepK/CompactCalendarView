@@ -55,7 +55,8 @@ public class MainActivity extends ActionBarActivity {
         CompactCalendarView compactCalendarView = (CompactCalendarView) findViewById(R.id.compactcalendar_view);
         compactCalendarView.drawSmallIndicatorForEvents(true);
         addEvents(compactCalendarView);
-
+        compactCalendarView.setLocale(Locale.CHINESE);
+        compactCalendarView.setUseThreeLetterAbbreviation(true);
         //set initial title
         actionBar.setTitle(dateFormatForMonth.format(compactCalendarView.getFirstDayOfCurrentMonth()));
 
