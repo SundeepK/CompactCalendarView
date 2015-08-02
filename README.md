@@ -3,6 +3,15 @@ CompactCalendarView is a simple calender view which provides scrolling between m
 
 ![ScreenShot](https://github.com/SundeepK/CompactCalendarView/blob/master/images/compact-calendar-view-example.png)
 
+# Locale specific settings
+It's possible to set the locale so that weekday column names are automatically set by the calendar.
+```java
+        CompactCalendarView compactCalendarView = (CompactCalendarView) findViewById(R.id.compactcalendar_view);
+        compactCalendarView.drawSmallIndicatorForEvents(true);
+        compactCalendarView.setLocale(Locale.CHINESE);
+        compactCalendarView.setUseThreeLetterAbbreviation(true);
+```
+![ScreenShot](https://github.com/SundeepK/CompactCalendarView/blob/master/images/chinese-locale-daynames.png)
 
 # Example usage
 It is possible to change the apreance of the view via a few properties. This includes the background color, text color, textsize color of the current day and the color of the first day of the month.
