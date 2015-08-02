@@ -55,8 +55,6 @@ public class MainActivity extends ActionBarActivity {
         CompactCalendarView compactCalendarView = (CompactCalendarView) findViewById(R.id.compactcalendar_view);
         compactCalendarView.drawSmallIndicatorForEvents(true);
         addEvents(compactCalendarView);
-        String[] dayNames = {"M", "T", "W", "T", "F", "S", "S"};
-        compactCalendarView.setDayColumnNames(dayNames);
 
         //set initial title
         actionBar.setTitle(dateFormatForMonth.format(compactCalendarView.getFirstDayOfCurrentMonth()));
