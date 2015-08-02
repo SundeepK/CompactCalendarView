@@ -18,6 +18,7 @@ import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.text.DateFormatSymbols;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -29,6 +30,7 @@ import static org.mockito.Matchers.anyFloat;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -97,6 +99,32 @@ public class CompactCalendarControllerTest {
         underTest.onDraw(canvas);
         underTest.onTouch(motionEvent);
         assertEquals(expectedDateOnScroll, underTest.getFirstDayOfCurrentMonth());
+    }
+
+    @Test
+    public void testItAbbreviatesDayNames(){
+        //simulate Feb month
+        when(calendar.get(Calendar.DAY_OF_WEEK)).thenReturn(1);
+        when(calendar.get(Calendar.MONTH)).thenReturn(1);
+        when(calendar.getActualMaximum(Calendar.DAY_OF_MONTH)).thenReturn(28);
+
+        underTest.setLocale(Locale.FRANCE);
+        reset(canvas); //reset because invalidate is called
+        underTest.setUseWeekDayAbbreviation(true);
+        reset(canvas); //reset because invalidate is called
+        underTest.drawMonth(canvas, calendar, 0);
+
+        DateFormatSymbols dateFormatSymbols = new DateFormatSymbols(Locale.FRANCE);
+        String[] dayNames = dateFormatSymbols.getShortWeekdays();
+
+        InOrder inOrder = inOrder(canvas);
+        inOrder.verify(canvas).drawText(eq(dayNames[2]), anyInt(), anyInt(), eq(paint));
+        inOrder.verify(canvas).drawText(eq(dayNames[3]), anyInt(), anyInt(), eq(paint));
+        inOrder.verify(canvas).drawText(eq(dayNames[4]), anyInt(), anyInt(), eq(paint));
+        inOrder.verify(canvas).drawText(eq(dayNames[5]), anyInt(), anyInt(), eq(paint));
+        inOrder.verify(canvas).drawText(eq(dayNames[6]), anyInt(), anyInt(), eq(paint));
+        inOrder.verify(canvas).drawText(eq(dayNames[7]), anyInt(), anyInt(), eq(paint));
+        inOrder.verify(canvas).drawText(eq(dayNames[1]), anyInt(), anyInt(), eq(paint));
     }
 
     @Test

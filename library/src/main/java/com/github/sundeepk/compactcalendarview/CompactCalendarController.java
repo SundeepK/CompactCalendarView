@@ -15,7 +15,9 @@ import android.widget.OverScroller;
 
 import com.github.sundeepk.compactcalendarview.domain.CalendarDayEvent;
 
+import java.text.DateFormatSymbols;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -34,15 +36,16 @@ class CompactCalendarController {
     private int textWidth;
     private static final int DAYS_IN_WEEK = 7;
     private int widthPerDay;
-    private String[] dayColumnNames = {"M", "T", "W", "T", "F", "S", "S"};
+    private String[] dayColumnNames;
     private float distanceX;
     private PointF accumulatedScrollOffset = new PointF();
     private OverScroller scroller;
     private int monthsScrolledSoFar;
     private Date currentDate = new Date();
-    private Calendar currentCalender = Calendar.getInstance(Locale.getDefault());
-    private Calendar calendarWithFirstDayOfMonth = Calendar.getInstance(Locale.getDefault());
-    private Calendar eventsCalendar = Calendar.getInstance(Locale.getDefault());
+    private Locale locale = Locale.getDefault();
+    private Calendar currentCalender = Calendar.getInstance(locale);
+    private Calendar calendarWithFirstDayOfMonth = Calendar.getInstance(locale);
+    private Calendar eventsCalendar = Calendar.getInstance(locale);
     private Direction currentDirection = Direction.NONE;
     private int heightPerDay;
     private int currentDayBackgroundColor;
@@ -91,6 +94,7 @@ class CompactCalendarController {
     }
 
     private void init() {
+        setUseWeekDayAbbreviation(false);
         dayPaint.setTextAlign(Paint.Align.CENTER);
         dayPaint.setStyle(Paint.Style.STROKE);
         dayPaint.setFlags(Paint.ANTI_ALIAS_FLAG);
@@ -117,6 +121,31 @@ class CompactCalendarController {
         calendarWithFirstDayOfMonth.set(Calendar.DAY_OF_MONTH, 1);
     }
 
+    void setLocale(Locale locale){
+        if(locale == null){
+            throw new IllegalArgumentException("Locale cannot be null");
+        }
+        this.locale = locale;
+    }
+
+    void setUseWeekDayAbbreviation(boolean useThreeLetterAbbreviation){
+        DateFormatSymbols dateFormatSymbols = new DateFormatSymbols(locale);
+        String[] dayNames = dateFormatSymbols.getShortWeekdays();
+        if(dayNames == null){
+            throw new IllegalStateException("Unable to determine weekday names from default locale");
+        }
+        if(dayNames.length != 8){
+            throw new IllegalStateException("Expected weekday names from default locale to be of size 7 but: "
+                    + Arrays.toString(dayNames) + " with size " + dayNames.length + " was returned.");
+        }
+        if (useThreeLetterAbbreviation) {
+            this.dayColumnNames = new String[]{dayNames[2], dayNames[3], dayNames[4], dayNames[5], dayNames[6], dayNames[7], dayNames[1]};
+        } else {
+            this.dayColumnNames = new String[]{dayNames[2].substring(0, 1), dayNames[3].substring(0, 1),
+                    dayNames[4].substring(0, 1), dayNames[5].substring(0, 1), dayNames[6].substring(0, 1), dayNames[7].substring(0, 1), dayNames[1].substring(0, 1)};
+        }
+    }
+
     void setDayColumnNames(String[] dayColumnNames){
         if(dayColumnNames == null || dayColumnNames.length != 7){
             throw new IllegalArgumentException("Column names cannot be null and must contain a value for each day of the week");
@@ -129,8 +158,8 @@ class CompactCalendarController {
         this.shouldDrawDaysHeader = shouldDrawDaysHeader;
     }
 
-    void showSmallIndicator(boolean showSmallindicator){
-        this.showSmallIndicator = showSmallindicator;
+    void showSmallIndicator(boolean showSmallIndicator){
+        this.showSmallIndicator = showSmallIndicator;
     }
 
     void onMeasure(int width, int height, int paddingRight, int paddingLeft) {
@@ -172,13 +201,13 @@ class CompactCalendarController {
     }
 
     int getWeekNumberForCurrentMonth(){
-        Calendar calendar = Calendar.getInstance();
+        Calendar calendar = Calendar.getInstance(locale);
         calendar.setTime(currentDate);
         return calendar.get(Calendar.WEEK_OF_MONTH);
     }
 
     Date getFirstDayOfCurrentMonth(){
-        Calendar calendar = Calendar.getInstance();
+        Calendar calendar = Calendar.getInstance(locale);
         calendar.setTime(currentDate);
         calendar.add(Calendar.MONTH, -monthsScrolledSoFar);
         calendar.set(Calendar.DAY_OF_MONTH, 1);

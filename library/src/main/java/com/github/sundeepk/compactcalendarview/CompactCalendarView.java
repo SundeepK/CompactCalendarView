@@ -15,6 +15,7 @@ import android.widget.OverScroller;
 import com.github.sundeepk.compactcalendarview.domain.CalendarDayEvent;
 
 import java.util.Date;
+import java.util.Locale;
 
 public class CompactCalendarView extends View {
 
@@ -74,6 +75,24 @@ public class CompactCalendarView extends View {
         compactCalendarController = new CompactCalendarController(new Paint(), new OverScroller(getContext()),
                 new Rect(), attrs, getContext(),  Color.argb(255, 233, 84, 81), Color.argb(255, 64, 64, 64), Color.argb(255, 219, 219, 219));
         gestureDetector = new GestureDetectorCompat(getContext(), gestureListener);
+    }
+
+    /*
+    Use a custom locale for compact calendar.
+     */
+    public void setLocale(Locale locale){
+        compactCalendarController.setLocale(locale);
+        invalidate();
+    }
+
+    /*
+    Compact calendar will use the locale to determine the abbreviation to use as the day column names.
+    The default is to use the default locale and to abbreviate the day names to one character.
+    Setting this to true will displace the short weekday string provided by java.
+     */
+    public void setUseThreeLetterAbbreviation(boolean useThreeLetterAbbreviation){
+        compactCalendarController.setUseWeekDayAbbreviation(useThreeLetterAbbreviation);
+        invalidate();
     }
 
     /*
