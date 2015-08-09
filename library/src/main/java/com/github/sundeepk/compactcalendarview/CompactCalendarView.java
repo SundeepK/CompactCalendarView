@@ -147,6 +147,18 @@ public class CompactCalendarView extends View {
        compactCalendarController.removeEvent(event);
    }
 
+    public void showNextMonth(){
+        compactCalendarController.showNextMonth();
+        invalidate();
+        listener.onMonthScroll(compactCalendarController.getFirstDayOfCurrentMonth());
+    }
+
+    public void showPreviousMonth(){
+        compactCalendarController.showPreviousMonth();
+        invalidate();
+        listener.onMonthScroll(compactCalendarController.getFirstDayOfCurrentMonth());
+    }
+
     @Override
     protected void onMeasure(int parentWidth, int parentHeight) {
         super.onMeasure(parentWidth, parentHeight);

@@ -7,7 +7,9 @@ import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 
 import com.github.sundeepk.compactcalendarview.CompactCalendarView;
@@ -27,7 +29,7 @@ import java.util.Map;
 public class MainActivity extends ActionBarActivity {
 
     private Calendar currentCalender = Calendar.getInstance(Locale.getDefault());
-    private SimpleDateFormat dateFormatForMonth = new SimpleDateFormat("MMM", Locale.getDefault());
+    private SimpleDateFormat dateFormatForMonth = new SimpleDateFormat("MMM - yyyy", Locale.getDefault());
     private Map<Date, List<Booking>> bookings = new HashMap<>();
 
     public class Booking {
@@ -50,9 +52,12 @@ public class MainActivity extends ActionBarActivity {
         final List<String> mutableBookings = new ArrayList<>();
 
         final ListView bookingsListView = (ListView) findViewById(R.id.bookings_listview);
+        final Button showPreviousMonthBut = (Button) findViewById(R.id.prev_button);
+        final Button showNextMonthBut = (Button) findViewById(R.id.next_button);
+
         final ArrayAdapter adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, mutableBookings);
         bookingsListView.setAdapter(adapter);
-        CompactCalendarView compactCalendarView = (CompactCalendarView) findViewById(R.id.compactcalendar_view);
+        final CompactCalendarView compactCalendarView = (CompactCalendarView) findViewById(R.id.compactcalendar_view);
         compactCalendarView.drawSmallIndicatorForEvents(true);
         addEvents(compactCalendarView);
 
@@ -81,6 +86,21 @@ public class MainActivity extends ActionBarActivity {
                 actionBar.setTitle(dateFormatForMonth.format(firstDayOfNewMonth));
             }
         });
+
+        showPreviousMonthBut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                compactCalendarView.showPreviousMonth();
+            }
+        });
+
+        showNextMonthBut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                compactCalendarView.showNextMonth();
+            }
+        });
+
 
     }
 

@@ -61,6 +61,30 @@ public class CompactCalendarControllerTest {
     }
 
     @Test
+    public void testItScrollsToNextMonth(){
+        //Sun, 08 Feb 2015 00:00:00 GMT
+        underTest.setCurrentDate(new Date(1423353600000L));
+
+        underTest.showNextMonth();
+        Date actualDate = underTest.getFirstDayOfCurrentMonth();
+
+        //Sun, 01 Mar 2015 00:00:00 GMT - expected
+        assertEquals(new Date(1425168000000L), actualDate);
+    }
+
+    @Test
+    public void testItScrollsToPreviousMonth(){
+        //Sun, 08 Feb 2015 00:00:00 GMT
+        underTest.setCurrentDate(new Date(1423353600000L));
+
+        underTest.showPreviousMonth();
+        Date actualDate = underTest.getFirstDayOfCurrentMonth();
+
+        // Thu, 01 Jan 2015 00:00:00 GMT - expected
+        assertEquals(new Date(1420070400000L), actualDate);
+    }
+
+    @Test
     public void testItSetsDayColumns(){
         //simulate Feb month
         when(calendar.get(Calendar.DAY_OF_WEEK)).thenReturn(1);

@@ -121,6 +121,16 @@ class CompactCalendarController {
         calendarWithFirstDayOfMonth.set(Calendar.DAY_OF_MONTH, 1);
     }
 
+    void showNextMonth(){
+        setCalenderToFirstDayOfMonth(calendarWithFirstDayOfMonth, currentDate, 1);
+        setCurrentDate(calendarWithFirstDayOfMonth.getTime());
+    }
+
+    void showPreviousMonth(){
+        setCalenderToFirstDayOfMonth(calendarWithFirstDayOfMonth, currentDate, -1);
+        setCurrentDate(calendarWithFirstDayOfMonth.getTime());
+    }
+
     void setLocale(Locale locale){
         if(locale == null){
             throw new IllegalArgumentException("Locale cannot be null");

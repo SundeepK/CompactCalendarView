@@ -4,7 +4,22 @@
                 android:layout_height="match_parent"
                 tools:context=".MainActivity">
 
+    <Button
+        android:layout_alignParentLeft="true"
+        android:id="@+id/prev_button"
+        android:text="Previous"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <Button
+        android:layout_alignParentRight="true"
+        android:id="@+id/next_button"
+        android:text="Next"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
     <com.github.sundeepk.compactcalendarview.CompactCalendarView
+        android:layout_below="@+id/prev_button"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/compactcalendar_view"
         android:layout_width="fill_parent"
