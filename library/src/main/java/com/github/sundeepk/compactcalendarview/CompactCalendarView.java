@@ -150,13 +150,17 @@ public class CompactCalendarView extends View {
     public void showNextMonth(){
         compactCalendarController.showNextMonth();
         invalidate();
-        listener.onMonthScroll(compactCalendarController.getFirstDayOfCurrentMonth());
+        if(listener != null){
+             listener.onMonthScroll(compactCalendarController.getFirstDayOfCurrentMonth());
+        }
     }
 
     public void showPreviousMonth(){
         compactCalendarController.showPreviousMonth();
         invalidate();
-        listener.onMonthScroll(compactCalendarController.getFirstDayOfCurrentMonth());
+        if(listener != null){
+             listener.onMonthScroll(compactCalendarController.getFirstDayOfCurrentMonth());
+        }
     }
 
     @Override
