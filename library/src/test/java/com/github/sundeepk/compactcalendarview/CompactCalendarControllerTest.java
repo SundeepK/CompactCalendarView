@@ -20,6 +20,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import java.text.DateFormatSymbols;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -241,6 +242,19 @@ public class CompactCalendarControllerTest {
         Assert.assertEquals(events, actualEvents);
     }
 
+    @Test
+    public void testItAddsEventsUsingList(){
+        //Sun, 01 Feb 2015 00:00:00 GMT
+        List<CalendarDayEvent> events = getEvents(0, 30, 1422748800000L);
+
+        underTest.addEvents(events);
+
+        events = getEvents(0, 28, 1422748800000L);
+
+        List<CalendarDayEvent> actualEvents = underTest.getEvents(new Date(1422748800000L));
+        Assert.assertEquals(events, actualEvents);
+    }
+
 
     @Test
     public void testItRemovesEvents(){
@@ -260,6 +274,23 @@ public class CompactCalendarControllerTest {
         expectedEvents.remove(events.get(1));
         expectedEvents.remove(events.get(5));
         expectedEvents.remove(events.get(20));
+
+        List<CalendarDayEvent> actualEvents = underTest.getEvents(new Date(1422748800000L));
+        Assert.assertEquals(expectedEvents, actualEvents);
+    }
+
+    @Test
+    public void testItRemovesEventsUsingList(){
+        //Sun, 01 Feb 2015 00:00:00 GMT
+        List<CalendarDayEvent> events = getEvents(0, 30, 1422748800000L);
+        for(CalendarDayEvent event : events){
+            underTest.addEvent(event);
+        }
+
+        underTest.removeEvents(Arrays.asList(events.get(0), events.get(1), events.get(5), events.get(20)));
+
+        List<CalendarDayEvent> expectedEvents = getEvents(0, 28, 1422748800000L);
+        expectedEvents.removeAll(Arrays.asList(events.get(0), events.get(1), events.get(5), events.get(20)));
 
         List<CalendarDayEvent> actualEvents = underTest.getEvents(new Date(1422748800000L));
         Assert.assertEquals(expectedEvents, actualEvents);

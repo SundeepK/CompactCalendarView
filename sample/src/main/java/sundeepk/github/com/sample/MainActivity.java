@@ -60,6 +60,7 @@ public class MainActivity extends ActionBarActivity {
         final CompactCalendarView compactCalendarView = (CompactCalendarView) findViewById(R.id.compactcalendar_view);
         compactCalendarView.drawSmallIndicatorForEvents(true);
         addEvents(compactCalendarView);
+        compactCalendarView.invalidate();
 
         //set initial title
         actionBar.setTitle(dateFormatForMonth.format(compactCalendarView.getFirstDayOfCurrentMonth()));
@@ -108,7 +109,7 @@ public class MainActivity extends ActionBarActivity {
         for(int i = 0; i < 6; i++){
             currentCalender.setTimeInMillis(System.currentTimeMillis());
             currentCalender.add(Calendar.DATE, i);
-            compactCalendarView.addEvent(new CalendarDayEvent(currentCalender.getTimeInMillis(),  Color.argb(255, 169, 68, 65)));
+            compactCalendarView.addEvent(new CalendarDayEvent(currentCalender.getTimeInMillis(),  Color.argb(255, 169, 68, 65)), false);
             setToMidnight(currentCalender);
             bookings.put(currentCalender.getTime(), createBookings());
         }

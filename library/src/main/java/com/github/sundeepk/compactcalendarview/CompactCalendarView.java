@@ -14,7 +14,9 @@ import android.widget.OverScroller;
 
 import com.github.sundeepk.compactcalendarview.domain.CalendarDayEvent;
 
+import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 public class CompactCalendarView extends View {
@@ -138,17 +140,49 @@ public class CompactCalendarView extends View {
         compactCalendarController.setShouldDrawDaysHeader(shouldDrawDaysHeader);
     }
 
-   /*
-   Adds an event to be drawn as an indicator in the calendar. The code assume only one event per a day and makes no effort to remove duplicates.
-   It is the clients responsibility to add unique events, not doing so will cause the calendar to draw events for the same day multiple times.
-    */
-   public void addEvent(CalendarDayEvent event){
+    /**
+     *  Adds an event to be drawn as an indicator in the calendar.
+     *  If adding multiple events see {@link #addEvents(List)}} method.
+     * @param event to be added to the calendar
+     * @param shouldInvalidate true if the view should invalidate
+     */
+    public void addEvent(CalendarDayEvent event, boolean shouldInvalidate){
         compactCalendarController.addEvent(event);
-   }
+        if(shouldInvalidate){
+            invalidate();
+        }
+    }
 
-   public void removeEvent(CalendarDayEvent event){
-       compactCalendarController.removeEvent(event);
-   }
+    /*
+    Adds multiple events to the calendar and invalidates the view once all events are added.
+      */
+    public void addEvents(List<CalendarDayEvent> events){
+       compactCalendarController.addEvents(events);
+       invalidate();
+    }
+
+    /**
+     * Removes an event from the calendar.
+     * If removing multiple events see {@link #removeEvents(List)}
+     *
+     * @param event event to remove from the calendar
+     * @param shouldInvalidate true if the view should invalidate
+     */
+    public void removeEvent(CalendarDayEvent event, boolean shouldInvalidate){
+        compactCalendarController.removeEvent(event);
+        if(shouldInvalidate){
+            invalidate();
+        }
+    }
+
+    /*
+    Adds multiple events to the calendar and invalidates the view once all events are added.
+    */
+    public void removeEvents(List<CalendarDayEvent> events){
+        compactCalendarController.removeEvents(events);
+        invalidate();
+    }
+
 
     public void showNextMonth(){
         compactCalendarController.showNextMonth();

@@ -253,12 +253,26 @@ class CompactCalendarController {
         events.put(key, uniqCalendarDayEvents);
     }
 
+    void addEvents(List<CalendarDayEvent> events) {
+        int count = events.size();
+        for(int i = 0; i < count; i++){
+            addEvent(events.get(i));
+        }
+    }
+
     void removeEvent(CalendarDayEvent event){
         eventsCalendar.setTimeInMillis(event.getTimeInMillis());
         String key = getKeyForCalendarEvent(eventsCalendar);
         List<CalendarDayEvent> uniqCalendarDayEvents = events.get(key);
         if(uniqCalendarDayEvents != null){
             uniqCalendarDayEvents.remove(event);
+        }
+    }
+
+    void removeEvents(List<CalendarDayEvent> events) {
+        int count = events.size();
+        for(int i = 0; i < count; i++){
+            removeEvent(events.get(i));
         }
     }
 
