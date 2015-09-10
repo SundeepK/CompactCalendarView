@@ -9,7 +9,6 @@ import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.widget.OverScroller;
@@ -128,14 +127,12 @@ class CompactCalendarController {
 
     void showNextMonth(){
         setCalenderToFirstDayOfMonth(calendarWithFirstDayOfMonth, currentDate, 1);
-        setMonthOffset(currentCalender, currentDate, 1);
-        setCurrentDate(currentCalender.getTime());
+        setCurrentDate(calendarWithFirstDayOfMonth.getTime());
     }
 
     void showPreviousMonth(){
         setCalenderToFirstDayOfMonth(calendarWithFirstDayOfMonth, currentDate, -1);
-        setMonthOffset(currentCalender, currentDate, -1);
-        setCurrentDate(currentCalender.getTime());
+        setCurrentDate(calendarWithFirstDayOfMonth.getTime());
     }
 
     void setLocale(Locale locale){
@@ -372,8 +369,6 @@ class CompactCalendarController {
 
     private void drawCurrentMonth(Canvas canvas) {
         setCalenderToFirstDayOfMonth(calendarWithFirstDayOfMonth, currentDate, 0);
-//        setMonthOffset(currentCalender, currentDate, 0);
-//        setCurrentDate(currentCalender.getTime());
         drawMonth(canvas, calendarWithFirstDayOfMonth, width * -monthsScrolledSoFar);
     }
 
