@@ -40,7 +40,7 @@ public class CompactCalendarView extends View {
         public boolean onSingleTapConfirmed(MotionEvent e) {
             Date onDateClicked = compactCalendarController.onSingleTapConfirmed(e);
             invalidate();
-            if(listener != null){
+            if(listener != null && onDateClicked != null){
                 listener.onDayClick(onDateClicked);
             }
             return super.onSingleTapConfirmed(e);
@@ -210,6 +210,7 @@ public class CompactCalendarView extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
+
         compactCalendarController.onDraw(canvas);
     }
 

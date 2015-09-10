@@ -9,6 +9,7 @@ import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.widget.OverScroller;
@@ -112,23 +113,29 @@ class CompactCalendarController {
     }
 
     private void setCalenderToFirstDayOfMonth(Calendar calendarWithFirstDayOfMonth, Date currentDate, int monthOffset) {
+        setMonthOffset(calendarWithFirstDayOfMonth, currentDate, monthOffset);
+        calendarWithFirstDayOfMonth.set(Calendar.DAY_OF_MONTH, 1);
+    }
+
+    private void setMonthOffset(Calendar calendarWithFirstDayOfMonth, Date currentDate, int monthOffset) {
         calendarWithFirstDayOfMonth.setTime(currentDate);
         calendarWithFirstDayOfMonth.add(Calendar.MONTH, -monthsScrolledSoFar + monthOffset);
         calendarWithFirstDayOfMonth.set(Calendar.HOUR_OF_DAY, 0);
         calendarWithFirstDayOfMonth.set(Calendar.MINUTE, 0);
         calendarWithFirstDayOfMonth.set(Calendar.SECOND, 0);
         calendarWithFirstDayOfMonth.set(Calendar.MILLISECOND, 0);
-        calendarWithFirstDayOfMonth.set(Calendar.DAY_OF_MONTH, 1);
     }
 
     void showNextMonth(){
         setCalenderToFirstDayOfMonth(calendarWithFirstDayOfMonth, currentDate, 1);
-        setCurrentDate(calendarWithFirstDayOfMonth.getTime());
+        setMonthOffset(currentCalender, currentDate, 1);
+        setCurrentDate(currentCalender.getTime());
     }
 
     void showPreviousMonth(){
         setCalenderToFirstDayOfMonth(calendarWithFirstDayOfMonth, currentDate, -1);
-        setCurrentDate(calendarWithFirstDayOfMonth.getTime());
+        setMonthOffset(currentCalender, currentDate, -1);
+        setCurrentDate(currentCalender.getTime());
     }
 
     void setLocale(Locale locale){
@@ -305,10 +312,15 @@ class CompactCalendarController {
 
         int dayOfMonth = ((dayRow - 1) * 7 + dayColumn + 1) - firstDayOfMonth;
 
-        calendarWithFirstDayOfMonth.add(Calendar.DATE, dayOfMonth);
+        if(dayOfMonth < calendarWithFirstDayOfMonth.getActualMaximum(Calendar.DAY_OF_MONTH)
+                && dayOfMonth > 0){
+            calendarWithFirstDayOfMonth.add(Calendar.DATE, dayOfMonth);
 
-        currentCalender.setTimeInMillis(calendarWithFirstDayOfMonth.getTimeInMillis());
-        return currentCalender.getTime();
+            currentCalender.setTimeInMillis(calendarWithFirstDayOfMonth.getTimeInMillis());
+            return currentCalender.getTime();
+        } else {
+           return null;
+        }
     }
 
     boolean onDown(MotionEvent e) {
@@ -345,6 +357,7 @@ class CompactCalendarController {
     private void drawScrollableCalender(Canvas canvas) {
         monthsScrolledSoFar = (int) (accumulatedScrollOffset.x / width);
 
+
         drawPreviousMonth(canvas);
 
         drawCurrentMonth(canvas);
@@ -359,6 +372,8 @@ class CompactCalendarController {
 
     private void drawCurrentMonth(Canvas canvas) {
         setCalenderToFirstDayOfMonth(calendarWithFirstDayOfMonth, currentDate, 0);
+//        setMonthOffset(currentCalender, currentDate, 0);
+//        setCurrentDate(currentCalender.getTime());
         drawMonth(canvas, calendarWithFirstDayOfMonth, width * -monthsScrolledSoFar);
     }
 
