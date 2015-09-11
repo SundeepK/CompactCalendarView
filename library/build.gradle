@@ -3,10 +3,8 @@ apply plugin: 'idea'
 
 idea {
     module {
-        // if you hate browsing Javadoc
         downloadJavadoc = false
 
-        // and love reading sources :)
         downloadSources = true
     }
 }

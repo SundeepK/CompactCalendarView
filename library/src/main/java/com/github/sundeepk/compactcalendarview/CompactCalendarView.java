@@ -14,7 +14,6 @@ import android.widget.OverScroller;
 
 import com.github.sundeepk.compactcalendarview.domain.CalendarDayEvent;
 
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -203,9 +202,12 @@ public class CompactCalendarView extends View {
     @Override
     protected void onMeasure(int parentWidth, int parentHeight) {
         super.onMeasure(parentWidth, parentHeight);
-        if(getWidth() > 0 && getHeight() > 0) {
-            compactCalendarController.onMeasure(getWidth(), getHeight(), getPaddingRight(), getPaddingLeft());
+        int width = MeasureSpec.getSize(parentWidth);
+        int height = MeasureSpec.getSize(parentHeight);
+        if(width > 0 && height > 0) {
+            compactCalendarController.onMeasure(width, height, getPaddingRight(), getPaddingLeft());
         }
+        setMeasuredDimension(width, height);
     }
 
     @Override
