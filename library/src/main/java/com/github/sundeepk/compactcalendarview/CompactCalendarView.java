@@ -140,6 +140,16 @@ public class CompactCalendarView extends View {
     }
 
     /**
+     * see {@link #addEvent(com.github.sundeepk.compactcalendarview.domain.CalendarDayEvent, boolean)} when adding single events
+     * or {@link #addEvents(java.util.List)}  when adding multiple events
+     * @param event
+     */
+    @Deprecated
+    public void addEvent(CalendarDayEvent event){
+        addEvent(event, false);
+    }
+
+    /**
      *  Adds an event to be drawn as an indicator in the calendar.
      *  If adding multiple events see {@link #addEvents(List)}} method.
      * @param event to be added to the calendar
@@ -158,6 +168,17 @@ public class CompactCalendarView extends View {
     public void addEvents(List<CalendarDayEvent> events){
        compactCalendarController.addEvents(events);
        invalidate();
+    }
+
+
+    /**
+     * see {@link #removeEvent(com.github.sundeepk.compactcalendarview.domain.CalendarDayEvent, boolean)} when removing single events
+     * or {@link #removeEvents(java.util.List)} (java.util.List)}  when removing multiple events
+     * @param event
+     */
+    @Deprecated
+    public void removeEvent(CalendarDayEvent event){
+        removeEvent(event, false);
     }
 
     /**
