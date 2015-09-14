@@ -44,6 +44,7 @@ class CompactCalendarController {
     private Date currentDate = new Date();
     private Locale locale = Locale.getDefault();
     private Calendar currentCalender = Calendar.getInstance(locale);
+    private Calendar todayCalender = Calendar.getInstance(locale);
     private Calendar calendarWithFirstDayOfMonth = Calendar.getInstance(locale);
     private Calendar eventsCalendar = Calendar.getInstance(locale);
     private Direction currentDirection = Direction.NONE;
@@ -104,6 +105,9 @@ class CompactCalendarController {
         dayPaint.getTextBounds("31", 0, "31".length(), rect);
         textHeight = rect.height() * 3;
         textWidth = rect.width() * 2;
+
+        todayCalender.setTime(currentDate);
+        setToMidnight(todayCalender);
 
         currentCalender.setTime(currentDate);
         setCalenderToFirstDayOfMonth(calendarWithFirstDayOfMonth, currentDate, 0);
@@ -394,7 +398,10 @@ class CompactCalendarController {
     void drawEvents(Canvas canvas, Calendar currentMonthToDrawCalender, int offset){
         List<CalendarDayEvent> uniqCalendarDayEvents =
                 events.get(getKeyForCalendarEvent(currentMonthToDrawCalender));
-        boolean shouldDrawCurrentDayCircle = currentMonthToDrawCalender.get(Calendar.MONTH) == currentCalender.get(Calendar.MONTH);
+
+        boolean shouldDrawCurrentDayCircle = currentMonthToDrawCalender.get(Calendar.MONTH) == todayCalender.get(Calendar.MONTH);
+        int todayDayOfMonth = todayCalender.get(Calendar.DAY_OF_MONTH);
+
         if(uniqCalendarDayEvents != null){
             for(int i = 0; i < uniqCalendarDayEvents.size() ; i++){
                 CalendarDayEvent event = uniqCalendarDayEvents.get(i);
@@ -410,7 +417,7 @@ class CompactCalendarController {
                 float yPosition = weekNumberForMonth * heightPerDay + paddingHeight;
 
                 int dayOfMonth = eventsCalendar.get(Calendar.DAY_OF_MONTH);
-                boolean isSameDayAsCurrentDay = (currentCalender.get(Calendar.DAY_OF_MONTH) == dayOfMonth && shouldDrawCurrentDayCircle);
+                boolean isSameDayAsCurrentDay = (todayDayOfMonth == dayOfMonth && shouldDrawCurrentDayCircle);
                 if(!isSameDayAsCurrentDay && dayOfMonth != 1){
                     if(showSmallIndicator){
                         //draw small indicators below the day in the calendar
@@ -433,7 +440,8 @@ class CompactCalendarController {
 
         //offset by one because of 0 index based calculations
         firstDayOfMonth = firstDayOfMonth - 1;
-        boolean shouldDrawCurrentDayCircle = currentMonthToDrawCalender.get(Calendar.MONTH) == currentCalender.get(Calendar.MONTH);
+        boolean isSameMonth = currentMonthToDrawCalender.get(Calendar.MONTH) == todayCalender.get(Calendar.MONTH);
+        int todayDayOfMonth = todayCalender.get(Calendar.DAY_OF_MONTH);
 
         for(int dayColumn = 0, dayRow = 0; dayColumn <= 6; dayRow++){
             if(dayRow == 7){
@@ -456,12 +464,12 @@ class CompactCalendarController {
             }else{
                 int day = ((dayRow - 1) * 7 + dayColumn + 1) - firstDayOfMonth;
                 float yPosition = dayRow * heightPerDay + paddingHeight;
-                if(shouldDrawCurrentDayCircle && currentCalender.get(Calendar.DAY_OF_MONTH) == day){
+                if(isSameMonth && todayDayOfMonth == day){
                     // TODO calculate position of circle in a more reliable way
                     drawCircle(canvas, xPosition, yPosition, currentDayBackgroundColor);
                 }
                 if(day <= currentMonthToDrawCalender.getActualMaximum(Calendar.DAY_OF_MONTH) && day > 0){
-                    if(day == 1){
+                    if(currentCalender.get(Calendar.DAY_OF_MONTH) == day){
                         drawCircle(canvas, xPosition, yPosition, firstDayBackgroundColor);
                     }
                     canvas.drawText(String.valueOf(day), xPosition, yPosition, dayPaint);
