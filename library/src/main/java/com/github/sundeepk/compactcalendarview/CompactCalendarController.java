@@ -207,6 +207,11 @@ class CompactCalendarController {
                 scroller.startScroll((int) accumulatedScrollOffset.x, 0, (int) -remainingScrollAfterFingerLifted, 0);
                 currentDirection = Direction.NONE;
                 setCalenderToFirstDayOfMonth(calendarWithFirstDayOfMonth, currentDate, 0);
+
+                if(calendarWithFirstDayOfMonth.get(Calendar.MONTH) != currentCalender.get(Calendar.MONTH)){
+                    setCalenderToFirstDayOfMonth(currentCalender, currentDate, 0);
+                }
+
                 return true;
             }
             currentDirection = Direction.NONE;
