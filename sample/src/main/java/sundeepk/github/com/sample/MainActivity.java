@@ -106,8 +106,11 @@ public class MainActivity extends ActionBarActivity {
     }
 
     private void addEvents(CompactCalendarView compactCalendarView) {
+        currentCalender.setTime(new Date());
+        currentCalender.set(Calendar.DAY_OF_MONTH, 1);
+        Date firstDayOfMonth = currentCalender.getTime();
         for(int i = 0; i < 6; i++){
-            currentCalender.setTimeInMillis(System.currentTimeMillis());
+            currentCalender.setTime(firstDayOfMonth);
             currentCalender.add(Calendar.DATE, i);
             compactCalendarView.addEvent(new CalendarDayEvent(currentCalender.getTimeInMillis(),  Color.argb(255, 169, 68, 65)), false);
             setToMidnight(currentCalender);
