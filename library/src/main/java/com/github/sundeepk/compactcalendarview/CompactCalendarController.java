@@ -51,7 +51,7 @@ class CompactCalendarController {
     private int heightPerDay;
     private int currentDayBackgroundColor;
     private int calenderTextColor;
-    private int firstDayBackgroundColor;
+    private int currentSelectedDayBackgroundColor;
     private int calenderBackgroundColor = Color.WHITE;
     private int textSize = 30;
     private int width;
@@ -67,13 +67,13 @@ class CompactCalendarController {
     }
 
     CompactCalendarController(Paint dayPaint, OverScroller scroller, Rect rect, AttributeSet attrs,
-                              Context context, int currentDayBackgroundColor, int calenderTextColor, int firstDayBackgroundColor) {
+                              Context context, int currentDayBackgroundColor, int calenderTextColor, int currentSelectedDayBackgroundColor) {
         this.dayPaint = dayPaint;
         this.scroller = scroller;
         this.rect = rect;
         this.currentDayBackgroundColor = currentDayBackgroundColor;
         this.calenderTextColor = calenderTextColor;
-        this.firstDayBackgroundColor = firstDayBackgroundColor;
+        this.currentSelectedDayBackgroundColor = currentSelectedDayBackgroundColor;
         loadAttributes(attrs, context);
         init();
     }
@@ -84,7 +84,7 @@ class CompactCalendarController {
             try {
                 currentDayBackgroundColor = typedArray.getColor(R.styleable.CompactCalendarView_compactCalendarCurrentDayBackgroundColor, currentDayBackgroundColor);
                 calenderTextColor = typedArray.getColor(R.styleable.CompactCalendarView_compactCalendarTextColor, calenderTextColor);
-                firstDayBackgroundColor = typedArray.getColor(R.styleable.CompactCalendarView_compactCalendarFirstDayOfMonthBackgroundColor, firstDayBackgroundColor);
+                currentSelectedDayBackgroundColor = typedArray.getColor(R.styleable.CompactCalendarView_compactCalendarCurrentSelectedDayBackgroundColor, currentSelectedDayBackgroundColor);
                 calenderBackgroundColor = typedArray.getColor(R.styleable.CompactCalendarView_compactCalendarBackgroundColor, calenderBackgroundColor);
                 textSize = typedArray.getDimensionPixelSize(R.styleable.CompactCalendarView_compactCalendarTextSize,
                         (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, textSize, context.getResources().getDisplayMetrics()));
@@ -473,7 +473,7 @@ class CompactCalendarController {
                     // TODO calculate position of circle in a more reliable way
                     drawCircle(canvas, xPosition, yPosition, currentDayBackgroundColor);
                 } else if (currentCalender.get(Calendar.DAY_OF_MONTH) == day) {
-                    drawCircle(canvas, xPosition, yPosition, firstDayBackgroundColor);
+                    drawCircle(canvas, xPosition, yPosition, currentSelectedDayBackgroundColor);
                 }
                 if (day <= currentMonthToDrawCalender.getActualMaximum(Calendar.DAY_OF_MONTH) && day > 0) {
                     canvas.drawText(String.valueOf(day), xPosition, yPosition, dayPaint);

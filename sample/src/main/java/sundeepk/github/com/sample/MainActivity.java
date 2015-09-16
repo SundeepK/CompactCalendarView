@@ -77,7 +77,7 @@ public class MainActivity extends ActionBarActivity {
                     for(Booking booking : bookingsFromMap){
                         mutableBookings.add(booking.title);
                     }
-
+                    compactCalendarView.removeEvent(new CalendarDayEvent(dateClicked.getTime(), Color.argb(255, 169, 68, 65)), true);
                     adapter.notifyDataSetChanged();
                 }
             }
@@ -112,8 +112,8 @@ public class MainActivity extends ActionBarActivity {
         for(int i = 0; i < 6; i++){
             currentCalender.setTime(firstDayOfMonth);
             currentCalender.add(Calendar.DATE, i);
-            compactCalendarView.addEvent(new CalendarDayEvent(currentCalender.getTimeInMillis(),  Color.argb(255, 169, 68, 65)), false);
             setToMidnight(currentCalender);
+            compactCalendarView.addEvent(new CalendarDayEvent(currentCalender.getTimeInMillis(),  Color.argb(255, 169, 68, 65)), false);
             bookings.put(currentCalender.getTime(), createBookings());
         }
     }
