@@ -309,8 +309,7 @@ public class CompactCalendarControllerTest {
 
         underTest.drawEvents(canvas, calendar, 0);
 
-        //should draw 1 less days because we don't draw events for the 1st day of month
-        verify(canvas, times(29)).drawCircle(anyFloat(), anyFloat(), anyFloat(), eq(paint));
+        verify(canvas, times(30)).drawCircle(anyFloat(), anyFloat(), anyFloat(), eq(paint));
     }
 
 
