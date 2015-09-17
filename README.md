@@ -27,9 +27,10 @@ It is possible to change the apreance of the view via a few properties. This inc
         app:compactCalendarTextSize="12sp"
         app:compactCalendarBackgroundColor="#ffe95451"
         app:compactCalendarTextColor="#fff"
-        app:compactCalendarFirstDayOfMonthBackgroundColor="#E57373"
+        app:compactCalendarCurrentSelectedDayBackgroundColor="#E57373"
         app:compactCalendarCurrentDayBackgroundColor="#B71C1C"
         />
+
 ```
 ```gradle
 dependencies {
