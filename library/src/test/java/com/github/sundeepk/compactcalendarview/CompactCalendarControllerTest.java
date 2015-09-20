@@ -62,6 +62,63 @@ public class CompactCalendarControllerTest {
     }
 
     @Test
+    public void testScrollAndGestureScrollPlayNicelyTogether(){
+        //Set width of view so that scrolling will return a correct value
+        underTest.onMeasure(720, 1080, 0, 0);
+
+        Calendar cal = Calendar.getInstance();
+
+        //Sun, 08 Feb 2015 00:00:00 GMT
+        underTest.setCurrentDate(setTimeAndGet(cal, 1423353600000L));
+
+        underTest.showNextMonth();
+
+        //Sun, 01 Mar 2015 00:00:00 GMT - expected
+        assertEquals(setTimeAndGet(cal, 1425168000000L), underTest.getFirstDayOfCurrentMonth());
+
+        when(motionEvent.getAction()).thenReturn(MotionEvent.ACTION_UP);
+
+        //Scroll enough to push calender to next month
+        underTest.onScroll(motionEvent, motionEvent, 600, 0);
+        underTest.onDraw(canvas);
+        underTest.onTouch(motionEvent);
+
+        //Wed, 01 Apr 2015 00:00:00 GMT
+        assertEquals(setTimeAndGet(cal, 1427842800000L), underTest.getFirstDayOfCurrentMonth());
+
+        when(motionEvent.getAction()).thenReturn(MotionEvent.ACTION_UP);
+
+        //Scroll enough to push calender to next month
+        underTest.onScroll(motionEvent, motionEvent, 600, 0);
+        underTest.onDraw(canvas);
+        underTest.onTouch(motionEvent);
+
+        //Mon, 01 Jun 2015 00:00:00 GMT
+        assertEquals(setTimeAndGet(cal, 1430438400000L), underTest.getFirstDayOfCurrentMonth());
+
+        underTest.showNextMonth();
+
+        //Mon, 01 Jun 2015 00:00:00 GMT
+        assertEquals(setTimeAndGet(cal, 1433116800000L), underTest.getFirstDayOfCurrentMonth());
+
+        underTest.showNextMonth();
+
+        //Wed, 01 Jul 2015 00:00:00 GMT
+        assertEquals(setTimeAndGet(cal, 1435708800000L), underTest.getFirstDayOfCurrentMonth());
+
+
+        when(motionEvent.getAction()).thenReturn(MotionEvent.ACTION_UP);
+
+        //Scroll enough to push calender to next month
+        underTest.onScroll(motionEvent, motionEvent, 600, 0);
+        underTest.onDraw(canvas);
+        underTest.onTouch(motionEvent);
+
+        //Sat, 01 Aug 2015 00:00:00 GMT
+        assertEquals(setTimeAndGet(cal, 1438387200000L), underTest.getFirstDayOfCurrentMonth());
+    }
+
+    @Test
     public void testItScrollsToNextMonth(){
         //Sun, 08 Feb 2015 00:00:00 GMT
         underTest.setCurrentDate(new Date(1423353600000L));
@@ -327,6 +384,15 @@ public class CompactCalendarControllerTest {
             eventList.add(new CalendarDayEvent(currentCalender.getTimeInMillis(), Color.BLUE));
         }
         return eventList;
+    }
+
+    private Date setTimeAndGet(Calendar cal, long epoch) {
+       cal.setTime(new Date(epoch));
+       cal.set(Calendar.HOUR_OF_DAY, 0);
+       cal.set(Calendar.MINUTE, 0);
+       cal.set(Calendar.SECOND, 0);
+       cal.set(Calendar.MILLISECOND, 0);
+       return cal.getTime();
     }
 
 }

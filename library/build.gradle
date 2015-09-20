@@ -37,8 +37,6 @@ dependencies {
     compile 'com.android.support:appcompat-v7:21.0.3'
 
     //mockito dependencies
-    testCompile files('libs/dexmaker-mockito-1.0.jar')
-    testCompile files('libs/dexmaker-1.0.jar')
     testCompile 'junit:junit:4.12'
     testCompile 'org.mockito:mockito-core:1.9.0'
 }
