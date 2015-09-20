@@ -77,7 +77,8 @@ public class MainActivity extends ActionBarActivity {
                     for(Booking booking : bookingsFromMap){
                         mutableBookings.add(booking.title);
                     }
-                    compactCalendarView.removeEvent(new CalendarDayEvent(dateClicked.getTime(), Color.argb(255, 169, 68, 65)), true);
+                   // below will remove events
+                   // compactCalendarView.removeEvent(new CalendarDayEvent(dateClicked.getTime(), Color.argb(255, 169, 68, 65)), true);
                     adapter.notifyDataSetChanged();
                 }
             }
