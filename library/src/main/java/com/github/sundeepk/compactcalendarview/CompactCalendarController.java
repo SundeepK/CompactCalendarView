@@ -61,6 +61,7 @@ class CompactCalendarController {
     private boolean shouldDrawDaysHeader = true;
     private Map<String, List<CalendarDayEvent>> events = new HashMap<>();
     private boolean showSmallIndicator;
+    private float smallIndicatorRadius;
 
     private enum Direction {
         NONE, HORIZONTAL, VERTICAL
@@ -75,7 +76,7 @@ class CompactCalendarController {
         this.calenderTextColor = calenderTextColor;
         this.currentSelectedDayBackgroundColor = currentSelectedDayBackgroundColor;
         loadAttributes(attrs, context);
-        init();
+        init(context);
     }
 
     private void loadAttributes(AttributeSet attrs, Context context) {
@@ -94,7 +95,7 @@ class CompactCalendarController {
         }
     }
 
-    private void init() {
+    private void init(Context context) {
         setUseWeekDayAbbreviation(false);
         dayPaint.setTextAlign(Paint.Align.CENTER);
         dayPaint.setStyle(Paint.Style.STROKE);
@@ -113,6 +114,11 @@ class CompactCalendarController {
         setCalenderToFirstDayOfMonth(calendarWithFirstDayOfMonth, currentDate, -monthsScrolledSoFar, 0);
 
         eventsCalendar.setFirstDayOfWeek(Calendar.MONDAY);
+
+        float screenDensity =  context.getResources().getDisplayMetrics().density;
+
+        //scale small indicator by screen density
+        smallIndicatorRadius = 2.5f * screenDensity;
     }
 
     private void setCalenderToFirstDayOfMonth(Calendar calendarWithFirstDayOfMonth, Date currentDate, int scrollOffset, int monthOffset) {
@@ -493,7 +499,7 @@ class CompactCalendarController {
 
     private void drawSmallIndicatorCircle(Canvas canvas, float x, float y, int color) {
         dayPaint.setColor(color);
-        drawCircle(canvas, 5.0f, x, y);
+        drawCircle(canvas, smallIndicatorRadius, x, y);
     }
 
     private void drawCircle(Canvas canvas, float radius, float x, float y) {
