@@ -115,7 +115,10 @@ class CompactCalendarController {
 
         eventsCalendar.setFirstDayOfWeek(Calendar.MONDAY);
 
-        float screenDensity =  context.getResources().getDisplayMetrics().density;
+        float screenDensity = 1;
+        if(context != null){
+             screenDensity =  context.getResources().getDisplayMetrics().density;
+        }
 
         //scale small indicator by screen density
         smallIndicatorRadius = 2.5f * screenDensity;
