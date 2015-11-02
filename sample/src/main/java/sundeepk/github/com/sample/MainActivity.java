@@ -61,6 +61,7 @@ public class MainActivity extends ActionBarActivity {
         compactCalendarView.drawSmallIndicatorForEvents(true);
         addEvents(compactCalendarView);
         compactCalendarView.invalidate();
+        compactCalendarView.setShouldShowMondayAsFirstDay(false);
 
         //set initial title
         actionBar.setTitle(dateFormatForMonth.format(compactCalendarView.getFirstDayOfCurrentMonth()));

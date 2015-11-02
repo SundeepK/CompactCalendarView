@@ -62,6 +62,7 @@ class CompactCalendarController {
     private Map<String, List<CalendarDayEvent>> events = new HashMap<>();
     private boolean showSmallIndicator;
     private float smallIndicatorRadius;
+    private boolean shouldShowMondayAsFirstDay = true;
 
     private enum Direction {
         NONE, HORIZONTAL, VERTICAL
@@ -138,6 +139,10 @@ class CompactCalendarController {
         calendarWithFirstDayOfMonth.set(Calendar.MILLISECOND, 0);
     }
 
+    void setShouldShowMondayAsFirstDay(boolean shouldShowMondayAsFirstDay) {
+        this.shouldShowMondayAsFirstDay = shouldShowMondayAsFirstDay;
+    }
+
     void showNextMonth() {
         setCalenderToFirstDayOfMonth(calendarWithFirstDayOfMonth, currentCalender.getTime(), 0, 1);
         setCurrentDate(calendarWithFirstDayOfMonth.getTime());
@@ -165,11 +170,21 @@ class CompactCalendarController {
             throw new IllegalStateException("Expected weekday names from default locale to be of size 7 but: "
                     + Arrays.toString(dayNames) + " with size " + dayNames.length + " was returned.");
         }
+
         if (useThreeLetterAbbreviation) {
-            this.dayColumnNames = new String[]{dayNames[2], dayNames[3], dayNames[4], dayNames[5], dayNames[6], dayNames[7], dayNames[1]};
+            if (!shouldShowMondayAsFirstDay) {
+                this.dayColumnNames = new String[]{dayNames[1], dayNames[2], dayNames[3], dayNames[4], dayNames[5], dayNames[6], dayNames[7]};
+            } else {
+                this.dayColumnNames = new String[]{dayNames[2], dayNames[3], dayNames[4], dayNames[5], dayNames[6], dayNames[7], dayNames[1]};
+            }
         } else {
-            this.dayColumnNames = new String[]{dayNames[2].substring(0, 1), dayNames[3].substring(0, 1),
-                    dayNames[4].substring(0, 1), dayNames[5].substring(0, 1), dayNames[6].substring(0, 1), dayNames[7].substring(0, 1), dayNames[1].substring(0, 1)};
+            if (!shouldShowMondayAsFirstDay) {
+                this.dayColumnNames = new String[]{dayNames[1].substring(0, 1), dayNames[2].substring(0, 1),
+                        dayNames[3].substring(0, 1), dayNames[4].substring(0, 1), dayNames[5].substring(0, 1), dayNames[6].substring(0, 1), dayNames[7].substring(0, 1)};
+            } else {
+                this.dayColumnNames = new String[]{dayNames[2].substring(0, 1), dayNames[3].substring(0, 1),
+                        dayNames[4].substring(0, 1), dayNames[5].substring(0, 1), dayNames[6].substring(0, 1), dayNames[7].substring(0, 1), dayNames[1].substring(0, 1)};
+            }
         }
     }
 
@@ -322,8 +337,7 @@ class CompactCalendarController {
         setCalenderToFirstDayOfMonth(calendarWithFirstDayOfMonth, currentDate, -monthsScrolledSoFar, 0);
 
         //Start Monday as day 1 and Sunday as day 7. Not Sunday as day 1 and Monday as day 2
-        int firstDayOfMonth = calendarWithFirstDayOfMonth.get(Calendar.DAY_OF_WEEK) - 1;
-        firstDayOfMonth = firstDayOfMonth <= 0 ? 7 : firstDayOfMonth;
+        int firstDayOfMonth = getDayOfWeek(calendarWithFirstDayOfMonth);
 
         int dayOfMonth = ((dayRow - 1) * 7 + dayColumn + 1) - firstDayOfMonth;
 
@@ -422,9 +436,7 @@ class CompactCalendarController {
                 long timeMillis = event.getTimeInMillis();
                 eventsCalendar.setTimeInMillis(timeMillis);
 
-                int dayOfWeek = eventsCalendar.get(Calendar.DAY_OF_WEEK) - 1;
-                dayOfWeek = dayOfWeek <= 0 ? 7 : dayOfWeek;
-                dayOfWeek = dayOfWeek - 1;
+                int dayOfWeek = getDayOfWeek(eventsCalendar) - 1;
 
                 int weekNumberForMonth = eventsCalendar.get(Calendar.WEEK_OF_MONTH);
                 float xPosition = widthPerDay * dayOfWeek + paddingWidth + paddingLeft + accumulatedScrollOffset.x + offset - paddingRight;
@@ -445,12 +457,22 @@ class CompactCalendarController {
         }
     }
 
+    private int getDayOfWeek(Calendar calendar) {
+        int dayOfWeek;
+        if (!shouldShowMondayAsFirstDay) {
+            return calendar.get(Calendar.DAY_OF_WEEK);
+        } else {
+            dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK) - 1;
+            dayOfWeek = dayOfWeek <= 0 ? 7 : dayOfWeek;
+        }
+        return dayOfWeek;
+    }
+
     void drawMonth(Canvas canvas, Calendar currentMonthToDrawCalender, int offset) {
         drawEvents(canvas, currentMonthToDrawCalender, offset);
 
         //offset by one because we want to start from Monday
-        int firstDayOfMonth = currentMonthToDrawCalender.get(Calendar.DAY_OF_WEEK) - 1;
-        firstDayOfMonth = firstDayOfMonth <= 0 ? 7 : firstDayOfMonth;
+        int firstDayOfMonth = getDayOfWeek(currentMonthToDrawCalender);
 
         //offset by one because of 0 index based calculations
         firstDayOfMonth = firstDayOfMonth - 1;
