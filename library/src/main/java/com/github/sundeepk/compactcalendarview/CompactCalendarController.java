@@ -63,6 +63,7 @@ class CompactCalendarController {
     private boolean showSmallIndicator;
     private float smallIndicatorRadius;
     private boolean shouldShowMondayAsFirstDay = true;
+    private boolean useThreeLetterAbbreviation = false;
 
     private enum Direction {
         NONE, HORIZONTAL, VERTICAL
@@ -141,6 +142,12 @@ class CompactCalendarController {
 
     void setShouldShowMondayAsFirstDay(boolean shouldShowMondayAsFirstDay) {
         this.shouldShowMondayAsFirstDay = shouldShowMondayAsFirstDay;
+        setUseWeekDayAbbreviation(useThreeLetterAbbreviation);
+        if (shouldShowMondayAsFirstDay) {
+            eventsCalendar.setFirstDayOfWeek(Calendar.MONDAY);
+        } else {
+            eventsCalendar.setFirstDayOfWeek(Calendar.SUNDAY);
+        }
     }
 
     void showNextMonth() {
@@ -161,6 +168,7 @@ class CompactCalendarController {
     }
 
     void setUseWeekDayAbbreviation(boolean useThreeLetterAbbreviation) {
+        this.useThreeLetterAbbreviation = useThreeLetterAbbreviation;
         DateFormatSymbols dateFormatSymbols = new DateFormatSymbols(locale);
         String[] dayNames = dateFormatSymbols.getShortWeekdays();
         if (dayNames == null) {

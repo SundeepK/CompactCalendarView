@@ -116,6 +116,7 @@ public class CompactCalendarView extends View {
 
     public void setShouldShowMondayAsFirstDay(boolean shouldShowMondayAsFirstDay) {
         compactCalendarController.setShouldShowMondayAsFirstDay(shouldShowMondayAsFirstDay);
+        invalidate();
     }
 
     public int getHeightPerDay(){

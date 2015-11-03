@@ -41,6 +41,14 @@ public class MainActivity extends ActionBarActivity {
             this.date = date;
         }
 
+
+        @Override
+        public String toString() {
+            return "Booking{" +
+                    "title='" + title + '\'' +
+                    ", date=" + date +
+                    '}';
+        }
     }
 
     @Override
@@ -121,7 +129,8 @@ public class MainActivity extends ActionBarActivity {
     }
 
     private List<Booking> createBookings() {
-        return Arrays.asList(new Booking("Test title with time - " + currentCalender.getTimeInMillis(), currentCalender.getTime()),
+        return Arrays.asList(
+                new Booking("Test title with time - " + currentCalender.getTimeInMillis(), currentCalender.getTime()),
                 new Booking("Test title 2 with time - " + currentCalender.getTimeInMillis(), currentCalender.getTime()),
                 new Booking("Test title 3 with time - " + currentCalender.getTimeInMillis(), currentCalender.getTime()));
     }
