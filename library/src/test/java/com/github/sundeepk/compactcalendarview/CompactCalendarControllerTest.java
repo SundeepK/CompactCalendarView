@@ -237,6 +237,27 @@ public class CompactCalendarControllerTest {
     }
 
     @Test
+    public void testItDrawsSundayAsFirstDay(){
+        //simulate Feb month
+        when(calendar.get(Calendar.DAY_OF_WEEK)).thenReturn(1);
+        when(calendar.get(Calendar.MONTH)).thenReturn(1);
+        when(calendar.getActualMaximum(Calendar.DAY_OF_MONTH)).thenReturn(28);
+
+        underTest.setShouldShowMondayAsFirstDay(false);
+        underTest.setUseWeekDayAbbreviation(true);
+        underTest.drawMonth(canvas, calendar, 0);
+
+        InOrder inOrder = inOrder(canvas);
+        inOrder.verify(canvas).drawText(eq("Sun"), anyInt(), anyInt(), eq(paint));
+        inOrder.verify(canvas).drawText(eq("Mon"), anyInt(), anyInt(), eq(paint));
+        inOrder.verify(canvas).drawText(eq("Tue"), anyInt(), anyInt(), eq(paint));
+        inOrder.verify(canvas).drawText(eq("Wed"), anyInt(), anyInt(), eq(paint));
+        inOrder.verify(canvas).drawText(eq("Thu"), anyInt(), anyInt(), eq(paint));
+        inOrder.verify(canvas).drawText(eq("Fri"), anyInt(), anyInt(), eq(paint));
+        inOrder.verify(canvas).drawText(eq("Sat"), anyInt(), anyInt(), eq(paint));
+    }
+
+    @Test
     public void testItDrawsFirstLetterOfEachDay(){
         //simulate Feb month
         when(calendar.get(Calendar.DAY_OF_WEEK)).thenReturn(1);
