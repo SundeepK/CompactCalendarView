@@ -67,9 +67,13 @@ public class MainActivity extends ActionBarActivity {
         bookingsListView.setAdapter(adapter);
         final CompactCalendarView compactCalendarView = (CompactCalendarView) findViewById(R.id.compactcalendar_view);
         compactCalendarView.drawSmallIndicatorForEvents(true);
-        addEvents(compactCalendarView);
+        addEvents(compactCalendarView, -1);
+        addEvents(compactCalendarView, Calendar.DECEMBER);
+        addEvents(compactCalendarView, Calendar.AUGUST);
         compactCalendarView.invalidate();
-        compactCalendarView.setShouldShowMondayAsFirstDay(false);
+
+        // below line will display Sunday as the first day of the week
+        //compactCalendarView.setShouldShowMondayAsFirstDay(false);
 
         //set initial title
         actionBar.setTitle(dateFormatForMonth.format(compactCalendarView.getFirstDayOfCurrentMonth()));
@@ -115,12 +119,15 @@ public class MainActivity extends ActionBarActivity {
 
     }
 
-    private void addEvents(CompactCalendarView compactCalendarView) {
+    private void addEvents(CompactCalendarView compactCalendarView, int month) {
         currentCalender.setTime(new Date());
         currentCalender.set(Calendar.DAY_OF_MONTH, 1);
         Date firstDayOfMonth = currentCalender.getTime();
         for(int i = 0; i < 6; i++){
             currentCalender.setTime(firstDayOfMonth);
+            if(month > -1){
+                currentCalender.set(Calendar.MONTH, month);
+            }
             currentCalender.add(Calendar.DATE, i);
             setToMidnight(currentCalender);
             compactCalendarView.addEvent(new CalendarDayEvent(currentCalender.getTimeInMillis(),  Color.argb(255, 169, 68, 65)), false);
