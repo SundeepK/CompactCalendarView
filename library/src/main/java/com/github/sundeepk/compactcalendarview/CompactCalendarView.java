@@ -123,6 +123,10 @@ public class CompactCalendarView extends View {
         return compactCalendarController.getHeightPerDay();
     }
 
+    public void setSmallIndicatorSize(int smallIndicatorSize){
+        compactCalendarController.setSmallIndicatorSize(smallIndicatorSize);
+    }
+
     public void setListener(CompactCalendarViewListener listener){
         this.listener = listener;
     }

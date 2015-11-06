@@ -64,6 +64,7 @@ class CompactCalendarController {
     private float smallIndicatorRadius;
     private boolean shouldShowMondayAsFirstDay = true;
     private boolean useThreeLetterAbbreviation = false;
+    private float smallIndicatorSize = 2.5f;
 
     private enum Direction {
         NONE, HORIZONTAL, VERTICAL
@@ -123,7 +124,7 @@ class CompactCalendarController {
         }
 
         //scale small indicator by screen density
-        smallIndicatorRadius = 2.5f * screenDensity;
+        smallIndicatorRadius = smallIndicatorSize * screenDensity;
     }
 
     private void setCalenderToFirstDayOfMonth(Calendar calendarWithFirstDayOfMonth, Date currentDate, int scrollOffset, int monthOffset) {
@@ -165,6 +166,10 @@ class CompactCalendarController {
             throw new IllegalArgumentException("Locale cannot be null");
         }
         this.locale = locale;
+    }
+
+    void setSmallIndicatorSize(int smallIndicatorSize){
+        this.smallIndicatorSize = smallIndicatorSize;
     }
 
     void setUseWeekDayAbbreviation(boolean useThreeLetterAbbreviation) {
