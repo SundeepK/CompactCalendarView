@@ -123,8 +123,9 @@ public class CompactCalendarView extends View {
         return compactCalendarController.getHeightPerDay();
     }
 
-    public void setSmallIndicatorSize(int smallIndicatorSize){
+    public void setSmallIndicatorSize(float smallIndicatorSize){
         compactCalendarController.setSmallIndicatorSize(smallIndicatorSize);
+        invalidate();
     }
 
     public void setListener(CompactCalendarViewListener listener){

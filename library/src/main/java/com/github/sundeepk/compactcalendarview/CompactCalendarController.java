@@ -65,6 +65,7 @@ class CompactCalendarController {
     private boolean shouldShowMondayAsFirstDay = true;
     private boolean useThreeLetterAbbreviation = false;
     private float smallIndicatorSize = 2.5f;
+    private float screenDensity = 1;
 
     private enum Direction {
         NONE, HORIZONTAL, VERTICAL
@@ -118,11 +119,14 @@ class CompactCalendarController {
 
         eventsCalendar.setFirstDayOfWeek(Calendar.MONDAY);
 
-        float screenDensity = 1;
         if(context != null){
              screenDensity =  context.getResources().getDisplayMetrics().density;
         }
 
+        calculateSmallIIndicatorSize();
+    }
+
+    private void calculateSmallIIndicatorSize() {
         //scale small indicator by screen density
         smallIndicatorRadius = smallIndicatorSize * screenDensity;
     }
@@ -168,8 +172,9 @@ class CompactCalendarController {
         this.locale = locale;
     }
 
-    void setSmallIndicatorSize(int smallIndicatorSize){
+    void setSmallIndicatorSize(float smallIndicatorSize){
         this.smallIndicatorSize = smallIndicatorSize;
+        calculateSmallIIndicatorSize();
     }
 
     void setUseWeekDayAbbreviation(boolean useThreeLetterAbbreviation) {
