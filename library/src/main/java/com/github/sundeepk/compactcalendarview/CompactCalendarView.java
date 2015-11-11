@@ -119,6 +119,16 @@ public class CompactCalendarView extends View {
         invalidate();
     }
 
+    public void setCurrentSelectedDayBackgroundColor(int currentSelectedDayBackgroundColor) {
+        compactCalendarController.setCurrentSelectedDayBackgroundColor(currentSelectedDayBackgroundColor);
+        invalidate();
+    }
+
+    public void setCurrentDayBackgroundColor(int currentDayBackgroundColor) {
+        compactCalendarController.setCurrentDayBackgroundColor(currentDayBackgroundColor);
+        invalidate();
+    }
+
     public int getHeightPerDay(){
         return compactCalendarController.getHeightPerDay();
     }

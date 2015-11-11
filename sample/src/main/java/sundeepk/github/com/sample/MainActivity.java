@@ -67,6 +67,8 @@ public class MainActivity extends ActionBarActivity {
         bookingsListView.setAdapter(adapter);
         final CompactCalendarView compactCalendarView = (CompactCalendarView) findViewById(R.id.compactcalendar_view);
         compactCalendarView.drawSmallIndicatorForEvents(true);
+        compactCalendarView.setCurrentDayBackgroundColor(getResources().getColor(R.color.black));
+        compactCalendarView.setCurrentSelectedDayBackgroundColor(getResources().getColor(R.color.dark_red));
         addEvents(compactCalendarView, -1);
         addEvents(compactCalendarView, Calendar.DECEMBER);
         addEvents(compactCalendarView, Calendar.AUGUST);
@@ -90,8 +92,8 @@ public class MainActivity extends ActionBarActivity {
                     for(Booking booking : bookingsFromMap){
                         mutableBookings.add(booking.title);
                     }
-                   // below will remove events
-                   // compactCalendarView.removeEvent(new CalendarDayEvent(dateClicked.getTime(), Color.argb(255, 169, 68, 65)), true);
+                    // below will remove events
+                    // compactCalendarView.removeEvent(new CalendarDayEvent(dateClicked.getTime(), Color.argb(255, 169, 68, 65)), true);
                     adapter.notifyDataSetChanged();
                 }
             }

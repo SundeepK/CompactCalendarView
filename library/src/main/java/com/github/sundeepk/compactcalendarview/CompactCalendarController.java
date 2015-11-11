@@ -150,6 +150,14 @@ class CompactCalendarController {
         }
     }
 
+    void setCurrentSelectedDayBackgroundColor(int currentSelectedDayBackgroundColor) {
+        this.currentSelectedDayBackgroundColor = currentSelectedDayBackgroundColor;
+    }
+
+    void setCurrentDayBackgroundColor(int currentDayBackgroundColor) {
+        this.currentDayBackgroundColor = currentDayBackgroundColor;
+    }
+
     void showNextMonth() {
         setCalenderToFirstDayOfMonth(calendarWithFirstDayOfMonth, currentCalender.getTime(), 0, 1);
         setCurrentDate(calendarWithFirstDayOfMonth.getTime());
