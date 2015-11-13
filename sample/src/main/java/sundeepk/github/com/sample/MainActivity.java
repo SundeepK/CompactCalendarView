@@ -67,8 +67,12 @@ public class MainActivity extends ActionBarActivity {
         bookingsListView.setAdapter(adapter);
         final CompactCalendarView compactCalendarView = (CompactCalendarView) findViewById(R.id.compactcalendar_view);
         compactCalendarView.drawSmallIndicatorForEvents(true);
+        
+        // below allows you to configure color for the current day in the month
         compactCalendarView.setCurrentDayBackgroundColor(getResources().getColor(R.color.black));
+        // below allows you to configure colors for the current day the user has selected
         compactCalendarView.setCurrentSelectedDayBackgroundColor(getResources().getColor(R.color.dark_red));
+        
         addEvents(compactCalendarView, -1);
         addEvents(compactCalendarView, Calendar.DECEMBER);
         addEvents(compactCalendarView, Calendar.AUGUST);
