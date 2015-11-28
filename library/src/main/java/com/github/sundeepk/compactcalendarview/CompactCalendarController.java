@@ -64,7 +64,6 @@ class CompactCalendarController {
     private float smallIndicatorRadius;
     private boolean shouldShowMondayAsFirstDay = true;
     private boolean useThreeLetterAbbreviation = false;
-    private boolean shouldResetScroller;
 
     private enum Direction {
         NONE, HORIZONTAL, VERTICAL
@@ -243,7 +242,7 @@ class CompactCalendarController {
     boolean onTouch(MotionEvent event) {
         if (event.getAction() == MotionEvent.ACTION_UP) {
             if (currentDirection == Direction.HORIZONTAL) {
-                    monthsScrolledSoFar = Math.round(accumulatedScrollOffset.x / width);
+                monthsScrolledSoFar = Math.round(accumulatedScrollOffset.x / width);
                 float remainingScrollAfterFingerLifted = (accumulatedScrollOffset.x - monthsScrolledSoFar * width);
                 scroller.startScroll((int) accumulatedScrollOffset.x, 0, (int) -remainingScrollAfterFingerLifted, 0);
                 currentDirection = Direction.NONE;
@@ -280,10 +279,10 @@ class CompactCalendarController {
     }
 
     void setCurrentDate(Date dateTimeMonth) {
-        shouldResetScroller = true;
         distanceX = 0;
         monthsScrolledSoFar = 0;
         accumulatedScrollOffset.x = 0;
+        scroller.startScroll(0, 0, 0, 0);
         currentDate = new Date(dateTimeMonth.getTime());
         currentCalender.setTime(currentDate);
         setToMidnight(currentCalender);
@@ -398,13 +397,6 @@ class CompactCalendarController {
         if (scroller.computeScrollOffset()) {
             accumulatedScrollOffset.x = scroller.getCurrX();
             return true;
-        } else {
-            if (shouldResetScroller) {
-                accumulatedScrollOffset.x = 0;
-                monthsScrolledSoFar = 0;
-                scroller.startScroll(0, 0, 0, 0);
-                shouldResetScroller = false;
-            }
         }
         return false;
     }
