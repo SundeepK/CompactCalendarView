@@ -140,6 +140,10 @@ class CompactCalendarController {
         calendarWithFirstDayOfMonth.set(Calendar.MILLISECOND, 0);
     }
 
+    void removeAllEvents(){
+        events.clear();
+    }
+
     void setShouldShowMondayAsFirstDay(boolean shouldShowMondayAsFirstDay) {
         this.shouldShowMondayAsFirstDay = shouldShowMondayAsFirstDay;
         setUseWeekDayAbbreviation(useThreeLetterAbbreviation);
@@ -335,7 +339,7 @@ class CompactCalendarController {
         eventsCalendar.setTimeInMillis(date.getTime());
         String key = getKeyForCalendarEvent(eventsCalendar);
         List<CalendarDayEvent> uniqEvents = events.get(key);
-        if (events != null) {
+        if (uniqEvents != null) {
             return uniqEvents;
         } else {
             return new ArrayList<>();
