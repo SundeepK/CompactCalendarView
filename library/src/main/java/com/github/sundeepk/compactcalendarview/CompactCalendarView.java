@@ -177,9 +177,9 @@ public class CompactCalendarView extends View {
         }
     }
 
-    /*
-    Adds multiple events to the calendar and invalidates the view once all events are added.
-      */
+    /**
+    * Adds multiple events to the calendar and invalidates the view once all events are added.
+    */
     public void addEvents(List<CalendarDayEvent> events){
        compactCalendarController.addEvents(events);
        invalidate();
@@ -210,14 +210,20 @@ public class CompactCalendarView extends View {
         }
     }
 
-    /*
-    Adds multiple events to the calendar and invalidates the view once all events are added.
+    /**
+    * Adds multiple events to the calendar and invalidates the view once all events are added.
     */
     public void removeEvents(List<CalendarDayEvent> events){
         compactCalendarController.removeEvents(events);
         invalidate();
     }
 
+    /**
+     * Clears all Events from the calendar.
+     */
+    public void removeAllEvents() {
+        compactCalendarController.removeAllEvents();
+    }
 
     public void showNextMonth(){
         compactCalendarController.showNextMonth();
