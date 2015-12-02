@@ -490,15 +490,16 @@ class CompactCalendarController {
         return dayOfWeek;
     }
 
-    void drawMonth(Canvas canvas, Calendar currentMonthToDrawCalender, int offset) {
-        drawEvents(canvas, currentMonthToDrawCalender, offset);
+    void drawMonth(Canvas canvas, Calendar monthToDrawCalender, int offset) {
+        drawEvents(canvas, monthToDrawCalender, offset);
 
         //offset by one because we want to start from Monday
-        int firstDayOfMonth = getDayOfWeek(currentMonthToDrawCalender);
+        int firstDayOfMonth = getDayOfWeek(monthToDrawCalender);
 
         //offset by one because of 0 index based calculations
         firstDayOfMonth = firstDayOfMonth - 1;
-        boolean isSameMonth = currentMonthToDrawCalender.get(Calendar.MONTH) == todayCalender.get(Calendar.MONTH);
+        boolean isSameMonthAsToday = monthToDrawCalender.get(Calendar.MONTH) == todayCalender.get(Calendar.MONTH);
+        boolean isSameMonthAsCurrentCalendar = monthToDrawCalender.get(Calendar.MONTH) == currentCalender.get(Calendar.MONTH);
         int todayDayOfMonth = todayCalender.get(Calendar.DAY_OF_MONTH);
 
         for (int dayColumn = 0, dayRow = 0; dayColumn <= 6; dayRow++) {
@@ -522,13 +523,15 @@ class CompactCalendarController {
             } else {
                 int day = ((dayRow - 1) * 7 + dayColumn + 1) - firstDayOfMonth;
                 float yPosition = dayRow * heightPerDay + paddingHeight;
-                if (isSameMonth && todayDayOfMonth == day) {
+                if (isSameMonthAsToday && todayDayOfMonth == day) {
                     // TODO calculate position of circle in a more reliable way
                     drawCircle(canvas, xPosition, yPosition, currentDayBackgroundColor);
-                } else if (currentCalender.get(Calendar.DAY_OF_MONTH) == day) {
+                } else if (currentCalender.get(Calendar.DAY_OF_MONTH) == day && isSameMonthAsCurrentCalendar) {
+                    drawCircle(canvas, xPosition, yPosition, currentSelectedDayBackgroundColor);
+                } else if (day == 1 && !isSameMonthAsCurrentCalendar) {
                     drawCircle(canvas, xPosition, yPosition, currentSelectedDayBackgroundColor);
                 }
-                if (day <= currentMonthToDrawCalender.getActualMaximum(Calendar.DAY_OF_MONTH) && day > 0) {
+                if (day <= monthToDrawCalender.getActualMaximum(Calendar.DAY_OF_MONTH) && day > 0) {
                     canvas.drawText(String.valueOf(day), xPosition, yPosition, dayPaint);
                 }
             }
