@@ -62,6 +62,9 @@ class CompactCalendarController {
     private Map<String, List<CalendarDayEvent>> events = new HashMap<>();
     private boolean showSmallIndicator;
     private float smallIndicatorRadius;
+    private boolean drawCustomRange;
+    Calendar startDate = Calendar.getInstance();
+    Calendar endDate = Calendar.getInstance();
     private boolean shouldShowMondayAsFirstDay = true;
     private boolean useThreeLetterAbbreviation = false;
 
@@ -124,6 +127,12 @@ class CompactCalendarController {
 
         //scale small indicator by screen density
         smallIndicatorRadius = 2.5f * screenDensity;
+
+        // TODO Take params from User
+        drawCustomRange = false;
+        // NOTE Java Months start from 0
+        startDate.set(2015, 9, 12, 0, 0, 0);
+        endDate.set(2015, 10, 2, 0, 0, 0);
     }
 
     private void setCalenderToFirstDayOfMonth(Calendar calendarWithFirstDayOfMonth, Date currentDate, int scrollOffset, int monthOffset) {
@@ -226,7 +235,14 @@ class CompactCalendarController {
 
     void onMeasure(int width, int height, int paddingRight, int paddingLeft) {
         widthPerDay = (width) / DAYS_IN_WEEK;
-        heightPerDay = height / 7;
+        if(drawCustomRange) {
+            int numOfDays = (int)((endDate.getTimeInMillis() - startDate.getTimeInMillis()) / (1000 * 60 * 60 * 24));
+            int startDay = startDate.get(Calendar.DAY_OF_WEEK);
+            int numOfWeeks = (int) Math.ceil(1.0*(startDay + numOfDays) / 7);
+            heightPerDay = height/(numOfWeeks + 1);
+        } else {
+            heightPerDay = height / 7;
+        }
         this.width = width;
         this.height = height;
         this.paddingRight = paddingRight;
@@ -239,8 +255,11 @@ class CompactCalendarController {
         calculateXPositionOffset();
 
         drawCalenderBackground(canvas);
-
-        drawScrollableCalender(canvas);
+        if(!drawCustomRange) {
+            drawScrollableCalender(canvas);
+        } else {
+            drawDateRangeCalendar(canvas, startDate, endDate);
+        }
     }
 
     boolean onTouch(MotionEvent event) {
@@ -416,6 +435,10 @@ class CompactCalendarController {
         drawNextMonth(canvas);
     }
 
+    public void drawDateRangeCalendar(Canvas canvas, Calendar startDate, Calendar endDate) {
+        drawDateRange(canvas, startDate, endDate, 0);
+    }
+
     private void drawNextMonth(Canvas canvas) {
         setCalenderToFirstDayOfMonth(calendarWithFirstDayOfMonth, currentDate, -monthsScrolledSoFar, 1);
         drawMonth(canvas, calendarWithFirstDayOfMonth, (width * (-monthsScrolledSoFar + 1)));
@@ -488,6 +511,42 @@ class CompactCalendarController {
             dayOfWeek = dayOfWeek <= 0 ? 7 : dayOfWeek;
         }
         return dayOfWeek;
+    }
+
+    void drawDateRange(Canvas canvas, Calendar startDate, Calendar endDate, int offset) {
+
+        int firstDayToDraw = startDate.get(Calendar.DAY_OF_WEEK);
+        firstDayToDraw = (firstDayToDraw + 7 - 1) % 7;
+        Calendar dateToDraw = (Calendar) startDate.clone();
+
+        for(int dayColumn = 0, dayRow = 0; dateToDraw.before(endDate) || dateToDraw.compareTo(endDate) == 0; dayColumn++) {
+            if(dayColumn == 7) {
+                dayColumn = 0;
+                dayRow++;
+            }
+            float xPosition = widthPerDay * dayColumn + paddingWidth + paddingLeft + accumulatedScrollOffset.x + offset - paddingRight;
+            if (dayRow == 0) {
+                // first row, so draw the first letter of the day
+                if (shouldDrawDaysHeader) {
+                    dayPaint.setTypeface(Typeface.DEFAULT_BOLD);
+                    canvas.drawText(dayColumnNames[dayColumn], xPosition, paddingHeight, dayPaint);
+                    dayPaint.setTypeface(Typeface.DEFAULT);
+                }
+            } else {
+                if(firstDayToDraw > 0) {
+                    firstDayToDraw--;
+                } else {
+                    float yPosition = dayRow * heightPerDay + paddingHeight;
+                    if (todayCalender.equals(dateToDraw)) {
+                        drawCircle(canvas, xPosition, yPosition, currentDayBackgroundColor);
+                    } else if (currentCalender.equals(dateToDraw)) {
+                        drawCircle(canvas, xPosition, yPosition, currentSelectedDayBackgroundColor);
+                    }
+                    canvas.drawText(String.valueOf(dateToDraw.get(Calendar.DAY_OF_MONTH)), xPosition, yPosition, dayPaint);
+                    dateToDraw.add(Calendar.DAY_OF_MONTH, 1);
+                }
+            }
+        }
     }
 
     void drawMonth(Canvas canvas, Calendar currentMonthToDrawCalender, int offset) {
