@@ -233,11 +233,11 @@ class CompactCalendarController {
         //scale small indicator by screen density
         smallIndicatorRadius = 2.5f * screenDensity;
 
-        //assume square around each day of width/height = heightPerDay
+        //assume square around each day of width and height = heightPerDay and get diagonal line length
         //makes easier to find radius
-        double radiusAroundDay = 0.5 * Math.sqrt(heightPerDay * heightPerDay + heightPerDay * heightPerDay);
+        double radiusAroundDay = 0.5 * Math.sqrt((heightPerDay * heightPerDay) + (heightPerDay * heightPerDay));
         //make radius based on screen density and apply some multiplier
-        bigCircleIndicatorRadius = (float) (radiusAroundDay / screenDensity) * 2.5f;
+        bigCircleIndicatorRadius = (float) (radiusAroundDay / screenDensity) * 2.2f;
 
     }
 
