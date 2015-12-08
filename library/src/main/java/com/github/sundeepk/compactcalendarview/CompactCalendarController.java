@@ -64,6 +64,8 @@ class CompactCalendarController {
     private float smallIndicatorRadius;
     private boolean shouldShowMondayAsFirstDay = true;
     private boolean useThreeLetterAbbreviation = false;
+    private float growFactor = 0f;
+    private boolean isAnimating;
 
     private enum Direction {
         NONE, HORIZONTAL, VERTICAL
@@ -238,9 +240,18 @@ class CompactCalendarController {
         paddingHeight = heightPerDay / 2;
         calculateXPositionOffset();
 
-        drawCalenderBackground(canvas);
+        if (isAnimating) {
+            dayPaint.setColor(calenderBackgroundColor);
+            dayPaint.setStyle(Paint.Style.FILL);
+            canvas.drawCircle(0, 0, growFactor, dayPaint);
+            dayPaint.setStyle(Paint.Style.STROKE);
+            dayPaint.setColor(calenderTextColor);
+        } else {
 
-        drawScrollableCalender(canvas);
+            drawCalenderBackground(canvas);
+
+            drawScrollableCalender(canvas);
+        }
     }
 
     boolean onTouch(MotionEvent event) {
@@ -349,6 +360,19 @@ class CompactCalendarController {
     //E.g. 4 2016 becomes 2016_4
     private String getKeyForCalendarEvent(Calendar cal) {
         return cal.get(Calendar.YEAR) + "_" + cal.get(Calendar.MONTH);
+    }
+
+
+    public void setGrowGfactor(float grow) {
+        growFactor = grow;
+    }
+
+    public float getGrowFactor() {
+        return growFactor;
+    }
+
+    public void setAnimation(boolean shouldAnimate){
+        isAnimating = shouldAnimate;
     }
 
     Date onSingleTapConfirmed(MotionEvent e) {

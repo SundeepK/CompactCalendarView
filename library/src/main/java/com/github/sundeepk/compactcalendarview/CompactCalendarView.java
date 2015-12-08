@@ -1,5 +1,6 @@
 package com.github.sundeepk.compactcalendarview;
 
+import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -7,9 +8,11 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.support.v4.view.GestureDetectorCompat;
 import android.util.AttributeSet;
+import android.util.Property;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.OverScroller;
 
 import com.github.sundeepk.compactcalendarview.domain.CalendarDayEvent;
@@ -29,6 +32,19 @@ public class CompactCalendarView extends View {
         public void onDayClick(Date dateClicked);
         public void onMonthScroll(Date firstDayOfNewMonth);
     }
+
+    public final Property<CompactCalendarView, Float> GROW_FACTOR = new Property<CompactCalendarView, Float>(Float.class, "growFactor") {
+        @Override
+        public void set(CompactCalendarView object, Float value) {
+            CompactCalendarView.this.invalidate();
+            compactCalendarController.setGrowGfactor(value);
+        }
+
+        @Override
+        public Float get(CompactCalendarView object) {
+            return compactCalendarController.getGrowFactor();
+        }
+    };
 
     private final GestureDetector.SimpleOnGestureListener gestureListener = new GestureDetector.SimpleOnGestureListener() {
         @Override
@@ -223,6 +239,14 @@ public class CompactCalendarView extends View {
      */
     public void removeAllEvents() {
         compactCalendarController.removeAllEvents();
+    }
+
+    public void showCalendarWithAnimation(){
+        compactCalendarController.setAnimation(true);
+        ObjectAnimator anim = ObjectAnimator.ofFloat(this, GROW_FACTOR, 1f, 1700f);
+        anim.setDuration(500);
+        anim.setInterpolator(new DecelerateInterpolator());
+        anim.start();
     }
 
     public void showNextMonth(){
