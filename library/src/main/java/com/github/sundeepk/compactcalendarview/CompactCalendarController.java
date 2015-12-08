@@ -589,7 +589,7 @@ class CompactCalendarController {
     // Draw Circle on certain days to highlight them
     private void drawCircle(Canvas canvas, float x, float y, int color) {
         dayPaint.setColor(color);
-        if (isAnimating && growfactorIndicator <= bigCircleIndicatorRadius) {
+        if (isAnimating) {
             drawCircle(canvas, growfactorIndicator, x, y - (textHeight / 6));
         } else {
             drawCircle(canvas, bigCircleIndicatorRadius, x, y - (textHeight / 6));

@@ -14,6 +14,7 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.OvershootInterpolator;
 import android.widget.OverScroller;
 
 import com.github.sundeepk.compactcalendarview.domain.CalendarDayEvent;
@@ -280,9 +281,9 @@ public class CompactCalendarView extends View {
             }
         });
         anim.start();
-        ObjectAnimator animIndicator = ObjectAnimator.ofFloat(this, INDICATOR_GROW_FACTOR, 1f, 30f);
+        ObjectAnimator animIndicator = ObjectAnimator.ofFloat(this, INDICATOR_GROW_FACTOR, 1f, 55f);
         animIndicator.setDuration(700);
-        animIndicator.setInterpolator(new AccelerateDecelerateInterpolator());
+        animIndicator.setInterpolator(new OvershootInterpolator());
         animIndicator.addListener(new Animator.AnimatorListener() {
             @Override
             public void onAnimationStart(Animator animation) {
