@@ -236,9 +236,8 @@ class CompactCalendarController {
         //assume square around each day of width and height = heightPerDay and get diagonal line length
         //makes easier to find radius
         double radiusAroundDay = 0.5 * Math.sqrt((heightPerDay * heightPerDay) + (heightPerDay * heightPerDay));
-        //make radius based on screen density and apply some multiplier
-        bigCircleIndicatorRadius = (float) (radiusAroundDay / screenDensity) * 2.2f;
-
+        //make radius based on screen density
+        bigCircleIndicatorRadius = (float) radiusAroundDay /  ((1.8f) - 0.5f / screenDensity) ;
     }
 
     void onDraw(Canvas canvas) {
