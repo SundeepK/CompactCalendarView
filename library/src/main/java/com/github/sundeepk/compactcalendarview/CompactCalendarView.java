@@ -1,5 +1,6 @@
 package com.github.sundeepk.compactcalendarview;
 
+import android.animation.Animator;
 import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.graphics.Canvas;
@@ -12,7 +13,7 @@ import android.util.Property;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.animation.DecelerateInterpolator;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.OverScroller;
 
 import com.github.sundeepk.compactcalendarview.domain.CalendarDayEvent;
@@ -43,6 +44,19 @@ public class CompactCalendarView extends View {
         @Override
         public Float get(CompactCalendarView object) {
             return compactCalendarController.getGrowFactor();
+        }
+    };
+
+    public final Property<CompactCalendarView, Float> INDICATOR_GROW_FACTOR = new Property<CompactCalendarView, Float>(Float.class, "growFactor") {
+        @Override
+        public void set(CompactCalendarView object, Float value) {
+            CompactCalendarView.this.invalidate();
+            compactCalendarController.setGrowFactorIndicator(value);
+        }
+
+        @Override
+        public Float get(CompactCalendarView object) {
+            return compactCalendarController.getGrowFactorIndicator();
         }
     };
 
@@ -244,9 +258,51 @@ public class CompactCalendarView extends View {
     public void showCalendarWithAnimation(){
         compactCalendarController.setAnimation(true);
         ObjectAnimator anim = ObjectAnimator.ofFloat(this, GROW_FACTOR, 1f, 1700f);
-        anim.setDuration(500);
-        anim.setInterpolator(new DecelerateInterpolator());
+        anim.setDuration(700);
+        anim.setInterpolator(new AccelerateDecelerateInterpolator());
+        anim.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                compactCalendarController.setAnimation(false);
+                CompactCalendarView.this.invalidate();
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+            }
+        });
         anim.start();
+        ObjectAnimator animIndicator = ObjectAnimator.ofFloat(this, INDICATOR_GROW_FACTOR, 1f, 30f);
+        animIndicator.setDuration(700);
+        animIndicator.setInterpolator(new AccelerateDecelerateInterpolator());
+        animIndicator.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                compactCalendarController.setAnimation(false);
+                CompactCalendarView.this.invalidate();
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+            }
+        });
+        animIndicator.start();
     }
 
     public void showNextMonth(){

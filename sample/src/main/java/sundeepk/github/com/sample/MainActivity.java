@@ -67,7 +67,6 @@ public class MainActivity extends ActionBarActivity {
         bookingsListView.setAdapter(adapter);
         final CompactCalendarView compactCalendarView = (CompactCalendarView) findViewById(R.id.compactcalendar_view);
         compactCalendarView.drawSmallIndicatorForEvents(true);
-        compactCalendarView.showCalendarWithAnimation();
 
 
         // below allows you to configure color for the current day in the month
@@ -120,7 +119,9 @@ public class MainActivity extends ActionBarActivity {
         showNextMonthBut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                compactCalendarView.showNextMonth();
+                compactCalendarView.showCalendarWithAnimation();
+
+                // compactCalendarView.showNextMonth();
             }
         });
 

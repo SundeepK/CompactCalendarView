@@ -61,11 +61,22 @@ class CompactCalendarController {
     private boolean shouldDrawDaysHeader = true;
     private Map<String, List<CalendarDayEvent>> events = new HashMap<>();
     private boolean showSmallIndicator;
+    private float bigCircleIndicatorRadius;
     private float smallIndicatorRadius;
     private boolean shouldShowMondayAsFirstDay = true;
     private boolean useThreeLetterAbbreviation = false;
     private float growFactor = 0f;
     private boolean isAnimating;
+    private float screenDensity = 1;
+    private float growfactorIndicator;
+
+    public void setGrowFactorIndicator(float growfactorIndicator) {
+        this.growfactorIndicator = growfactorIndicator;
+    }
+
+    public float getGrowFactorIndicator() {
+        return growfactorIndicator;
+    }
 
     private enum Direction {
         NONE, HORIZONTAL, VERTICAL
@@ -119,13 +130,9 @@ class CompactCalendarController {
 
         eventsCalendar.setFirstDayOfWeek(Calendar.MONDAY);
 
-        float screenDensity = 1;
         if(context != null){
              screenDensity =  context.getResources().getDisplayMetrics().density;
         }
-
-        //scale small indicator by screen density
-        smallIndicatorRadius = 2.5f * screenDensity;
     }
 
     private void setCalenderToFirstDayOfMonth(Calendar calendarWithFirstDayOfMonth, Date currentDate, int scrollOffset, int monthOffset) {
@@ -233,6 +240,16 @@ class CompactCalendarController {
         this.height = height;
         this.paddingRight = paddingRight;
         this.paddingLeft = paddingLeft;
+
+        //scale small indicator by screen density
+        smallIndicatorRadius = 2.5f * screenDensity;
+
+        //assume square around each day of width and height = heightPerDay and get diagonal line length
+        //makes easier to find radius
+        double radiusAroundDay = 0.5 * Math.sqrt((heightPerDay * heightPerDay) + (heightPerDay * heightPerDay));
+        //make radius based on screen density and apply some multiplier
+        bigCircleIndicatorRadius = (float) (radiusAroundDay / screenDensity) * 2.2f;
+
     }
 
     void onDraw(Canvas canvas) {
@@ -246,6 +263,10 @@ class CompactCalendarController {
             canvas.drawCircle(0, 0, growFactor, dayPaint);
             dayPaint.setStyle(Paint.Style.STROKE);
             dayPaint.setColor(calenderTextColor);
+
+            drawScrollableCalender(canvas);
+
+
         } else {
 
             drawCalenderBackground(canvas);
@@ -487,6 +508,7 @@ class CompactCalendarController {
                 int weekNumberForMonth = eventsCalendar.get(Calendar.WEEK_OF_MONTH);
                 float xPosition = widthPerDay * dayOfWeek + paddingWidth + paddingLeft + accumulatedScrollOffset.x + offset - paddingRight;
                 float yPosition = weekNumberForMonth * heightPerDay + paddingHeight;
+                if (xPosition >= growFactor || yPosition >= growFactor ) continue;
 
                 int dayOfMonth = eventsCalendar.get(Calendar.DAY_OF_MONTH);
                 boolean isSameDayAsCurrentDay = (todayDayOfMonth == dayOfMonth && shouldDrawCurrentDayCircle);
@@ -537,6 +559,8 @@ class CompactCalendarController {
                 break;
             }
             float xPosition = widthPerDay * dayColumn + paddingWidth + paddingLeft + accumulatedScrollOffset.x + offset - paddingRight;
+            float yPosition = dayRow * heightPerDay + paddingHeight;
+            if (xPosition >= growFactor || yPosition >= growFactor ) continue;
             if (dayRow == 0) {
                 // first row, so draw the first letter of the day
                 if (shouldDrawDaysHeader) {
@@ -546,7 +570,6 @@ class CompactCalendarController {
                 }
             } else {
                 int day = ((dayRow - 1) * 7 + dayColumn + 1) - firstDayOfMonth;
-                float yPosition = dayRow * heightPerDay + paddingHeight;
                 if (isSameMonthAsToday && todayDayOfMonth == day) {
                     // TODO calculate position of circle in a more reliable way
                     drawCircle(canvas, xPosition, yPosition, currentDayBackgroundColor);
@@ -566,9 +589,11 @@ class CompactCalendarController {
     // Draw Circle on certain days to highlight them
     private void drawCircle(Canvas canvas, float x, float y, int color) {
         dayPaint.setColor(color);
-        float radius = (float) (0.5 * Math.sqrt(widthPerDay * widthPerDay + heightPerDay * heightPerDay));
-        // add some padding to height
-        drawCircle(canvas, radius / 2, x, y - (textHeight / 6));
+        if (isAnimating && growfactorIndicator <= bigCircleIndicatorRadius) {
+            drawCircle(canvas, growfactorIndicator, x, y - (textHeight / 6));
+        } else {
+            drawCircle(canvas, bigCircleIndicatorRadius, x, y - (textHeight / 6));
+        }
     }
 
     private void drawSmallIndicatorCircle(Canvas canvas, float x, float y, int color) {
@@ -577,9 +602,6 @@ class CompactCalendarController {
     }
 
     private void drawCircle(Canvas canvas, float radius, float x, float y) {
-        if (radius >= 34) {
-            radius = 34;
-        }
         dayPaint.setStyle(Paint.Style.FILL);
         canvas.drawCircle(x, y, radius, dayPaint);
         dayPaint.setStyle(Paint.Style.STROKE);
