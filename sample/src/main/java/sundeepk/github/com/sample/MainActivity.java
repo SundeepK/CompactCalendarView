@@ -101,10 +101,11 @@ public class MainActivity extends ActionBarActivity {
                     // compactCalendarView.removeEvent(new CalendarDayEvent(dateClicked.getTime(), Color.argb(255, 169, 68, 65)), true);
                     adapter.notifyDataSetChanged();
                 }
+                compactCalendarView.setCurrentSelectedDayBackgroundColor(Color.BLUE);
             }
 
-            @Override
-            public void onMonthScroll(Date firstDayOfNewMonth) {
+        @Override
+        public void onMonthScroll(Date firstDayOfNewMonth) {
                 actionBar.setTitle(dateFormatForMonth.format(firstDayOfNewMonth));
             }
         });

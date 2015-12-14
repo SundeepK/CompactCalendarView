@@ -14,7 +14,9 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.Animation;
 import android.view.animation.OvershootInterpolator;
+import android.view.animation.Transformation;
 import android.widget.OverScroller;
 
 import com.github.sundeepk.compactcalendarview.domain.CalendarDayEvent;
@@ -280,7 +282,7 @@ public class CompactCalendarView extends View {
             public void onAnimationRepeat(Animator animation) {
             }
         });
-        anim.start();
+    //    anim.start();
         ObjectAnimator animIndicator = ObjectAnimator.ofFloat(this, INDICATOR_GROW_FACTOR, 1f, 55f);
         animIndicator.setDuration(700);
         animIndicator.setInterpolator(new OvershootInterpolator());
@@ -303,8 +305,46 @@ public class CompactCalendarView extends View {
             public void onAnimationRepeat(Animator animation) {
             }
         });
-        animIndicator.start();
+        DropDownAnim dropDownAnim = new DropDownAnim(this, 250, true);
+        dropDownAnim.setDuration(700);
+        this.startAnimation(dropDownAnim);
+     //   animIndicator.start();
     }
+    public class DropDownAnim extends Animation {
+        private final int targetHeight;
+        private final View view;
+        private final boolean down;
+
+        public DropDownAnim(View view, int targetHeight, boolean down) {
+            this.view = view;
+            this.targetHeight = targetHeight;
+            this.down = down;
+        }
+
+        @Override
+        protected void applyTransformation(float interpolatedTime, Transformation t) {
+            int newHeight;
+            if (down) {
+                newHeight = (int) (targetHeight * interpolatedTime);
+            } else {
+                newHeight = (int) (targetHeight * (1 - interpolatedTime));
+            }
+            view.getLayoutParams().height = newHeight;
+            view.requestLayout();
+        }
+
+        @Override
+        public void initialize(int width, int height, int parentWidth,
+                               int parentHeight) {
+            super.initialize(width, height, parentWidth, parentHeight);
+        }
+
+        @Override
+        public boolean willChangeBounds() {
+            return true;
+        }
+    }
+
 
     public void showNextMonth(){
         compactCalendarController.showNextMonth();
