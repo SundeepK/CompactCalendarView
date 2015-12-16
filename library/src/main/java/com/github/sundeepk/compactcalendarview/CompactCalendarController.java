@@ -31,8 +31,8 @@ import java.util.Map;
 
 class CompactCalendarController {
 
-    private static final int VELOCITY_UNIT_PIXELS_PER_SECOND = 600;
-    private static final float ANIMATION_SCREEN_SET_DURATION_MILLIS = 500;
+    private static final int VELOCITY_UNIT_PIXELS_PER_SECOND = 1000;
+    private static final float ANIMATION_SCREEN_SET_DURATION_MILLIS = 700;
     private int paddingWidth = 40;
     private int paddingHeight = 40;
     private Paint dayPaint = new Paint();
@@ -74,7 +74,7 @@ class CompactCalendarController {
     VelocityTracker velocityTracker = null;
     private int touchSlop;
     private int maximumVelocity;
-    private float SNAP_VELOCITY_DIP_PER_SECOND = 100;
+    private float SNAP_VELOCITY_DIP_PER_SECOND = 200;
     private int densityAdjustedSnapVelocity;
 
     private enum Direction {
@@ -272,8 +272,6 @@ class CompactCalendarController {
         }
         velocityTracker.addMovement(event);
 
-
-
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
             if (!scroller.isFinished()) {
                 scroller.abortAnimation();
@@ -286,31 +284,28 @@ class CompactCalendarController {
         } else if (event.getAction() == MotionEvent.ACTION_UP) {
             if (currentDirection == Direction.HORIZONTAL) {
                 monthsScrolledSoFar = Math.round(accumulatedScrollOffset.x / width);
-                float remainingScrollAfterFingerLifted = (accumulatedScrollOffset.x - monthsScrolledSoFar * width);
 
                 velocityTracker.computeCurrentVelocity(
                         VELOCITY_UNIT_PIXELS_PER_SECOND, maximumVelocity);
                 int velocityX = (int) velocityTracker.getXVelocity();
 
                 if (velocityX > densityAdjustedSnapVelocity) {
-                    Log.d("compactcalendar", "inside velocty");
-                    scroller.startScroll((int) accumulatedScrollOffset.x, 0, (int) ((int) -(monthsScrolledSoFar * width) - remainingScrollAfterFingerLifted), 0, (int) (Math.abs((int) ((int) -(monthsScrolledSoFar * width) - remainingScrollAfterFingerLifted)
-                    )  / (float) width * ANIMATION_SCREEN_SET_DURATION_MILLIS));
+                    int totalScroll = (1 + monthsScrolledSoFar) * width;
+                    float remainingScrollAfterFingerLifted = totalScroll - accumulatedScrollOffset.x;
+                    Log.d("compactcalendar", "velocityX " + velocityX + " densityAdjustedSnapVelocity " + densityAdjustedSnapVelocity + " accumulatedScrollOffset.x " + accumulatedScrollOffset.x + " remainingScrollAfterFingerLifted " + remainingScrollAfterFingerLifted + " totalScroll " + totalScroll);
+                    scroller.startScroll((int) accumulatedScrollOffset.x, 0, (int) (remainingScrollAfterFingerLifted), 0,
+                            (int) (Math.abs((int) ( remainingScrollAfterFingerLifted))  / (float) width * ANIMATION_SCREEN_SET_DURATION_MILLIS));
 
-                //    scroller.startScroll((int) accumulatedScrollOffset.x, 0, (int) -(1 + monthsScrolledSoFar * width), 0);
-
+                } else if (velocityX < -densityAdjustedSnapVelocity) {
+                    int totalScroll = (monthsScrolledSoFar - 1) * width;
+                    float remainingScrollAfterFingerLifted = totalScroll - accumulatedScrollOffset.x;
+                    Log.d("compactcalendar", "velocityX " + velocityX + " densityAdjustedSnapVelocity " + densityAdjustedSnapVelocity + " accumulatedScrollOffset.x " + accumulatedScrollOffset.x + " remainingScrollAfterFingerLifted " + remainingScrollAfterFingerLifted + " totalScroll " + totalScroll);
+                    scroller.startScroll((int) accumulatedScrollOffset.x, 0, (int) (remainingScrollAfterFingerLifted), 0,
+                            (int) (Math.abs((int) (remainingScrollAfterFingerLifted))  / (float) width * ANIMATION_SCREEN_SET_DURATION_MILLIS));
                 } else {
-                    Log.d("compactcalendar", "not inside velocty");
-                    scroller.startScroll((int) accumulatedScrollOffset.x, 0, (int) -remainingScrollAfterFingerLifted, 0);
-
+                    float remainingScrollAfterFingerLifted1 = (accumulatedScrollOffset.x - monthsScrolledSoFar * width);
+                    scroller.startScroll((int) accumulatedScrollOffset.x, 0, (int) -remainingScrollAfterFingerLifted1, 0);
                 }
-
-//                if (Math.abs(remainingScrollAfterFingerLifted) > (accumulatedScrollOffset.x / monthsScrolledSoFar) / 4) {
-//                    scroller.startScroll((int) accumulatedScrollOffset.x, 0, (int) ((int) -((1 + monthsScrolledSoFar) * width) + remainingScrollAfterFingerLifted), 0);
-//                } else {
-                  //  scroller.startScroll((int) accumulatedScrollOffset.x, 0, (int) -remainingScrollAfterFingerLifted, 0);
-//                }
-
 
                 currentDirection = Direction.NONE;
                 setCalenderToFirstDayOfMonth(calendarWithFirstDayOfMonth, currentDate, -monthsScrolledSoFar, 0);
