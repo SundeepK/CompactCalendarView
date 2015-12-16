@@ -272,8 +272,10 @@ class CompactCalendarController {
         velocityTracker.addMovement(event);
 
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
+
             if (!scroller.isFinished()) {
                 scroller.abortAnimation();
+                snapBackScroller();
             }
 
         } else if(event.getAction() == MotionEvent.ACTION_MOVE) {
@@ -290,8 +292,13 @@ class CompactCalendarController {
         return false;
     }
 
+    private void snapBackScroller() {
+        float remainingScrollAfterFingerLifted1 = (accumulatedScrollOffset.x - (monthsScrolledSoFar * width));
+        scroller.startScroll((int) accumulatedScrollOffset.x, 0, (int) -remainingScrollAfterFingerLifted1, 0);
+    }
+
     private void handleHorizontalScrolling() {
-        monthsScrolledSoFar = Math.round(accumulatedScrollOffset.x / width);
+        //monthsScrolledSoFar = Math.round(accumulatedScrollOffset.x / width);
 
         int velocityX = computeVelocity();
 
@@ -320,8 +327,7 @@ class CompactCalendarController {
             monthsScrolledSoFar = monthsScrolledSoFar - 1;
             performScroll();
         } else {
-            float remainingScrollAfterFingerLifted1 = (accumulatedScrollOffset.x - monthsScrolledSoFar * width);
-            scroller.startScroll((int) accumulatedScrollOffset.x, 0, (int) -remainingScrollAfterFingerLifted1, 0);
+            snapBackScroller();
         }
     }
 
@@ -421,7 +427,7 @@ class CompactCalendarController {
     }
 
     Date onSingleTapConfirmed(MotionEvent e) {
-        monthsScrolledSoFar = Math.round(accumulatedScrollOffset.x / width);
+        //monthsScrolledSoFar = Math.round(accumulatedScrollOffset.x / width);
         int dayColumn = Math.round((paddingLeft + e.getX() - paddingWidth - paddingRight) / widthPerDay);
         int dayRow = Math.round((e.getY() - paddingHeight) / heightPerDay);
 
@@ -444,7 +450,7 @@ class CompactCalendarController {
     }
 
     boolean onDown(MotionEvent e) {
-        scroller.forceFinished(true);
+      //  scroller.forceFinished(true);
         return true;
     }
 
@@ -475,9 +481,6 @@ class CompactCalendarController {
     }
 
     private void drawScrollableCalender(Canvas canvas) {
-        monthsScrolledSoFar = (int) (accumulatedScrollOffset.x / width);
-
-
         drawPreviousMonth(canvas);
 
         drawCurrentMonth(canvas);
