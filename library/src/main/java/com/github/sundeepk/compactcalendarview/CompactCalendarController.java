@@ -73,7 +73,7 @@ class CompactCalendarController {
     VelocityTracker velocityTracker = null;
     private int touchSlop;
     private int maximumVelocity;
-    private float SNAP_VELOCITY_DIP_PER_SECOND = 200;
+    private float SNAP_VELOCITY_DIP_PER_SECOND = 400;
     private int densityAdjustedSnapVelocity;
 
     private enum Direction {
@@ -275,7 +275,7 @@ class CompactCalendarController {
 
             if (!scroller.isFinished()) {
                 scroller.abortAnimation();
-                snapBackScroller();
+                //snapBackScroller();
             }
 
         } else if(event.getAction() == MotionEvent.ACTION_MOVE) {
@@ -283,11 +283,9 @@ class CompactCalendarController {
             velocityTracker.computeCurrentVelocity(500);
 
         } else if (event.getAction() == MotionEvent.ACTION_UP) {
-            if (currentDirection == Direction.HORIZONTAL) {
                 handleHorizontalScrolling();
                 return true;
-            }
-            currentDirection = Direction.NONE;
+
         }
         return false;
     }
