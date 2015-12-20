@@ -76,6 +76,9 @@ class CompactCalendarController {
     private int maximumVelocity;
     private float SNAP_VELOCITY_DIP_PER_SECOND = 400;
     private int densityAdjustedSnapVelocity;
+    private boolean manuallyOverridedScroll;
+    private static long mDeBounce = 0;
+    private boolean ignoreScrollEvent;
 
     private enum Direction {
         NONE, HORIZONTAL, VERTICAL
@@ -277,19 +280,27 @@ class CompactCalendarController {
             if (!scroller.isFinished()) {
                 scroller.abortAnimation();
                 //snapBackScroller();
+                manuallyOverridedScroll = true;
+            } else {
+                manuallyOverridedScroll = false;
             }
+            ignoreScrollEvent = false;
 
         } else if(event.getAction() == MotionEvent.ACTION_MOVE) {
             velocityTracker.addMovement(event);
             velocityTracker.computeCurrentVelocity(500);
 
         } else if (event.getAction() == MotionEvent.ACTION_UP) {
-            return handleHorizontalScrolling();
+                handleHorizontalScrolling();
+
+           // return true;
+
         }
         return false;
     }
 
     private void snapBackScroller() {
+        Log.d("Compact", "snapback");
         float remainingScrollAfterFingerLifted1 = (accumulatedScrollOffset.x - (monthsScrolledSoFar * width));
         scroller.startScroll((int) accumulatedScrollOffset.x, 0, (int) -remainingScrollAfterFingerLifted1, 0);
     }
@@ -321,13 +332,19 @@ class CompactCalendarController {
             //scrolled enough to move to prev month
             monthsScrolledSoFar = monthsScrolledSoFar + 1;
             performScroll();
+            ignoreScrollEvent = true;
+
             return true;
         } else if (velocityX < -densityAdjustedSnapVelocity) {
             //scrolled enough to move to next month
             monthsScrolledSoFar = monthsScrolledSoFar - 1;
             performScroll();
+            ignoreScrollEvent = true;
+
             return true;
         } else {
+            ignoreScrollEvent = false;
+
             snapBackScroller();
             return false;
         }
@@ -430,6 +447,12 @@ class CompactCalendarController {
 
     Date onSingleTapConfirmed(MotionEvent e) {
 
+        Log.d("Compact", "accumulatedScrollOffset.x " + accumulatedScrollOffset.x + " total width" + width * monthsScrolledSoFar);
+
+        if(Math.abs(accumulatedScrollOffset.x) < Math.abs(width * monthsScrolledSoFar) || Math.abs(monthsScrolledSoFar) == 0 && Math.abs(accumulatedScrollOffset.x) > 0) {
+            return null;
+        }
+
         Log.d("compact", "singletap");
         //monthsScrolledSoFar = Math.round(accumulatedScrollOffset.x / width);
         int dayColumn = Math.round((paddingLeft + e.getX() - paddingWidth - paddingRight) / widthPerDay);
@@ -454,19 +477,24 @@ class CompactCalendarController {
     }
 
     boolean onDown(MotionEvent e) {
-        if (!scroller.isFinished()) {
-            scroller.abortAnimation();
-            //snapBackScroller();
-        }
+//        if (!scroller.isFinished()) {
+//            scroller.abortAnimation();
+//            //snapBackScroller();
+//        }
         return true;
     }
 
     boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-        scroller.forceFinished(true);
+     //   scroller.forceFinished(true);
         return true;
     }
 
     boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+
+        if (ignoreScrollEvent) {
+            return true;
+        }
+
         if (currentDirection == Direction.NONE) {
             if (Math.abs(distanceX) > Math.abs(distanceY)) {
                 currentDirection = Direction.HORIZONTAL;

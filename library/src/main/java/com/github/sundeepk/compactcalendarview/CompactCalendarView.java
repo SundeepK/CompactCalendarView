@@ -271,12 +271,13 @@ public class CompactCalendarView extends View {
     }
 
     public boolean onTouchEvent(MotionEvent event) {
-        if(compactCalendarController.onTouch(event) && shouldScroll){
+        compactCalendarController.onTouch(event);
+        if(shouldScroll){
             invalidate();
             if(listener != null){
                 listener.onMonthScroll(compactCalendarController.getFirstDayOfCurrentMonth());
             }
-            return true;
+          //  return true;
         }
         return gestureDetector.onTouchEvent(event);
     }
