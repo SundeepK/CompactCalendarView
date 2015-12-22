@@ -276,8 +276,8 @@ public class CompactCalendarView extends View {
             if(listener != null){
                 listener.onMonthScroll(compactCalendarController.getFirstDayOfCurrentMonth());
             }
-          //  return true;
         }
+        // always allow gestureDetector to detect onSingleTap and scroll events
         return gestureDetector.onTouchEvent(event);
     }
 
