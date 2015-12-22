@@ -74,7 +74,7 @@ class CompactCalendarController {
     private int maximumVelocity;
     private float SNAP_VELOCITY_DIP_PER_SECOND = 400;
     private int densityAdjustedSnapVelocity;
-    private boolean ignoreScrollEvent;
+    private boolean isSmoothScrolling;
 
     private enum Direction {
         NONE, HORIZONTAL, VERTICAL
@@ -292,7 +292,8 @@ class CompactCalendarController {
     }
 
     boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-        if (ignoreScrollEvent) {
+        //ignore scrolling callback if already smooth scrolling
+        if (isSmoothScrolling) {
             return true;
         }
 
@@ -319,7 +320,7 @@ class CompactCalendarController {
             if (!scroller.isFinished()) {
                 scroller.abortAnimation();
             }
-            ignoreScrollEvent = false;
+            isSmoothScrolling = false;
 
         } else if(event.getAction() == MotionEvent.ACTION_MOVE) {
             velocityTracker.addMovement(event);
@@ -360,14 +361,14 @@ class CompactCalendarController {
             //scrolled enough to move to prev month
             monthsScrolledSoFar = monthsScrolledSoFar + 1;
             performScroll();
-            ignoreScrollEvent = true;
+            isSmoothScrolling = true;
         } else if (velocityX < -densityAdjustedSnapVelocity) {
             //scrolled enough to move to next month
             monthsScrolledSoFar = monthsScrolledSoFar - 1;
             performScroll();
-            ignoreScrollEvent = true;
+            isSmoothScrolling = true;
         } else {
-            ignoreScrollEvent = false;
+            isSmoothScrolling = false;
             snapBackScroller();
         }
     }
