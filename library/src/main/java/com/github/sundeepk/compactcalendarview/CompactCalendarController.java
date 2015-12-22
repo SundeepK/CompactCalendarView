@@ -447,9 +447,9 @@ class CompactCalendarController {
 
     Date onSingleTapConfirmed(MotionEvent e) {
 
-        Log.d("Compact", "accumulatedScrollOffset.x " + accumulatedScrollOffset.x + " total width" + width * monthsScrolledSoFar);
+        //Don't handle singletap the calander is scrolling and is not stationary
 
-        if(Math.abs(accumulatedScrollOffset.x) < Math.abs(width * monthsScrolledSoFar) || Math.abs(monthsScrolledSoFar) == 0 && Math.abs(accumulatedScrollOffset.x) > 0) {
+        if(Math.abs(accumulatedScrollOffset.x) != Math.abs(width * monthsScrolledSoFar) ) {
             return null;
         }
 
