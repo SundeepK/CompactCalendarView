@@ -268,6 +268,50 @@ class CompactCalendarController {
         drawScrollableCalender(canvas);
     }
 
+    Date onSingleTapConfirmed(MotionEvent e) {
+        //Don't handle singletap the calander is scrolling and is not stationary
+        if(Math.abs(accumulatedScrollOffset.x) != Math.abs(width * monthsScrolledSoFar) ) {
+            return null;
+        }
+
+        int dayColumn = Math.round((paddingLeft + e.getX() - paddingWidth - paddingRight) / widthPerDay);
+        int dayRow = Math.round((e.getY() - paddingHeight) / heightPerDay);
+
+        setCalenderToFirstDayOfMonth(calendarWithFirstDayOfMonth, currentDate, -monthsScrolledSoFar, 0);
+
+        //Start Monday as day 1 and Sunday as day 7. Not Sunday as day 1 and Monday as day 2
+        int firstDayOfMonth = getDayOfWeek(calendarWithFirstDayOfMonth);
+
+        int dayOfMonth = ((dayRow - 1) * 7 + dayColumn + 1) - firstDayOfMonth;
+
+        if (dayOfMonth < calendarWithFirstDayOfMonth.getActualMaximum(Calendar.DAY_OF_MONTH)
+                && dayOfMonth >= 0) {
+            calendarWithFirstDayOfMonth.add(Calendar.DATE, dayOfMonth);
+
+            currentCalender.setTimeInMillis(calendarWithFirstDayOfMonth.getTimeInMillis());
+            return currentCalender.getTime();
+        } else {
+            return null;
+        }
+    }
+
+    boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+        if (ignoreScrollEvent) {
+            return true;
+        }
+
+        if (currentDirection == Direction.NONE) {
+            if (Math.abs(distanceX) > Math.abs(distanceY)) {
+                currentDirection = Direction.HORIZONTAL;
+            } else {
+                currentDirection = Direction.VERTICAL;
+            }
+        }
+
+        this.distanceX = distanceX;
+        return true;
+    }
+
     boolean onTouch(MotionEvent event) {
         if (velocityTracker == null) {
             velocityTracker = VelocityTracker.obtain();
@@ -436,50 +480,6 @@ class CompactCalendarController {
     //E.g. 4 2016 becomes 2016_4
     private String getKeyForCalendarEvent(Calendar cal) {
         return cal.get(Calendar.YEAR) + "_" + cal.get(Calendar.MONTH);
-    }
-
-    Date onSingleTapConfirmed(MotionEvent e) {
-        //Don't handle singletap the calander is scrolling and is not stationary
-        if(Math.abs(accumulatedScrollOffset.x) != Math.abs(width * monthsScrolledSoFar) ) {
-            return null;
-        }
-
-        int dayColumn = Math.round((paddingLeft + e.getX() - paddingWidth - paddingRight) / widthPerDay);
-        int dayRow = Math.round((e.getY() - paddingHeight) / heightPerDay);
-
-        setCalenderToFirstDayOfMonth(calendarWithFirstDayOfMonth, currentDate, -monthsScrolledSoFar, 0);
-
-        //Start Monday as day 1 and Sunday as day 7. Not Sunday as day 1 and Monday as day 2
-        int firstDayOfMonth = getDayOfWeek(calendarWithFirstDayOfMonth);
-
-        int dayOfMonth = ((dayRow - 1) * 7 + dayColumn + 1) - firstDayOfMonth;
-
-        if (dayOfMonth < calendarWithFirstDayOfMonth.getActualMaximum(Calendar.DAY_OF_MONTH)
-                && dayOfMonth >= 0) {
-            calendarWithFirstDayOfMonth.add(Calendar.DATE, dayOfMonth);
-
-            currentCalender.setTimeInMillis(calendarWithFirstDayOfMonth.getTimeInMillis());
-            return currentCalender.getTime();
-        } else {
-            return null;
-        }
-    }
-
-    boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-        if (ignoreScrollEvent) {
-            return true;
-        }
-
-        if (currentDirection == Direction.NONE) {
-            if (Math.abs(distanceX) > Math.abs(distanceY)) {
-                currentDirection = Direction.HORIZONTAL;
-            } else {
-                currentDirection = Direction.VERTICAL;
-            }
-        }
-
-        this.distanceX = distanceX;
-        return true;
     }
 
     boolean computeScroll() {
