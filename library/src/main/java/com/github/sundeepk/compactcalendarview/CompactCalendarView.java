@@ -47,12 +47,11 @@ public class CompactCalendarView extends View {
 
         @Override
         public boolean onDown(MotionEvent e) {
-            return compactCalendarController.onDown(e);
+            return true;
         }
 
         @Override
         public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-            compactCalendarController.onFling(e1, e2, velocityX, velocityY);
             return true;
         }
 

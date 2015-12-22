@@ -476,19 +476,6 @@ class CompactCalendarController {
         }
     }
 
-    boolean onDown(MotionEvent e) {
-//        if (!scroller.isFinished()) {
-//            scroller.abortAnimation();
-//            //snapBackScroller();
-//        }
-        return true;
-    }
-
-    boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-     //   scroller.forceFinished(true);
-        return true;
-    }
-
     boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
 
         if (ignoreScrollEvent) {
