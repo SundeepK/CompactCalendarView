@@ -9,7 +9,6 @@ import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
@@ -279,7 +278,6 @@ class CompactCalendarController {
 
             if (!scroller.isFinished()) {
                 scroller.abortAnimation();
-                //snapBackScroller();
                 manuallyOverridedScroll = true;
             } else {
                 manuallyOverridedScroll = false;
@@ -291,23 +289,18 @@ class CompactCalendarController {
             velocityTracker.computeCurrentVelocity(500);
 
         } else if (event.getAction() == MotionEvent.ACTION_UP) {
-                handleHorizontalScrolling();
-
-           // return true;
+            handleHorizontalScrolling();
 
         }
         return false;
     }
 
     private void snapBackScroller() {
-        Log.d("Compact", "snapback");
         float remainingScrollAfterFingerLifted1 = (accumulatedScrollOffset.x - (monthsScrolledSoFar * width));
         scroller.startScroll((int) accumulatedScrollOffset.x, 0, (int) -remainingScrollAfterFingerLifted1, 0);
     }
 
     private boolean handleHorizontalScrolling() {
-        //monthsScrolledSoFar = Math.round(accumulatedScrollOffset.x / width);
-
         int velocityX = computeVelocity();
 
         boolean result = handleSmoothScrolling(velocityX);
@@ -446,15 +439,11 @@ class CompactCalendarController {
     }
 
     Date onSingleTapConfirmed(MotionEvent e) {
-
         //Don't handle singletap the calander is scrolling and is not stationary
-
         if(Math.abs(accumulatedScrollOffset.x) != Math.abs(width * monthsScrolledSoFar) ) {
             return null;
         }
 
-        Log.d("compact", "singletap");
-        //monthsScrolledSoFar = Math.round(accumulatedScrollOffset.x / width);
         int dayColumn = Math.round((paddingLeft + e.getX() - paddingWidth - paddingRight) / widthPerDay);
         int dayRow = Math.round((e.getY() - paddingHeight) / heightPerDay);
 
@@ -477,7 +466,6 @@ class CompactCalendarController {
     }
 
     boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-
         if (ignoreScrollEvent) {
             return true;
         }
