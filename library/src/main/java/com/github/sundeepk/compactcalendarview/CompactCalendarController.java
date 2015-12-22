@@ -70,7 +70,6 @@ class CompactCalendarController {
     private boolean shouldShowMondayAsFirstDay = true;
     private boolean useThreeLetterAbbreviation = false;
     private float screenDensity = 1;
-    VelocityTracker velocityTracker = null;
     private int maximumVelocity;
     private float SNAP_VELOCITY_DIP_PER_SECOND = 400;
     private int densityAdjustedSnapVelocity;
@@ -130,12 +129,11 @@ class CompactCalendarController {
 
         if(context != null){
              screenDensity =  context.getResources().getDisplayMetrics().density;
+            final ViewConfiguration configuration = ViewConfiguration
+                    .get(context);
+            densityAdjustedSnapVelocity = (int) (screenDensity * SNAP_VELOCITY_DIP_PER_SECOND);
+            maximumVelocity = configuration.getScaledMaximumFlingVelocity();
         }
-
-        final ViewConfiguration configuration = ViewConfiguration
-                .get(context);
-        densityAdjustedSnapVelocity = (int) (screenDensity * SNAP_VELOCITY_DIP_PER_SECOND);
-        maximumVelocity = configuration.getScaledMaximumFlingVelocity();
     }
 
     private void setCalenderToFirstDayOfMonth(Calendar calendarWithFirstDayOfMonth, Date currentDate, int scrollOffset, int monthOffset) {
@@ -309,10 +307,7 @@ class CompactCalendarController {
         return true;
     }
 
-    boolean onTouch(MotionEvent event) {
-        if (velocityTracker == null) {
-            velocityTracker = VelocityTracker.obtain();
-        }
+    boolean onTouch(final MotionEvent event, final VelocityTracker velocityTracker) {
         velocityTracker.addMovement(event);
 
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
@@ -327,7 +322,7 @@ class CompactCalendarController {
             velocityTracker.computeCurrentVelocity(500);
 
         } else if (event.getAction() == MotionEvent.ACTION_UP) {
-            handleHorizontalScrolling();
+            handleHorizontalScrolling(velocityTracker);
 
         }
         return false;
@@ -338,8 +333,8 @@ class CompactCalendarController {
         scroller.startScroll((int) accumulatedScrollOffset.x, 0, (int) -remainingScrollAfterFingerLifted1, 0);
     }
 
-    private void handleHorizontalScrolling() {
-        int velocityX = computeVelocity();
+    private void handleHorizontalScrolling(VelocityTracker velocityTracker) {
+        int velocityX = computeVelocity(velocityTracker);
         handleSmoothScrolling(velocityX);
 
         currentDirection = Direction.NONE;
@@ -351,7 +346,7 @@ class CompactCalendarController {
 
     }
 
-    private int computeVelocity() {
+    private int computeVelocity(VelocityTracker velocityTracker) {
         velocityTracker.computeCurrentVelocity(VELOCITY_UNIT_PIXELS_PER_SECOND, maximumVelocity);
         return (int) velocityTracker.getXVelocity();
     }

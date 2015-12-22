@@ -9,6 +9,7 @@ import android.support.v4.view.GestureDetectorCompat;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
+import android.view.VelocityTracker;
 import android.view.View;
 import android.widget.OverScroller;
 
@@ -270,13 +271,15 @@ public class CompactCalendarView extends View {
     }
 
     public boolean onTouchEvent(MotionEvent event) {
-        compactCalendarController.onTouch(event);
+        final VelocityTracker velocityTracker = VelocityTracker.obtain();
+        compactCalendarController.onTouch(event, velocityTracker);
         if(shouldScroll){
             invalidate();
             if(listener != null){
                 listener.onMonthScroll(compactCalendarController.getFirstDayOfCurrentMonth());
             }
         }
+        velocityTracker.recycle();
         // always allow gestureDetector to detect onSingleTap and scroll events
         return gestureDetector.onTouchEvent(event);
     }
