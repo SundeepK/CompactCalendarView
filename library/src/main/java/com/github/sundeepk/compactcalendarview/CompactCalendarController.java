@@ -344,10 +344,10 @@ class CompactCalendarController {
         scroller.startScroll((int) accumulatedScrollOffset.x, 0, (int) -remainingScrollAfterFingerLifted1, 0);
     }
 
-    private boolean handleHorizontalScrolling() {
+    private void handleHorizontalScrolling() {
         int velocityX = computeVelocity();
 
-        boolean result = handleSmoothScrolling(velocityX);
+        handleSmoothScrolling(velocityX);
 
         currentDirection = Direction.NONE;
         setCalenderToFirstDayOfMonth(calendarWithFirstDayOfMonth, currentDate, -monthsScrolledSoFar, 0);
@@ -356,7 +356,6 @@ class CompactCalendarController {
             setCalenderToFirstDayOfMonth(currentCalender, currentDate, -monthsScrolledSoFar, 0);
         }
 
-        return result;
     }
 
     private int computeVelocity() {
@@ -364,26 +363,20 @@ class CompactCalendarController {
         return (int) velocityTracker.getXVelocity();
     }
 
-    private boolean handleSmoothScrolling(int velocityX) {
+    private void handleSmoothScrolling(int velocityX) {
         if (velocityX > densityAdjustedSnapVelocity) {
             //scrolled enough to move to prev month
             monthsScrolledSoFar = monthsScrolledSoFar + 1;
             performScroll();
             ignoreScrollEvent = true;
-
-            return true;
         } else if (velocityX < -densityAdjustedSnapVelocity) {
             //scrolled enough to move to next month
             monthsScrolledSoFar = monthsScrolledSoFar - 1;
             performScroll();
             ignoreScrollEvent = true;
-
-            return true;
         } else {
             ignoreScrollEvent = false;
-
             snapBackScroller();
-            return false;
         }
     }
 
