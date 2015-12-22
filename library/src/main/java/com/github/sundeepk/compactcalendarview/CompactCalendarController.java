@@ -71,12 +71,9 @@ class CompactCalendarController {
     private boolean useThreeLetterAbbreviation = false;
     private float screenDensity = 1;
     VelocityTracker velocityTracker = null;
-    private int touchSlop;
     private int maximumVelocity;
     private float SNAP_VELOCITY_DIP_PER_SECOND = 400;
     private int densityAdjustedSnapVelocity;
-    private boolean manuallyOverridedScroll;
-    private static long mDeBounce = 0;
     private boolean ignoreScrollEvent;
 
     private enum Direction {
@@ -137,7 +134,6 @@ class CompactCalendarController {
 
         final ViewConfiguration configuration = ViewConfiguration
                 .get(context);
-        touchSlop = configuration.getScaledTouchSlop();
         densityAdjustedSnapVelocity = (int) (screenDensity * SNAP_VELOCITY_DIP_PER_SECOND);
         maximumVelocity = configuration.getScaledMaximumFlingVelocity();
     }
@@ -322,9 +318,6 @@ class CompactCalendarController {
 
             if (!scroller.isFinished()) {
                 scroller.abortAnimation();
-                manuallyOverridedScroll = true;
-            } else {
-                manuallyOverridedScroll = false;
             }
             ignoreScrollEvent = false;
 
@@ -346,7 +339,6 @@ class CompactCalendarController {
 
     private void handleHorizontalScrolling() {
         int velocityX = computeVelocity();
-
         handleSmoothScrolling(velocityX);
 
         currentDirection = Direction.NONE;
