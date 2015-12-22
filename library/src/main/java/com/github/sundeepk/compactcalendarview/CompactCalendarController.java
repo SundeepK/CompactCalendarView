@@ -269,7 +269,7 @@ class CompactCalendarController {
     }
 
     Date onSingleTapConfirmed(MotionEvent e) {
-        //Don't handle singletap the calander is scrolling and is not stationary
+        //Don't handle single tap the calendar is scrolling and is not stationary
         if(Math.abs(accumulatedScrollOffset.x) != Math.abs(width * monthsScrolledSoFar) ) {
             return null;
         }
