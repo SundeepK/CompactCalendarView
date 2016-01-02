@@ -55,7 +55,7 @@ public class CompactCalendarControllerTest {
     @Before
     public void setUp(){
         when(velocityTracker.getXVelocity()).thenReturn(-200f);
-        underTest = new CompactCalendarController(paint, overScroller, rect, null, null, 0, 0, 0);
+        underTest = new CompactCalendarController(paint, overScroller, rect, null, null, 0, 0, 0, velocityTracker);
     }
 
     @Test(expected=IllegalArgumentException.class)
@@ -84,7 +84,7 @@ public class CompactCalendarControllerTest {
         //Scroll enough to push calender to next month
         underTest.onScroll(motionEvent, motionEvent, 600, 0);
         underTest.onDraw(canvas);
-        underTest.onTouch(motionEvent, velocityTracker);
+        underTest.onTouch(motionEvent);
 
         //Wed, 01 Apr 2015 00:00:00 GMT
         assertEquals(setTimeAndGet(cal, 1427842800000L), underTest.getFirstDayOfCurrentMonth());
@@ -94,7 +94,7 @@ public class CompactCalendarControllerTest {
         //Scroll enough to push calender to next month
         underTest.onScroll(motionEvent, motionEvent, 600, 0);
         underTest.onDraw(canvas);
-        underTest.onTouch(motionEvent, velocityTracker);
+        underTest.onTouch(motionEvent);
 
         //Mon, 01 Jun 2015 00:00:00 GMT
         assertEquals(setTimeAndGet(cal, 1430438400000L), underTest.getFirstDayOfCurrentMonth());
@@ -115,7 +115,7 @@ public class CompactCalendarControllerTest {
         //Scroll enough to push calender to next month
         underTest.onScroll(motionEvent, motionEvent, 600, 0);
         underTest.onDraw(canvas);
-        underTest.onTouch(motionEvent, velocityTracker);
+        underTest.onTouch(motionEvent);
 
         //Sat, 01 Aug 2015 00:00:00 GMT
         assertEquals(setTimeAndGet(cal, 1438387200000L), underTest.getFirstDayOfCurrentMonth());
@@ -182,7 +182,7 @@ public class CompactCalendarControllerTest {
         //Scroll enough to push calender to next month
         underTest.onScroll(motionEvent, motionEvent, 600, 0);
         underTest.onDraw(canvas);
-        underTest.onTouch(motionEvent, velocityTracker);
+        underTest.onTouch(motionEvent);
         assertEquals(expectedDateOnScroll, underTest.getFirstDayOfCurrentMonth());
     }
 

@@ -77,7 +77,8 @@ public class CompactCalendarView extends View {
     public CompactCalendarView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         compactCalendarController = new CompactCalendarController(new Paint(), new OverScroller(getContext()),
-                new Rect(), attrs, getContext(),  Color.argb(255, 233, 84, 81), Color.argb(255, 64, 64, 64), Color.argb(255, 219, 219, 219));
+                new Rect(), attrs, getContext(),  Color.argb(255, 233, 84, 81),
+                Color.argb(255, 64, 64, 64), Color.argb(255, 219, 219, 219), VelocityTracker.obtain());
         gestureDetector = new GestureDetectorCompat(getContext(), gestureListener);
     }
 
@@ -111,7 +112,7 @@ public class CompactCalendarView extends View {
     Works best with 3-4 characters for each day.
      */
     public void setDayColumnNames(String[] dayColumnNames){
-       compactCalendarController.setDayColumnNames(dayColumnNames);
+        compactCalendarController.setDayColumnNames(dayColumnNames);
     }
 
     public void setShouldShowMondayAsFirstDay(boolean shouldShowMondayAsFirstDay) {
@@ -178,11 +179,11 @@ public class CompactCalendarView extends View {
     }
 
     /**
-    * Adds multiple events to the calendar and invalidates the view once all events are added.
-    */
+     * Adds multiple events to the calendar and invalidates the view once all events are added.
+     */
     public void addEvents(List<CalendarDayEvent> events){
-       compactCalendarController.addEvents(events);
-       invalidate();
+        compactCalendarController.addEvents(events);
+        invalidate();
     }
 
 
@@ -211,8 +212,8 @@ public class CompactCalendarView extends View {
     }
 
     /**
-    * Adds multiple events to the calendar and invalidates the view once all events are added.
-    */
+     * Adds multiple events to the calendar and invalidates the view once all events are added.
+     */
     public void removeEvents(List<CalendarDayEvent> events){
         compactCalendarController.removeEvents(events);
         invalidate();
@@ -229,7 +230,7 @@ public class CompactCalendarView extends View {
         compactCalendarController.showNextMonth();
         invalidate();
         if(listener != null){
-             listener.onMonthScroll(compactCalendarController.getFirstDayOfCurrentMonth());
+            listener.onMonthScroll(compactCalendarController.getFirstDayOfCurrentMonth());
         }
     }
 
@@ -237,7 +238,7 @@ public class CompactCalendarView extends View {
         compactCalendarController.showPreviousMonth();
         invalidate();
         if(listener != null){
-             listener.onMonthScroll(compactCalendarController.getFirstDayOfCurrentMonth());
+            listener.onMonthScroll(compactCalendarController.getFirstDayOfCurrentMonth());
         }
     }
 
@@ -271,15 +272,13 @@ public class CompactCalendarView extends View {
     }
 
     public boolean onTouchEvent(MotionEvent event) {
-        final VelocityTracker velocityTracker = VelocityTracker.obtain();
-        compactCalendarController.onTouch(event, velocityTracker);
+        compactCalendarController.onTouch(event);
         if(shouldScroll){
             invalidate();
             if(listener != null){
                 listener.onMonthScroll(compactCalendarController.getFirstDayOfCurrentMonth());
             }
         }
-        velocityTracker.recycle();
         // always allow gestureDetector to detect onSingleTap and scroll events
         return gestureDetector.onTouchEvent(event);
     }

@@ -70,6 +70,7 @@ class CompactCalendarController {
     private boolean shouldShowMondayAsFirstDay = true;
     private boolean useThreeLetterAbbreviation = false;
     private float screenDensity = 1;
+    VelocityTracker velocityTracker = null;
     private int maximumVelocity;
     private float SNAP_VELOCITY_DIP_PER_SECOND = 400;
     private int densityAdjustedSnapVelocity;
@@ -80,13 +81,15 @@ class CompactCalendarController {
     }
 
     CompactCalendarController(Paint dayPaint, OverScroller scroller, Rect rect, AttributeSet attrs,
-                              Context context, int currentDayBackgroundColor, int calenderTextColor, int currentSelectedDayBackgroundColor) {
+                              Context context, int currentDayBackgroundColor, int calenderTextColor,
+                              int currentSelectedDayBackgroundColor, VelocityTracker velocityTracker) {
         this.dayPaint = dayPaint;
         this.scroller = scroller;
         this.rect = rect;
         this.currentDayBackgroundColor = currentDayBackgroundColor;
         this.calenderTextColor = calenderTextColor;
         this.currentSelectedDayBackgroundColor = currentSelectedDayBackgroundColor;
+        this.velocityTracker = velocityTracker;
         loadAttributes(attrs, context);
         init(context);
     }
@@ -128,7 +131,7 @@ class CompactCalendarController {
         eventsCalendar.setFirstDayOfWeek(Calendar.MONDAY);
 
         if(context != null){
-             screenDensity =  context.getResources().getDisplayMetrics().density;
+            screenDensity =  context.getResources().getDisplayMetrics().density;
             final ViewConfiguration configuration = ViewConfiguration
                     .get(context);
             densityAdjustedSnapVelocity = (int) (screenDensity * SNAP_VELOCITY_DIP_PER_SECOND);
@@ -307,7 +310,11 @@ class CompactCalendarController {
         return true;
     }
 
-    boolean onTouch(final MotionEvent event, final VelocityTracker velocityTracker) {
+    boolean onTouch(MotionEvent event) {
+        if(velocityTracker == null) {
+            velocityTracker = VelocityTracker.obtain();
+        }
+
         velocityTracker.addMovement(event);
 
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
@@ -322,8 +329,10 @@ class CompactCalendarController {
             velocityTracker.computeCurrentVelocity(500);
 
         } else if (event.getAction() == MotionEvent.ACTION_UP) {
-            handleHorizontalScrolling(velocityTracker);
-
+            handleHorizontalScrolling();
+            velocityTracker.recycle();
+            velocityTracker.clear();
+            velocityTracker = null;
         }
         return false;
     }
@@ -333,8 +342,8 @@ class CompactCalendarController {
         scroller.startScroll((int) accumulatedScrollOffset.x, 0, (int) -remainingScrollAfterFingerLifted1, 0);
     }
 
-    private void handleHorizontalScrolling(VelocityTracker velocityTracker) {
-        int velocityX = computeVelocity(velocityTracker);
+    private void handleHorizontalScrolling() {
+        int velocityX = computeVelocity();
         handleSmoothScrolling(velocityX);
 
         currentDirection = Direction.NONE;
@@ -346,7 +355,7 @@ class CompactCalendarController {
 
     }
 
-    private int computeVelocity(VelocityTracker velocityTracker) {
+    private int computeVelocity() {
         velocityTracker.computeCurrentVelocity(VELOCITY_UNIT_PIXELS_PER_SECOND, maximumVelocity);
         return (int) velocityTracker.getXVelocity();
     }
