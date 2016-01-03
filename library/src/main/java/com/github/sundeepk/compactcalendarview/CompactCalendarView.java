@@ -23,7 +23,6 @@ public class CompactCalendarView extends View {
 
     private CompactCalendarController compactCalendarController;
     private GestureDetectorCompat gestureDetector;
-    private CompactCalendarViewListener listener;
     private boolean shouldScroll = true;
 
     public interface CompactCalendarViewListener {
@@ -38,11 +37,8 @@ public class CompactCalendarView extends View {
 
         @Override
         public boolean onSingleTapConfirmed(MotionEvent e) {
-            Date onDateClicked = compactCalendarController.onSingleTapConfirmed(e);
+            compactCalendarController.onSingleTapConfirmed(e);
             invalidate();
-            if(listener != null && onDateClicked != null){
-                listener.onDayClick(onDateClicked);
-            }
             return super.onSingleTapConfirmed(e);
         }
 
@@ -135,7 +131,7 @@ public class CompactCalendarView extends View {
     }
 
     public void setListener(CompactCalendarViewListener listener){
-        this.listener = listener;
+        compactCalendarController.setListener(listener);
     }
 
     public Date getFirstDayOfCurrentMonth(){
@@ -229,17 +225,11 @@ public class CompactCalendarView extends View {
     public void showNextMonth(){
         compactCalendarController.showNextMonth();
         invalidate();
-        if(listener != null){
-            listener.onMonthScroll(compactCalendarController.getFirstDayOfCurrentMonth());
-        }
     }
 
     public void showPreviousMonth(){
         compactCalendarController.showPreviousMonth();
         invalidate();
-        if(listener != null){
-            listener.onMonthScroll(compactCalendarController.getFirstDayOfCurrentMonth());
-        }
     }
 
     @Override
@@ -255,7 +245,6 @@ public class CompactCalendarView extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
-
         compactCalendarController.onDraw(canvas);
     }
 
@@ -273,12 +262,7 @@ public class CompactCalendarView extends View {
 
     public boolean onTouchEvent(MotionEvent event) {
         compactCalendarController.onTouch(event);
-        if(shouldScroll){
-            invalidate();
-            if(listener != null){
-                listener.onMonthScroll(compactCalendarController.getFirstDayOfCurrentMonth());
-            }
-        }
+        invalidate();
         // always allow gestureDetector to detect onSingleTap and scroll events
         return gestureDetector.onTouchEvent(event);
     }

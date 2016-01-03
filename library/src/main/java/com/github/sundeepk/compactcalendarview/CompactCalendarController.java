@@ -75,6 +75,7 @@ class CompactCalendarController {
     private float SNAP_VELOCITY_DIP_PER_SECOND = 400;
     private int densityAdjustedSnapVelocity;
     private boolean isSmoothScrolling;
+    private CompactCalendarView.CompactCalendarViewListener listener;
 
     private enum Direction {
         NONE, HORIZONTAL, VERTICAL
@@ -153,6 +154,11 @@ class CompactCalendarController {
         calendarWithFirstDayOfMonth.set(Calendar.MILLISECOND, 0);
     }
 
+
+    void setListener(CompactCalendarView.CompactCalendarViewListener listener) {
+        this.listener = listener;
+    }
+
     void removeAllEvents(){
         events.clear();
     }
@@ -178,11 +184,13 @@ class CompactCalendarController {
     void showNextMonth() {
         setCalenderToFirstDayOfMonth(calendarWithFirstDayOfMonth, currentCalender.getTime(), 0, 1);
         setCurrentDate(calendarWithFirstDayOfMonth.getTime());
+        performMonthScrollCallback();
     }
 
     void showPreviousMonth() {
         setCalenderToFirstDayOfMonth(calendarWithFirstDayOfMonth, currentCalender.getTime(), 0, -1);
         setCurrentDate(calendarWithFirstDayOfMonth.getTime());
+        performMonthScrollCallback();
     }
 
     void setLocale(Locale locale) {
@@ -265,10 +273,10 @@ class CompactCalendarController {
         drawScrollableCalender(canvas);
     }
 
-    Date onSingleTapConfirmed(MotionEvent e) {
+    void onSingleTapConfirmed(MotionEvent e) {
         //Don't handle single tap the calendar is scrolling and is not stationary
         if(Math.abs(accumulatedScrollOffset.x) != Math.abs(width * monthsScrolledSoFar) ) {
-            return null;
+            return;
         }
 
         int dayColumn = Math.round((paddingLeft + e.getX() - paddingWidth - paddingRight) / widthPerDay);
@@ -286,9 +294,13 @@ class CompactCalendarController {
             calendarWithFirstDayOfMonth.add(Calendar.DATE, dayOfMonth);
 
             currentCalender.setTimeInMillis(calendarWithFirstDayOfMonth.getTimeInMillis());
-            return currentCalender.getTime();
-        } else {
-            return null;
+            performOnDayClickCallback(currentCalender.getTime());
+        }
+    }
+
+    private void performOnDayClickCallback(Date date) {
+        if (listener != null) {
+            listener.onDayClick(date);
         }
     }
 
@@ -366,14 +378,22 @@ class CompactCalendarController {
             monthsScrolledSoFar = monthsScrolledSoFar + 1;
             performScroll();
             isSmoothScrolling = true;
+            performMonthScrollCallback();
         } else if (velocityX < -densityAdjustedSnapVelocity) {
             //scrolled enough to move to next month
             monthsScrolledSoFar = monthsScrolledSoFar - 1;
             performScroll();
             isSmoothScrolling = true;
+            performMonthScrollCallback();
         } else {
             isSmoothScrolling = false;
             snapBackScroller();
+        }
+    }
+
+    private void performMonthScrollCallback() {
+        if(listener != null){
+            listener.onMonthScroll(getFirstDayOfCurrentMonth());
         }
     }
 
