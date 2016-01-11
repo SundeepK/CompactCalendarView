@@ -374,21 +374,31 @@ class CompactCalendarController {
 
     private void handleSmoothScrolling(int velocityX) {
         if (velocityX > densityAdjustedSnapVelocity) {
-            //scrolled enough to move to prev month
-            monthsScrolledSoFar = monthsScrolledSoFar + 1;
-            performScroll();
-            isSmoothScrolling = true;
-            performMonthScrollCallback();
+            scrollPreviousMonth();
         } else if (velocityX < -densityAdjustedSnapVelocity) {
-            //scrolled enough to move to next month
-            monthsScrolledSoFar = monthsScrolledSoFar - 1;
-            performScroll();
-            isSmoothScrolling = true;
-            performMonthScrollCallback();
+            scrollNextMonth();
+        } else if (accumulatedScrollOffset.x > (monthsScrolledSoFar * width + (width * 0.5))) {
+            scrollPreviousMonth();
+        } else if (accumulatedScrollOffset.x < (monthsScrolledSoFar * width + (width * 0.5))) {
+            scrollNextMonth();
         } else {
             isSmoothScrolling = false;
             snapBackScroller();
         }
+    }
+
+    private void scrollNextMonth() {
+        monthsScrolledSoFar = monthsScrolledSoFar - 1;
+        performScroll();
+        isSmoothScrolling = true;
+        performMonthScrollCallback();
+    }
+
+    private void scrollPreviousMonth() {
+        monthsScrolledSoFar = monthsScrolledSoFar + 1;
+        performScroll();
+        isSmoothScrolling = true;
+        performMonthScrollCallback();
     }
 
     private void performMonthScrollCallback() {
