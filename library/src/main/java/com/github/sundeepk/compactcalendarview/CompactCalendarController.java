@@ -377,10 +377,6 @@ class CompactCalendarController {
             scrollPreviousMonth();
         } else if (velocityX < -densityAdjustedSnapVelocity) {
             scrollNextMonth();
-        } else if (accumulatedScrollOffset.x > (monthsScrolledSoFar * width + (width * 0.5))) {
-            scrollPreviousMonth();
-        } else if (accumulatedScrollOffset.x < (monthsScrolledSoFar * width + (width * 0.5))) {
-            scrollNextMonth();
         } else {
             isSmoothScrolling = false;
             snapBackScroller();
