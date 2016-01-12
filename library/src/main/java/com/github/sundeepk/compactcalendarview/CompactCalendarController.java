@@ -156,6 +156,10 @@ class CompactCalendarController {
         this.currentSelectedDayBackgroundColor = currentSelectedDayBackgroundColor;
     }
 
+    void setCalenderBackgroundColor(int calenderBackgroundColor) {
+        this.calenderBackgroundColor = calenderBackgroundColor;
+    }
+
     void setCurrentDayBackgroundColor(int currentDayBackgroundColor) {
         this.currentDayBackgroundColor = currentDayBackgroundColor;
     }
