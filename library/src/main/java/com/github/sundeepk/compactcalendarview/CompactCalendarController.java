@@ -76,6 +76,8 @@ class CompactCalendarController {
     private int densityAdjustedSnapVelocity;
     private boolean isSmoothScrolling;
     private CompactCalendarView.CompactCalendarViewListener listener;
+    private boolean isScrolling;
+    private int distanceThresholdForAutoScroll;
 
     private enum Direction {
         NONE, HORIZONTAL, VERTICAL
@@ -249,6 +251,7 @@ class CompactCalendarController {
         widthPerDay = (width) / DAYS_IN_WEEK;
         heightPerDay = height / 7;
         this.width = width;
+        this.distanceThresholdForAutoScroll = (int) (width * 0.50);
         this.height = height;
         this.paddingRight = paddingRight;
         this.paddingLeft = paddingLeft;
@@ -318,6 +321,7 @@ class CompactCalendarController {
             }
         }
 
+        isScrolling = true;
         this.distanceX = distanceX;
         return true;
     }
@@ -345,6 +349,7 @@ class CompactCalendarController {
             velocityTracker.recycle();
             velocityTracker.clear();
             velocityTracker = null;
+            isScrolling = false;
         }
         return false;
     }
@@ -373,9 +378,14 @@ class CompactCalendarController {
     }
 
     private void handleSmoothScrolling(int velocityX) {
+        int distanceScrolled = (int) (accumulatedScrollOffset.x - (width * monthsScrolledSoFar));
         if (velocityX > densityAdjustedSnapVelocity) {
             scrollPreviousMonth();
         } else if (velocityX < -densityAdjustedSnapVelocity) {
+            scrollNextMonth();
+        } else if (isScrolling && distanceScrolled > distanceThresholdForAutoScroll) {
+            scrollPreviousMonth();
+        } else if (isScrolling && distanceScrolled < -distanceThresholdForAutoScroll) {
             scrollNextMonth();
         } else {
             isSmoothScrolling = false;
