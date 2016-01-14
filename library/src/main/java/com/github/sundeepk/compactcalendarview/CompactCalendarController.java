@@ -32,6 +32,7 @@ class CompactCalendarController {
 
     private static final int VELOCITY_UNIT_PIXELS_PER_SECOND = 1000;
     private static final float ANIMATION_SCREEN_SET_DURATION_MILLIS = 700;
+    private static final int LAST_FLING_THRESHOLD_MILLIS = 300;
     private int paddingWidth = 40;
     private int paddingHeight = 40;
     private Paint dayPaint = new Paint();
@@ -78,7 +79,7 @@ class CompactCalendarController {
     private CompactCalendarView.CompactCalendarViewListener listener;
     private boolean isScrolling;
     private int distanceThresholdForAutoScroll;
-    private long lastDownTime;
+    private long lastAutoScrollFromFling;
 
     private enum Direction {
         NONE, HORIZONTAL, VERTICAL
@@ -340,7 +341,6 @@ class CompactCalendarController {
                 scroller.abortAnimation();
             }
             isSmoothScrolling = false;
-            lastDownTime = System.currentTimeMillis();
 
         } else if(event.getAction() == MotionEvent.ACTION_MOVE) {
             velocityTracker.addMovement(event);
@@ -381,9 +381,9 @@ class CompactCalendarController {
 
     private void handleSmoothScrolling(int velocityX) {
         int distanceScrolled = (int) (accumulatedScrollOffset.x - (width * monthsScrolledSoFar));
-        if (velocityX > densityAdjustedSnapVelocity && System.currentTimeMillis() - lastDownTime > 140) {
+        if (velocityX > densityAdjustedSnapVelocity && System.currentTimeMillis() - lastAutoScrollFromFling > LAST_FLING_THRESHOLD_MILLIS) {
             scrollPreviousMonth();
-        } else if (velocityX < -densityAdjustedSnapVelocity && System.currentTimeMillis() - lastDownTime > 140) {
+        } else if (velocityX < -densityAdjustedSnapVelocity && System.currentTimeMillis() - lastAutoScrollFromFling > 300) {
             scrollNextMonth();
         } else if (isScrolling && distanceScrolled > distanceThresholdForAutoScroll) {
             scrollPreviousMonth();
@@ -396,6 +396,7 @@ class CompactCalendarController {
     }
 
     private void scrollNextMonth() {
+        lastAutoScrollFromFling = System.currentTimeMillis();
         monthsScrolledSoFar = monthsScrolledSoFar - 1;
         performScroll();
         isSmoothScrolling = true;
@@ -403,6 +404,7 @@ class CompactCalendarController {
     }
 
     private void scrollPreviousMonth() {
+        lastAutoScrollFromFling = System.currentTimeMillis();
         monthsScrolledSoFar = monthsScrolledSoFar + 1;
         performScroll();
         isSmoothScrolling = true;
