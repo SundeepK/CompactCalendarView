@@ -78,6 +78,7 @@ class CompactCalendarController {
     private CompactCalendarView.CompactCalendarViewListener listener;
     private boolean isScrolling;
     private int distanceThresholdForAutoScroll;
+    private long lastDownTime;
 
     private enum Direction {
         NONE, HORIZONTAL, VERTICAL
@@ -339,13 +340,14 @@ class CompactCalendarController {
                 scroller.abortAnimation();
             }
             isSmoothScrolling = false;
+            lastDownTime = System.currentTimeMillis();
 
         } else if(event.getAction() == MotionEvent.ACTION_MOVE) {
             velocityTracker.addMovement(event);
             velocityTracker.computeCurrentVelocity(500);
 
         } else if (event.getAction() == MotionEvent.ACTION_UP) {
-            handleHorizontalScrolling();
+                handleHorizontalScrolling();
             velocityTracker.recycle();
             velocityTracker.clear();
             velocityTracker = null;
@@ -379,9 +381,9 @@ class CompactCalendarController {
 
     private void handleSmoothScrolling(int velocityX) {
         int distanceScrolled = (int) (accumulatedScrollOffset.x - (width * monthsScrolledSoFar));
-        if (velocityX > densityAdjustedSnapVelocity) {
+        if (velocityX > densityAdjustedSnapVelocity && System.currentTimeMillis() - lastDownTime > 140) {
             scrollPreviousMonth();
-        } else if (velocityX < -densityAdjustedSnapVelocity) {
+        } else if (velocityX < -densityAdjustedSnapVelocity && System.currentTimeMillis() - lastDownTime > 140) {
             scrollNextMonth();
         } else if (isScrolling && distanceScrolled > distanceThresholdForAutoScroll) {
             scrollPreviousMonth();
