@@ -381,9 +381,10 @@ class CompactCalendarController {
 
     private void handleSmoothScrolling(int velocityX) {
         int distanceScrolled = (int) (accumulatedScrollOffset.x - (width * monthsScrolledSoFar));
-        if (velocityX > densityAdjustedSnapVelocity && System.currentTimeMillis() - lastAutoScrollFromFling > LAST_FLING_THRESHOLD_MILLIS) {
+        boolean isEnoughTimeElapsedSinceLastSmoothScroll = System.currentTimeMillis() - lastAutoScrollFromFling > LAST_FLING_THRESHOLD_MILLIS;
+        if (velocityX > densityAdjustedSnapVelocity && isEnoughTimeElapsedSinceLastSmoothScroll) {
             scrollPreviousMonth();
-        } else if (velocityX < -densityAdjustedSnapVelocity && System.currentTimeMillis() - lastAutoScrollFromFling > 300) {
+        } else if (velocityX < -densityAdjustedSnapVelocity && isEnoughTimeElapsedSinceLastSmoothScroll) {
             scrollNextMonth();
         } else if (isScrolling && distanceScrolled > distanceThresholdForAutoScroll) {
             scrollPreviousMonth();
