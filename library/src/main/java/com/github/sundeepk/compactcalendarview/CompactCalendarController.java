@@ -36,6 +36,7 @@ class CompactCalendarController {
     private int paddingWidth = 40;
     private int paddingHeight = 40;
     private Paint dayPaint = new Paint();
+    private Paint background = new Paint();
     private Rect rect;
     private int textHeight;
     private int textWidth;
@@ -83,6 +84,7 @@ class CompactCalendarController {
     private boolean isScrolling;
     private int distanceThresholdForAutoScroll;
     private long lastAutoScrollFromFling;
+    private boolean animationStarted;
 
     public void setGrowFactorIndicator(float growfactorIndicator) {
         this.growfactorIndicator = growfactorIndicator;
@@ -90,6 +92,10 @@ class CompactCalendarController {
 
     public float getGrowFactorIndicator() {
         return growfactorIndicator;
+    }
+
+    public void setAnimationStarted(boolean animationStarted) {
+        this.animationStarted = animationStarted;
     }
 
     private enum Direction {
@@ -284,10 +290,23 @@ class CompactCalendarController {
         paddingHeight = heightPerDay / 2;
         calculateXPositionOffset();
 
-        if (isAnimating) {
+        if (animationStarted) {
             dayPaint.setColor(calenderBackgroundColor);
             dayPaint.setStyle(Paint.Style.FILL);
             canvas.drawCircle(0, 0, growFactor, dayPaint);
+            dayPaint.setStyle(Paint.Style.STROKE);
+            dayPaint.setColor(Color.WHITE);
+
+            drawScrollableCalender(canvas);
+        } else if (isAnimating) {
+
+//            background.setColor(Color.WHITE);
+//            background.setStyle(Paint.Style.FILL);
+//            canvas.drawRect(0, 0, width, height, dayPaint);
+
+            background.setColor(Color.WHITE);
+            background.setStyle(Paint.Style.FILL);
+            canvas.drawCircle(0, 0, growFactor / 2, background);
             dayPaint.setStyle(Paint.Style.STROKE);
             dayPaint.setColor(calenderTextColor);
 
@@ -652,6 +671,7 @@ class CompactCalendarController {
     }
 
     void drawMonth(Canvas canvas, Calendar monthToDrawCalender, int offset) {
+     //   Log.d("compactcontroller", "height "+  height);
         drawEvents(canvas, monthToDrawCalender, offset);
 
         //offset by one because we want to start from Monday
@@ -685,7 +705,6 @@ class CompactCalendarController {
                 }
             } else {
                 int day = ((dayRow - 1) * 7 + dayColumn + 1) - firstDayOfMonth;
-                float yPosition = dayRow * heightPerDay + paddingHeight;
                 if (isSameMonthAsToday && todayDayOfMonth == day) {
                     // TODO calculate position of circle in a more reliable way
                     drawCircle(canvas, xPosition, yPosition, currentDayBackgroundColor);

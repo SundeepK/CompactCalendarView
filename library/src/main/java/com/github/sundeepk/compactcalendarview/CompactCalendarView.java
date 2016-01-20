@@ -9,13 +9,17 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.support.v4.view.GestureDetectorCompat;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.Property;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
 import android.view.animation.OvershootInterpolator;
+import android.view.animation.Transformation;
 import android.widget.OverScroller;
 
 import com.github.sundeepk.compactcalendarview.domain.CalendarDayEvent;
@@ -254,10 +258,12 @@ public class CompactCalendarView extends View {
     }
 
     public void showCalendarWithAnimation(){
-        compactCalendarController.setAnimation(true);
-        ObjectAnimator anim = ObjectAnimator.ofFloat(this, GROW_FACTOR, 1f, 1700f);
+        AnimationSet animationSet = new AnimationSet(true);
+
+        final ObjectAnimator anim = ObjectAnimator.ofFloat(this, GROW_FACTOR, 1f, 1700f);
         anim.setDuration(700);
-        anim.setInterpolator(new AccelerateDecelerateInterpolator());
+        AccelerateDecelerateInterpolator value = new AccelerateDecelerateInterpolator();
+        anim.setInterpolator(value);
         anim.addListener(new Animator.AnimatorListener() {
             @Override
             public void onAnimationStart(Animator animation) {
@@ -277,8 +283,9 @@ public class CompactCalendarView extends View {
             public void onAnimationRepeat(Animator animation) {
             }
         });
-        anim.start();
-        ObjectAnimator animIndicator = ObjectAnimator.ofFloat(this, INDICATOR_GROW_FACTOR, 1f, 55f);
+        anim.setDuration(700);
+
+        final ObjectAnimator animIndicator = ObjectAnimator.ofFloat(this, INDICATOR_GROW_FACTOR, 1f, 55f);
         animIndicator.setDuration(700);
         animIndicator.setInterpolator(new OvershootInterpolator());
         animIndicator.addListener(new Animator.AnimatorListener() {
@@ -300,8 +307,88 @@ public class CompactCalendarView extends View {
             public void onAnimationRepeat(Animator animation) {
             }
         });
-        animIndicator.start();
+
+
+        Animation heightAnim = new DropDownAnim(this, getHeight(), true, anim);
+
+        this.getLayoutParams().height = 0;
+        requestLayout();
+
+        compactCalendarController.setAnimationStarted(true);
+       // compactCalendarController.setAnimation(true);
+
+        heightAnim.setDuration(700);
+        heightAnim.setInterpolator(new AccelerateDecelerateInterpolator());
+        heightAnim.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                compactCalendarController.setAnimationStarted(false);
+                //compactCalendarController.setAnimation(true);
+              //  anim.start();
+                animIndicator.start();
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+            }
+        });
+
+
+        startAnimation(heightAnim);
+
+        compactCalendarController.setAnimation(false);
+
     }
+
+    public class DropDownAnim extends Animation {
+        private final int targetHeight;
+        private final View view;
+        private final boolean down;
+        private ObjectAnimator anim;
+        private float currentGrow;
+
+        public DropDownAnim(View view, int targetHeight, boolean down, ObjectAnimator anim) {
+            this.view = view;
+            this.targetHeight = targetHeight;
+            this.down = down;
+            this.anim = anim;
+        }
+
+        @Override
+        protected void applyTransformation(float interpolatedTime, Transformation t) {
+            currentGrow+=2.4;
+            float grow = interpolatedTime * 1700;
+            Log.d("calender", "grow " + grow);
+            compactCalendarController.setGrowGfactor(grow);
+            int newHeight;
+            if (down) {
+                newHeight = (int) (targetHeight * interpolatedTime);
+            } else {
+                newHeight = (int) (targetHeight * (1 - interpolatedTime));
+            }
+            view.getLayoutParams().height = newHeight;
+            view.requestLayout();
+
+        }
+
+        @Override
+        public void initialize(int width, int height, int parentWidth,
+                               int parentHeight) {
+            super.initialize(width, height, parentWidth, parentHeight);
+        }
+
+        @Override
+        public boolean willChangeBounds() {
+            return true;
+        }
+    }
+
 
     public void showNextMonth(){
         compactCalendarController.showNextMonth();
