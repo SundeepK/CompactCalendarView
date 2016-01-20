@@ -85,6 +85,7 @@ class CompactCalendarController {
     private int distanceThresholdForAutoScroll;
     private long lastAutoScrollFromFling;
     private boolean animationStarted;
+    private int targetHeight;
 
     public void setGrowFactorIndicator(float growfactorIndicator) {
         this.growfactorIndicator = growfactorIndicator;
@@ -96,6 +97,10 @@ class CompactCalendarController {
 
     public void setAnimationStarted(boolean animationStarted) {
         this.animationStarted = animationStarted;
+    }
+
+    public void setTargetHeight(int targetHeight) {
+        this.targetHeight = targetHeight;
     }
 
     private enum Direction {
@@ -268,7 +273,7 @@ class CompactCalendarController {
 
     void onMeasure(int width, int height, int paddingRight, int paddingLeft) {
         widthPerDay = (width) / DAYS_IN_WEEK;
-        heightPerDay = height / 7;
+        heightPerDay = targetHeight > 0 ? targetHeight / 7 : height / 7;
         this.width = width;
         this.distanceThresholdForAutoScroll = (int) (width * 0.50);
         this.height = height;
@@ -291,9 +296,9 @@ class CompactCalendarController {
         calculateXPositionOffset();
 
         if (animationStarted) {
-            dayPaint.setColor(calenderBackgroundColor);
-            dayPaint.setStyle(Paint.Style.FILL);
-            canvas.drawCircle(0, 0, growFactor, dayPaint);
+            background.setColor(calenderBackgroundColor);
+            background.setStyle(Paint.Style.FILL);
+            canvas.drawCircle(0, 0, growFactor, background);
             dayPaint.setStyle(Paint.Style.STROKE);
             dayPaint.setColor(Color.WHITE);
 
@@ -304,11 +309,11 @@ class CompactCalendarController {
 //            background.setStyle(Paint.Style.FILL);
 //            canvas.drawRect(0, 0, width, height, dayPaint);
 
-            background.setColor(Color.WHITE);
-            background.setStyle(Paint.Style.FILL);
-            canvas.drawCircle(0, 0, growFactor / 2, background);
+            dayPaint.setColor(calenderBackgroundColor);
+            dayPaint.setStyle(Paint.Style.FILL);
+            canvas.drawCircle(0, 0, growFactor, dayPaint);
             dayPaint.setStyle(Paint.Style.STROKE);
-            dayPaint.setColor(calenderTextColor);
+            dayPaint.setColor(Color.WHITE);
 
             drawScrollableCalender(canvas);
 
@@ -695,7 +700,7 @@ class CompactCalendarController {
             }
             float xPosition = widthPerDay * dayColumn + paddingWidth + paddingLeft + accumulatedScrollOffset.x + offset - paddingRight;
             float yPosition = dayRow * heightPerDay + paddingHeight;
-            if (xPosition >= growFactor || yPosition >= growFactor ) continue;
+            if (xPosition > growFactor || yPosition > growFactor ) continue;
             if (dayRow == 0) {
                 // first row, so draw the first letter of the day
                 if (shouldDrawDaysHeader) {

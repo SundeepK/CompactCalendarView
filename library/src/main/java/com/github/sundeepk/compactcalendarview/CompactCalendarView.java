@@ -9,7 +9,6 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.support.v4.view.GestureDetectorCompat;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.util.Property;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
@@ -310,7 +309,7 @@ public class CompactCalendarView extends View {
 
 
         Animation heightAnim = new DropDownAnim(this, getHeight(), true, anim);
-
+        compactCalendarController.setTargetHeight(getHeight());
         this.getLayoutParams().height = 0;
         requestLayout();
 
@@ -328,7 +327,7 @@ public class CompactCalendarView extends View {
             @Override
             public void onAnimationEnd(Animation animation) {
                 compactCalendarController.setAnimationStarted(false);
-                //compactCalendarController.setAnimation(true);
+                compactCalendarController.setAnimation(true);
               //  anim.start();
                 animIndicator.start();
 
@@ -342,7 +341,6 @@ public class CompactCalendarView extends View {
 
         startAnimation(heightAnim);
 
-        compactCalendarController.setAnimation(false);
 
     }
 
@@ -363,8 +361,8 @@ public class CompactCalendarView extends View {
         @Override
         protected void applyTransformation(float interpolatedTime, Transformation t) {
             currentGrow+=2.4;
-            float grow = interpolatedTime * 1700;
-            Log.d("calender", "grow " + grow);
+            float grow = (float) (interpolatedTime * (targetHeight * 2));
+          //  Log.d("calender", "grow " + grow);
             compactCalendarController.setGrowGfactor(grow);
             int newHeight;
             if (down) {
