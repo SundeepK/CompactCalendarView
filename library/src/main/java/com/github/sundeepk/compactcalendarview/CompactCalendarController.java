@@ -11,6 +11,8 @@ import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.MotionEvent;
+import android.view.VelocityTracker;
+import android.view.ViewConfiguration;
 import android.widget.OverScroller;
 
 import com.github.sundeepk.compactcalendarview.domain.CalendarDayEvent;
@@ -28,6 +30,9 @@ import java.util.Map;
 
 class CompactCalendarController {
 
+    private static final int VELOCITY_UNIT_PIXELS_PER_SECOND = 1000;
+    private static final float ANIMATION_SCREEN_SET_DURATION_MILLIS = 700;
+    private static final int LAST_FLING_THRESHOLD_MILLIS = 300;
     private int paddingWidth = 40;
     private int paddingHeight = 40;
     private Paint dayPaint = new Paint();
@@ -69,6 +74,15 @@ class CompactCalendarController {
     private boolean isAnimating;
     private float screenDensity = 1;
     private float growfactorIndicator;
+    VelocityTracker velocityTracker = null;
+    private int maximumVelocity;
+    private float SNAP_VELOCITY_DIP_PER_SECOND = 400;
+    private int densityAdjustedSnapVelocity;
+    private boolean isSmoothScrolling;
+    private CompactCalendarView.CompactCalendarViewListener listener;
+    private boolean isScrolling;
+    private int distanceThresholdForAutoScroll;
+    private long lastAutoScrollFromFling;
 
     public void setGrowFactorIndicator(float growfactorIndicator) {
         this.growfactorIndicator = growfactorIndicator;
@@ -83,13 +97,15 @@ class CompactCalendarController {
     }
 
     CompactCalendarController(Paint dayPaint, OverScroller scroller, Rect rect, AttributeSet attrs,
-                              Context context, int currentDayBackgroundColor, int calenderTextColor, int currentSelectedDayBackgroundColor) {
+                              Context context, int currentDayBackgroundColor, int calenderTextColor,
+                              int currentSelectedDayBackgroundColor, VelocityTracker velocityTracker) {
         this.dayPaint = dayPaint;
         this.scroller = scroller;
         this.rect = rect;
         this.currentDayBackgroundColor = currentDayBackgroundColor;
         this.calenderTextColor = calenderTextColor;
         this.currentSelectedDayBackgroundColor = currentSelectedDayBackgroundColor;
+        this.velocityTracker = velocityTracker;
         loadAttributes(attrs, context);
         init(context);
     }
@@ -131,7 +147,11 @@ class CompactCalendarController {
         eventsCalendar.setFirstDayOfWeek(Calendar.MONDAY);
 
         if(context != null){
-             screenDensity =  context.getResources().getDisplayMetrics().density;
+            screenDensity =  context.getResources().getDisplayMetrics().density;
+            final ViewConfiguration configuration = ViewConfiguration
+                    .get(context);
+            densityAdjustedSnapVelocity = (int) (screenDensity * SNAP_VELOCITY_DIP_PER_SECOND);
+            maximumVelocity = configuration.getScaledMaximumFlingVelocity();
         }
     }
 
@@ -147,6 +167,11 @@ class CompactCalendarController {
         calendarWithFirstDayOfMonth.set(Calendar.MINUTE, 0);
         calendarWithFirstDayOfMonth.set(Calendar.SECOND, 0);
         calendarWithFirstDayOfMonth.set(Calendar.MILLISECOND, 0);
+    }
+
+
+    void setListener(CompactCalendarView.CompactCalendarViewListener listener) {
+        this.listener = listener;
     }
 
     void removeAllEvents(){
@@ -174,11 +199,13 @@ class CompactCalendarController {
     void showNextMonth() {
         setCalenderToFirstDayOfMonth(calendarWithFirstDayOfMonth, currentCalender.getTime(), 0, 1);
         setCurrentDate(calendarWithFirstDayOfMonth.getTime());
+        performMonthScrollCallback();
     }
 
     void showPreviousMonth() {
         setCalenderToFirstDayOfMonth(calendarWithFirstDayOfMonth, currentCalender.getTime(), 0, -1);
         setCurrentDate(calendarWithFirstDayOfMonth.getTime());
+        performMonthScrollCallback();
     }
 
     void setLocale(Locale locale) {
@@ -237,6 +264,7 @@ class CompactCalendarController {
         widthPerDay = (width) / DAYS_IN_WEEK;
         heightPerDay = height / 7;
         this.width = width;
+        this.distanceThresholdForAutoScroll = (int) (width * 0.50);
         this.height = height;
         this.paddingRight = paddingRight;
         this.paddingLeft = paddingLeft;
@@ -247,9 +275,8 @@ class CompactCalendarController {
         //assume square around each day of width and height = heightPerDay and get diagonal line length
         //makes easier to find radius
         double radiusAroundDay = 0.5 * Math.sqrt((heightPerDay * heightPerDay) + (heightPerDay * heightPerDay));
-        //make radius based on screen density and apply some multiplier
-        bigCircleIndicatorRadius = (float) (radiusAroundDay / screenDensity) * 2.2f;
-
+        //make radius based on screen density
+        bigCircleIndicatorRadius = (float) radiusAroundDay /  ((1.8f) - 0.5f / screenDensity) ;
     }
 
     void onDraw(Canvas canvas) {
@@ -275,24 +302,151 @@ class CompactCalendarController {
         }
     }
 
-    boolean onTouch(MotionEvent event) {
-        if (event.getAction() == MotionEvent.ACTION_UP) {
-            if (currentDirection == Direction.HORIZONTAL) {
-                monthsScrolledSoFar = Math.round(accumulatedScrollOffset.x / width);
-                float remainingScrollAfterFingerLifted = (accumulatedScrollOffset.x - monthsScrolledSoFar * width);
-                scroller.startScroll((int) accumulatedScrollOffset.x, 0, (int) -remainingScrollAfterFingerLifted, 0);
-                currentDirection = Direction.NONE;
-                setCalenderToFirstDayOfMonth(calendarWithFirstDayOfMonth, currentDate, -monthsScrolledSoFar, 0);
+    void onSingleTapConfirmed(MotionEvent e) {
+        //Don't handle single tap the calendar is scrolling and is not stationary
+        if(Math.abs(accumulatedScrollOffset.x) != Math.abs(width * monthsScrolledSoFar) ) {
+            return;
+        }
 
-                if (calendarWithFirstDayOfMonth.get(Calendar.MONTH) != currentCalender.get(Calendar.MONTH)) {
-                    setCalenderToFirstDayOfMonth(currentCalender, currentDate, -monthsScrolledSoFar, 0);
-                }
+        int dayColumn = Math.round((paddingLeft + e.getX() - paddingWidth - paddingRight) / widthPerDay);
+        int dayRow = Math.round((e.getY() - paddingHeight) / heightPerDay);
 
-                return true;
+        setCalenderToFirstDayOfMonth(calendarWithFirstDayOfMonth, currentDate, -monthsScrolledSoFar, 0);
+
+        //Start Monday as day 1 and Sunday as day 7. Not Sunday as day 1 and Monday as day 2
+        int firstDayOfMonth = getDayOfWeek(calendarWithFirstDayOfMonth);
+
+        int dayOfMonth = ((dayRow - 1) * 7 + dayColumn + 1) - firstDayOfMonth;
+
+        if (dayOfMonth < calendarWithFirstDayOfMonth.getActualMaximum(Calendar.DAY_OF_MONTH)
+                && dayOfMonth >= 0) {
+            calendarWithFirstDayOfMonth.add(Calendar.DATE, dayOfMonth);
+
+            currentCalender.setTimeInMillis(calendarWithFirstDayOfMonth.getTimeInMillis());
+            performOnDayClickCallback(currentCalender.getTime());
+        }
+    }
+
+    private void performOnDayClickCallback(Date date) {
+        if (listener != null) {
+            listener.onDayClick(date);
+        }
+    }
+
+    boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+        //ignore scrolling callback if already smooth scrolling
+        if (isSmoothScrolling) {
+            return true;
+        }
+
+        if (currentDirection == Direction.NONE) {
+            if (Math.abs(distanceX) > Math.abs(distanceY)) {
+                currentDirection = Direction.HORIZONTAL;
+            } else {
+                currentDirection = Direction.VERTICAL;
             }
-            currentDirection = Direction.NONE;
+        }
+
+        isScrolling = true;
+        this.distanceX = distanceX;
+        return true;
+    }
+
+    boolean onTouch(MotionEvent event) {
+        if(velocityTracker == null) {
+            velocityTracker = VelocityTracker.obtain();
+        }
+
+        velocityTracker.addMovement(event);
+
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+
+            if (!scroller.isFinished()) {
+                scroller.abortAnimation();
+            }
+            isSmoothScrolling = false;
+
+        } else if(event.getAction() == MotionEvent.ACTION_MOVE) {
+            velocityTracker.addMovement(event);
+            velocityTracker.computeCurrentVelocity(500);
+
+        } else if (event.getAction() == MotionEvent.ACTION_UP) {
+                handleHorizontalScrolling();
+            velocityTracker.recycle();
+            velocityTracker.clear();
+            velocityTracker = null;
+            isScrolling = false;
         }
         return false;
+    }
+
+    private void snapBackScroller() {
+        float remainingScrollAfterFingerLifted1 = (accumulatedScrollOffset.x - (monthsScrolledSoFar * width));
+        scroller.startScroll((int) accumulatedScrollOffset.x, 0, (int) -remainingScrollAfterFingerLifted1, 0);
+    }
+
+    private void handleHorizontalScrolling() {
+        int velocityX = computeVelocity();
+        handleSmoothScrolling(velocityX);
+
+        currentDirection = Direction.NONE;
+        setCalenderToFirstDayOfMonth(calendarWithFirstDayOfMonth, currentDate, -monthsScrolledSoFar, 0);
+
+        if (calendarWithFirstDayOfMonth.get(Calendar.MONTH) != currentCalender.get(Calendar.MONTH)) {
+            setCalenderToFirstDayOfMonth(currentCalender, currentDate, -monthsScrolledSoFar, 0);
+        }
+
+    }
+
+    private int computeVelocity() {
+        velocityTracker.computeCurrentVelocity(VELOCITY_UNIT_PIXELS_PER_SECOND, maximumVelocity);
+        return (int) velocityTracker.getXVelocity();
+    }
+
+    private void handleSmoothScrolling(int velocityX) {
+        int distanceScrolled = (int) (accumulatedScrollOffset.x - (width * monthsScrolledSoFar));
+        boolean isEnoughTimeElapsedSinceLastSmoothScroll = System.currentTimeMillis() - lastAutoScrollFromFling > LAST_FLING_THRESHOLD_MILLIS;
+        if (velocityX > densityAdjustedSnapVelocity && isEnoughTimeElapsedSinceLastSmoothScroll) {
+            scrollPreviousMonth();
+        } else if (velocityX < -densityAdjustedSnapVelocity && isEnoughTimeElapsedSinceLastSmoothScroll) {
+            scrollNextMonth();
+        } else if (isScrolling && distanceScrolled > distanceThresholdForAutoScroll) {
+            scrollPreviousMonth();
+        } else if (isScrolling && distanceScrolled < -distanceThresholdForAutoScroll) {
+            scrollNextMonth();
+        } else {
+            isSmoothScrolling = false;
+            snapBackScroller();
+        }
+    }
+
+    private void scrollNextMonth() {
+        lastAutoScrollFromFling = System.currentTimeMillis();
+        monthsScrolledSoFar = monthsScrolledSoFar - 1;
+        performScroll();
+        isSmoothScrolling = true;
+        performMonthScrollCallback();
+    }
+
+    private void scrollPreviousMonth() {
+        lastAutoScrollFromFling = System.currentTimeMillis();
+        monthsScrolledSoFar = monthsScrolledSoFar + 1;
+        performScroll();
+        isSmoothScrolling = true;
+        performMonthScrollCallback();
+    }
+
+    private void performMonthScrollCallback() {
+        if(listener != null){
+            listener.onMonthScroll(getFirstDayOfCurrentMonth());
+        }
+    }
+
+    private void performScroll() {
+        int targetScroll = monthsScrolledSoFar * width;
+        float remainingScrollAfterFingerLifted = targetScroll - accumulatedScrollOffset.x;
+        scroller.startScroll((int) accumulatedScrollOffset.x, 0, (int) (remainingScrollAfterFingerLifted), 0,
+                (int) (Math.abs((int) ( remainingScrollAfterFingerLifted))  / (float) width * ANIMATION_SCREEN_SET_DURATION_MILLIS));
     }
 
     int getHeightPerDay() {
@@ -396,29 +550,6 @@ class CompactCalendarController {
         isAnimating = shouldAnimate;
     }
 
-    Date onSingleTapConfirmed(MotionEvent e) {
-        monthsScrolledSoFar = Math.round(accumulatedScrollOffset.x / width);
-        int dayColumn = Math.round((paddingLeft + e.getX() - paddingWidth - paddingRight) / widthPerDay);
-        int dayRow = Math.round((e.getY() - paddingHeight) / heightPerDay);
-
-        setCalenderToFirstDayOfMonth(calendarWithFirstDayOfMonth, currentDate, -monthsScrolledSoFar, 0);
-
-        //Start Monday as day 1 and Sunday as day 7. Not Sunday as day 1 and Monday as day 2
-        int firstDayOfMonth = getDayOfWeek(calendarWithFirstDayOfMonth);
-
-        int dayOfMonth = ((dayRow - 1) * 7 + dayColumn + 1) - firstDayOfMonth;
-
-        if (dayOfMonth < calendarWithFirstDayOfMonth.getActualMaximum(Calendar.DAY_OF_MONTH)
-                && dayOfMonth >= 0) {
-            calendarWithFirstDayOfMonth.add(Calendar.DATE, dayOfMonth);
-
-            currentCalender.setTimeInMillis(calendarWithFirstDayOfMonth.getTimeInMillis());
-            return currentCalender.getTime();
-        } else {
-            return null;
-        }
-    }
-
     boolean onDown(MotionEvent e) {
         scroller.forceFinished(true);
         return true;
@@ -426,19 +557,6 @@ class CompactCalendarController {
 
     boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
         scroller.forceFinished(true);
-        return true;
-    }
-
-    boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-        if (currentDirection == Direction.NONE) {
-            if (Math.abs(distanceX) > Math.abs(distanceY)) {
-                currentDirection = Direction.HORIZONTAL;
-            } else {
-                currentDirection = Direction.VERTICAL;
-            }
-        }
-
-        this.distanceX = distanceX;
         return true;
     }
 
@@ -451,9 +569,6 @@ class CompactCalendarController {
     }
 
     private void drawScrollableCalender(Canvas canvas) {
-        monthsScrolledSoFar = (int) (accumulatedScrollOffset.x / width);
-
-
         drawPreviousMonth(canvas);
 
         drawCurrentMonth(canvas);
@@ -570,6 +685,7 @@ class CompactCalendarController {
                 }
             } else {
                 int day = ((dayRow - 1) * 7 + dayColumn + 1) - firstDayOfMonth;
+                float yPosition = dayRow * heightPerDay + paddingHeight;
                 if (isSameMonthAsToday && todayDayOfMonth == day) {
                     // TODO calculate position of circle in a more reliable way
                     drawCircle(canvas, xPosition, yPosition, currentDayBackgroundColor);

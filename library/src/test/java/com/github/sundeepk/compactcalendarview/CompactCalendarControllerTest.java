@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.view.MotionEvent;
+import android.view.VelocityTracker;
 import android.widget.OverScroller;
 
 import com.github.sundeepk.compactcalendarview.domain.CalendarDayEvent;
@@ -45,6 +46,7 @@ public class CompactCalendarControllerTest {
     @Mock private Rect rect;
     @Mock private Calendar calendar;
     @Mock private MotionEvent motionEvent;
+    @Mock private VelocityTracker velocityTracker;
 
     private static final String[] dayColumnNames = {"M", "T", "W", "T", "F", "S", "S"};
 
@@ -52,7 +54,8 @@ public class CompactCalendarControllerTest {
 
     @Before
     public void setUp(){
-        underTest = new CompactCalendarController(paint, overScroller, rect, null, null, 0, 0, 0);
+        when(velocityTracker.getXVelocity()).thenReturn(-200f);
+        underTest = new CompactCalendarController(paint, overScroller, rect, null, null, 0, 0, 0, velocityTracker);
     }
 
     @Test(expected=IllegalArgumentException.class)
@@ -62,7 +65,7 @@ public class CompactCalendarControllerTest {
     }
 
     @Test
-    public void testScrollAndGestureScrollPlayNicelyTogether(){
+    public void testManualScrollAndGestureScrollPlayNicelyTogether(){
         //Set width of view so that scrolling will return a correct value
         underTest.onMeasure(720, 1080, 0, 0);
 
@@ -85,37 +88,6 @@ public class CompactCalendarControllerTest {
 
         //Wed, 01 Apr 2015 00:00:00 GMT
         assertEquals(setTimeAndGet(cal, 1427842800000L), underTest.getFirstDayOfCurrentMonth());
-
-        when(motionEvent.getAction()).thenReturn(MotionEvent.ACTION_UP);
-
-        //Scroll enough to push calender to next month
-        underTest.onScroll(motionEvent, motionEvent, 600, 0);
-        underTest.onDraw(canvas);
-        underTest.onTouch(motionEvent);
-
-        //Mon, 01 Jun 2015 00:00:00 GMT
-        assertEquals(setTimeAndGet(cal, 1430438400000L), underTest.getFirstDayOfCurrentMonth());
-
-        underTest.showNextMonth();
-
-        //Mon, 01 Jun 2015 00:00:00 GMT
-        assertEquals(setTimeAndGet(cal, 1433116800000L), underTest.getFirstDayOfCurrentMonth());
-
-        underTest.showNextMonth();
-
-        //Wed, 01 Jul 2015 00:00:00 GMT
-        assertEquals(setTimeAndGet(cal, 1435708800000L), underTest.getFirstDayOfCurrentMonth());
-
-
-        when(motionEvent.getAction()).thenReturn(MotionEvent.ACTION_UP);
-
-        //Scroll enough to push calender to next month
-        underTest.onScroll(motionEvent, motionEvent, 600, 0);
-        underTest.onDraw(canvas);
-        underTest.onTouch(motionEvent);
-
-        //Sat, 01 Aug 2015 00:00:00 GMT
-        assertEquals(setTimeAndGet(cal, 1438387200000L), underTest.getFirstDayOfCurrentMonth());
     }
 
     @Test
