@@ -316,7 +316,7 @@ public class CompactCalendarView extends View {
         compactCalendarController.setAnimationStarted(true);
        // compactCalendarController.setAnimation(true);
 
-        heightAnim.setDuration(700);
+        heightAnim.setDuration(800);
         heightAnim.setInterpolator(new AccelerateDecelerateInterpolator());
         heightAnim.setAnimationListener(new Animation.AnimationListener() {
             @Override
