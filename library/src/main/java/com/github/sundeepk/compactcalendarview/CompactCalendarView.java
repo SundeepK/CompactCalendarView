@@ -96,6 +96,11 @@ public class CompactCalendarView extends View {
         invalidate();
     }
 
+    public void setCalendarBackgroundColor(final int calenderBackgroundColor) {
+        compactCalendarController.setCalenderBackgroundColor(calenderBackgroundColor);
+        invalidate();
+    }
+
     /*
     Will draw the indicator for events as a small dot under the day rather than a circle behind the day.
      */
