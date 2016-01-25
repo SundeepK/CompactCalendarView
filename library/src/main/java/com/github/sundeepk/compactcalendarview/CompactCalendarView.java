@@ -316,7 +316,7 @@ public class CompactCalendarView extends View {
         compactCalendarController.setAnimationStarted(true);
        // compactCalendarController.setAnimation(true);
 
-        heightAnim.setDuration(800);
+        heightAnim.setDuration(650);
         heightAnim.setInterpolator(new AccelerateDecelerateInterpolator());
         heightAnim.setAnimationListener(new Animation.AnimationListener() {
             @Override
@@ -362,7 +362,6 @@ public class CompactCalendarView extends View {
         protected void applyTransformation(float interpolatedTime, Transformation t) {
             currentGrow+=2.4;
             float grow = (float) (interpolatedTime * (targetHeight * 2));
-          //  Log.d("calender", "grow " + grow);
             compactCalendarController.setGrowGfactor(grow);
             int newHeight;
             if (down) {

@@ -710,12 +710,12 @@ class CompactCalendarController {
                 }
             } else {
                 int day = ((dayRow - 1) * 7 + dayColumn + 1) - firstDayOfMonth;
-                if (isSameMonthAsToday && todayDayOfMonth == day) {
+                if (isSameMonthAsToday && todayDayOfMonth == day && !animationStarted) {
                     // TODO calculate position of circle in a more reliable way
                     drawCircle(canvas, xPosition, yPosition, currentDayBackgroundColor);
-                } else if (currentCalender.get(Calendar.DAY_OF_MONTH) == day && isSameMonthAsCurrentCalendar) {
+                } else if (currentCalender.get(Calendar.DAY_OF_MONTH) == day && isSameMonthAsCurrentCalendar && !animationStarted) {
                     drawCircle(canvas, xPosition, yPosition, currentSelectedDayBackgroundColor);
-                } else if (day == 1 && !isSameMonthAsCurrentCalendar) {
+                } else if (day == 1 && !isSameMonthAsCurrentCalendar && !animationStarted) {
                     drawCircle(canvas, xPosition, yPosition, currentSelectedDayBackgroundColor);
                 }
                 if (day <= monthToDrawCalender.getActualMaximum(Calendar.DAY_OF_MONTH) && day > 0) {
