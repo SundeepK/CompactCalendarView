@@ -1,7 +1,5 @@
 package com.github.sundeepk.compactcalendarview;
 
-import android.animation.Animator;
-import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -9,16 +7,10 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.support.v4.view.GestureDetectorCompat;
 import android.util.AttributeSet;
-import android.util.Property;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
-import android.view.animation.AccelerateDecelerateInterpolator;
-import android.view.animation.Animation;
-import android.view.animation.AnimationSet;
-import android.view.animation.OvershootInterpolator;
-import android.view.animation.Transformation;
 import android.widget.OverScroller;
 
 import com.github.sundeepk.compactcalendarview.domain.CalendarDayEvent;
@@ -29,6 +21,7 @@ import java.util.Locale;
 
 public class CompactCalendarView extends View {
 
+    private final AnimationHandler animationHandler;
     private CompactCalendarController compactCalendarController;
     private GestureDetectorCompat gestureDetector;
     private boolean shouldScroll = true;
@@ -38,31 +31,6 @@ public class CompactCalendarView extends View {
         public void onMonthScroll(Date firstDayOfNewMonth);
     }
 
-    public final Property<CompactCalendarView, Float> GROW_FACTOR = new Property<CompactCalendarView, Float>(Float.class, "growFactor") {
-        @Override
-        public void set(CompactCalendarView object, Float value) {
-            CompactCalendarView.this.invalidate();
-            compactCalendarController.setGrowGfactor(value);
-        }
-
-        @Override
-        public Float get(CompactCalendarView object) {
-            return compactCalendarController.getGrowFactor();
-        }
-    };
-
-    public final Property<CompactCalendarView, Float> INDICATOR_GROW_FACTOR = new Property<CompactCalendarView, Float>(Float.class, "growFactor") {
-        @Override
-        public void set(CompactCalendarView object, Float value) {
-            CompactCalendarView.this.invalidate();
-            compactCalendarController.setGrowFactorIndicator(value);
-        }
-
-        @Override
-        public Float get(CompactCalendarView object) {
-            return compactCalendarController.getGrowFactorIndicator();
-        }
-    };
 
     private final GestureDetector.SimpleOnGestureListener gestureListener = new GestureDetector.SimpleOnGestureListener() {
         @Override
@@ -110,6 +78,7 @@ public class CompactCalendarView extends View {
                 new Rect(), attrs, getContext(),  Color.argb(255, 233, 84, 81),
                 Color.argb(255, 64, 64, 64), Color.argb(255, 219, 219, 219), VelocityTracker.obtain());
         gestureDetector = new GestureDetectorCompat(getContext(), gestureListener);
+        animationHandler = new AnimationHandler(compactCalendarController, this);
     }
 
     /*
@@ -257,135 +226,8 @@ public class CompactCalendarView extends View {
     }
 
     public void showCalendarWithAnimation(){
-        AnimationSet animationSet = new AnimationSet(true);
-
-        final ObjectAnimator anim = ObjectAnimator.ofFloat(this, GROW_FACTOR, 1f, 1700f);
-        anim.setDuration(700);
-        AccelerateDecelerateInterpolator value = new AccelerateDecelerateInterpolator();
-        anim.setInterpolator(value);
-        anim.addListener(new Animator.AnimatorListener() {
-            @Override
-            public void onAnimationStart(Animator animation) {
-            }
-
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                compactCalendarController.setAnimation(false);
-                CompactCalendarView.this.invalidate();
-            }
-
-            @Override
-            public void onAnimationCancel(Animator animation) {
-            }
-
-            @Override
-            public void onAnimationRepeat(Animator animation) {
-            }
-        });
-        anim.setDuration(700);
-
-        final ObjectAnimator animIndicator = ObjectAnimator.ofFloat(this, INDICATOR_GROW_FACTOR, 1f, 55f);
-        animIndicator.setDuration(700);
-        animIndicator.setInterpolator(new OvershootInterpolator());
-        animIndicator.addListener(new Animator.AnimatorListener() {
-            @Override
-            public void onAnimationStart(Animator animation) {
-            }
-
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                compactCalendarController.setAnimation(false);
-                CompactCalendarView.this.invalidate();
-            }
-
-            @Override
-            public void onAnimationCancel(Animator animation) {
-            }
-
-            @Override
-            public void onAnimationRepeat(Animator animation) {
-            }
-        });
-
-
-        Animation heightAnim = new DropDownAnim(this, getHeight(), true, anim);
-        compactCalendarController.setTargetHeight(getHeight());
-        this.getLayoutParams().height = 0;
-        requestLayout();
-
-        compactCalendarController.setAnimationStarted(true);
-       // compactCalendarController.setAnimation(true);
-
-        heightAnim.setDuration(650);
-        heightAnim.setInterpolator(new AccelerateDecelerateInterpolator());
-        heightAnim.setAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {
-
-            }
-
-            @Override
-            public void onAnimationEnd(Animation animation) {
-                compactCalendarController.setAnimationStarted(false);
-                compactCalendarController.setAnimation(true);
-              //  anim.start();
-                animIndicator.start();
-
-            }
-
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-            }
-        });
-
-
-        startAnimation(heightAnim);
-
-
+        animationHandler.openCalendar();
     }
-
-    public class DropDownAnim extends Animation {
-        private final int targetHeight;
-        private final View view;
-        private final boolean down;
-        private ObjectAnimator anim;
-        private float currentGrow;
-
-        public DropDownAnim(View view, int targetHeight, boolean down, ObjectAnimator anim) {
-            this.view = view;
-            this.targetHeight = targetHeight;
-            this.down = down;
-            this.anim = anim;
-        }
-
-        @Override
-        protected void applyTransformation(float interpolatedTime, Transformation t) {
-            currentGrow+=2.4;
-            float grow = (float) (interpolatedTime * (targetHeight * 2));
-            compactCalendarController.setGrowGfactor(grow);
-            int newHeight;
-            if (down) {
-                newHeight = (int) (targetHeight * interpolatedTime);
-            } else {
-                newHeight = (int) (targetHeight * (1 - interpolatedTime));
-            }
-            view.getLayoutParams().height = newHeight;
-            view.requestLayout();
-
-        }
-
-        @Override
-        public void initialize(int width, int height, int parentWidth,
-                               int parentHeight) {
-            super.initialize(width, height, parentWidth, parentHeight);
-        }
-
-        @Override
-        public boolean willChangeBounds() {
-            return true;
-        }
-    }
-
 
     public void showNextMonth(){
         compactCalendarController.showNextMonth();

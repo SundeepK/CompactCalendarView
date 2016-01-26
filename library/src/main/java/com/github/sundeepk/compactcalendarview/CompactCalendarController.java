@@ -562,7 +562,7 @@ class CompactCalendarController {
     }
 
 
-    public void setGrowGfactor(float grow) {
+    public void setGrowProgress(float grow) {
         growFactor = grow;
     }
 
