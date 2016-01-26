@@ -37,24 +37,12 @@ class AnimationHandler {
         final ObjectAnimator animIndicator = ObjectAnimator.ofFloat(compactCalendarView, INDICATOR_GROW_FACTOR, 1f, 55f);
         animIndicator.setDuration(700);
         animIndicator.setInterpolator(new OvershootInterpolator());
-        animIndicator.addListener(new Animator.AnimatorListener() {
+
+        animIndicator.addListener(new AnimatorListener() {
             @Override
             public void onAnimationStart(Animator animation) {
-            }
-
-            @Override
-            public void onAnimationEnd(Animator animation) {
                 compactCalendarController.setAnimation(false);
-                compactCalendarView.invalidate();
-            }
-
-            @Override
-            public void onAnimationCancel(Animator animation) {
-            }
-
-            @Override
-            public void onAnimationRepeat(Animator animation) {
-            }
+                compactCalendarView.invalidate();            }
         });
 
 
