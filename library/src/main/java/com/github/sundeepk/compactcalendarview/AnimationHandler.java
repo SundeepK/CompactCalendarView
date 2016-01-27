@@ -4,7 +4,6 @@ package com.github.sundeepk.compactcalendarview;
 import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.support.annotation.NonNull;
-import android.util.Property;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.OvershootInterpolator;
@@ -20,19 +19,6 @@ class AnimationHandler {
         this.compactCalendarController = compactCalendarController;
         this.compactCalendarView = compactCalendarView;
     }
-
-    public final Property<CompactCalendarView, Float> INDICATOR_GROW_FACTOR = new Property<CompactCalendarView, Float>(Float.class, "growFactor") {
-        @Override
-        public void set(CompactCalendarView object, Float value) {
-            compactCalendarView.invalidate();
-            compactCalendarController.setGrowFactorIndicator(value);
-        }
-
-        @Override
-        public Float get(CompactCalendarView object) {
-            return compactCalendarController.getGrowFactorIndicator();
-        }
-    };
 
     void openCalendar(){
         final Animator indicatorAnim = getIndicatorAnimator(1f, 55f);
