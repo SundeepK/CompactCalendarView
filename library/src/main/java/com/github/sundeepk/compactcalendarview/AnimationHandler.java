@@ -2,7 +2,7 @@ package com.github.sundeepk.compactcalendarview;
 
 
 import android.animation.Animator;
-import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.support.annotation.NonNull;
 import android.util.Property;
 import android.view.animation.AccelerateDecelerateInterpolator;
@@ -35,8 +35,20 @@ class AnimationHandler {
     };
 
     void openCalendar(){
-        final ObjectAnimator indicatorAnim = getIndicatorAnimator();
-        final Animation heightAnim = getCollapsingAnimation(indicatorAnim);
+        final Animator indicatorAnim = getIndicatorAnimator(1f, 55f);
+        final Animation heightAnim = getCollapsingAnimation(indicatorAnim, true);
+
+        compactCalendarController.setTargetHeight(compactCalendarView.getHeight());
+        compactCalendarController.setAnimatingHeight(true);
+        compactCalendarView.getLayoutParams().height = 0;
+        compactCalendarView.requestLayout();
+
+        compactCalendarView.startAnimation(heightAnim);
+    }
+
+    void closeCalendar(){
+        final Animator indicatorAnim = getIndicatorAnimator(55f, 1f);
+        final Animation heightAnim = getCollapsingAnimation(indicatorAnim, false);
 
         compactCalendarController.setTargetHeight(compactCalendarView.getHeight());
         compactCalendarController.setAnimatingHeight(true);
@@ -47,8 +59,8 @@ class AnimationHandler {
     }
 
     @NonNull
-    private Animation getCollapsingAnimation(final ObjectAnimator animIndicator) {
-        Animation heightAnim = new CollapsingAnimation(compactCalendarView, compactCalendarController, compactCalendarView.getHeight(), true);
+    private Animation getCollapsingAnimation(final Animator animIndicator, final boolean isCollapsing) {
+        Animation heightAnim = new CollapsingAnimation(compactCalendarView, compactCalendarController, compactCalendarView.getHeight(), isCollapsing);
         heightAnim.setDuration(HEIGHT_ANIM_DURATION_MILLIS);
         heightAnim.setInterpolator(new AccelerateDecelerateInterpolator());
         heightAnim.setAnimationListener(new AnimationListener() {
@@ -64,13 +76,20 @@ class AnimationHandler {
     }
 
     @NonNull
-    private ObjectAnimator getIndicatorAnimator() {
-        final ObjectAnimator animIndicator = ObjectAnimator.ofFloat(compactCalendarView, INDICATOR_GROW_FACTOR, 1f, 55f);
+    private Animator getIndicatorAnimator(float from, float to) {
+        ValueAnimator animIndicator = ValueAnimator.ofFloat(from, to);
         animIndicator.setDuration(INDICATOR_ANIM_DURATION_MILLIS);
         animIndicator.setInterpolator(new OvershootInterpolator());
+        animIndicator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                compactCalendarView.invalidate();
+                compactCalendarController.setGrowFactorIndicator((Float) animation.getAnimatedValue());
+            }
+        });
         animIndicator.addListener(new AnimatorListener() {
             @Override
-            public void onAnimationStart(Animator animation) {
+            public void onAnimationEnd(Animator animation) {
                 compactCalendarController.setAnimation(false);
                 compactCalendarView.invalidate();
             }

@@ -72,7 +72,7 @@ class CompactCalendarController {
     private boolean shouldShowMondayAsFirstDay = true;
     private boolean useThreeLetterAbbreviation = false;
     private float growFactor = 0f;
-    private boolean isAnimatingIndicator;
+    private boolean isAnimating;
     private float screenDensity = 1;
     private float growfactorIndicator;
     VelocityTracker velocityTracker = null;
@@ -86,6 +86,22 @@ class CompactCalendarController {
     private long lastAutoScrollFromFling;
     private boolean isAnimatingHeight;
     private int targetHeight;
+
+    public void setGrowFactorIndicator(float growfactorIndicator) {
+        this.growfactorIndicator = growfactorIndicator;
+    }
+
+    public float getGrowFactorIndicator() {
+        return growfactorIndicator;
+    }
+
+    public void setAnimatingHeight(boolean animatingHeight) {
+        this.isAnimatingHeight = animatingHeight;
+    }
+
+    public void setTargetHeight(int targetHeight) {
+        this.targetHeight = targetHeight;
+    }
 
     private enum Direction {
         NONE, HORIZONTAL, VERTICAL
@@ -162,22 +178,6 @@ class CompactCalendarController {
         calendarWithFirstDayOfMonth.set(Calendar.MINUTE, 0);
         calendarWithFirstDayOfMonth.set(Calendar.SECOND, 0);
         calendarWithFirstDayOfMonth.set(Calendar.MILLISECOND, 0);
-    }
-
-    void setGrowFactorIndicator(float growfactorIndicator) {
-        this.growfactorIndicator = growfactorIndicator;
-    }
-
-    float getGrowFactorIndicator() {
-        return growfactorIndicator;
-    }
-
-    void setAnimatingHeight(boolean animatingHeight) {
-        this.isAnimatingHeight = animatingHeight;
-    }
-
-    void setTargetHeight(int targetHeight) {
-        this.targetHeight = targetHeight;
     }
 
 
@@ -303,7 +303,7 @@ class CompactCalendarController {
             dayPaint.setColor(Color.WHITE);
 
             drawScrollableCalender(canvas);
-        } else if (isAnimatingIndicator) {
+        } else if (isAnimating) {
 
             dayPaint.setColor(calenderBackgroundColor);
             dayPaint.setStyle(Paint.Style.FILL);
@@ -312,7 +312,10 @@ class CompactCalendarController {
             dayPaint.setColor(Color.WHITE);
 
             drawScrollableCalender(canvas);
+
+
         } else {
+
             drawCalenderBackground(canvas);
 
             drawScrollableCalender(canvas);
@@ -564,7 +567,7 @@ class CompactCalendarController {
     }
 
     public void setAnimation(boolean shouldAnimate){
-        isAnimatingIndicator = shouldAnimate;
+        isAnimating = shouldAnimate;
     }
 
     boolean onDown(MotionEvent e) {
@@ -722,7 +725,7 @@ class CompactCalendarController {
     // Draw Circle on certain days to highlight them
     private void drawCircle(Canvas canvas, float x, float y, int color) {
         dayPaint.setColor(color);
-        if (isAnimatingIndicator) {
+        if (isAnimating) {
             drawCircle(canvas, growfactorIndicator, x, y - (textHeight / 6));
         } else {
             drawCircle(canvas, bigCircleIndicatorRadius, x, y - (textHeight / 6));

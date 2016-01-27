@@ -113,7 +113,9 @@ public class MainActivity extends ActionBarActivity {
         showPreviousMonthBut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                compactCalendarView.showPreviousMonth();
+                compactCalendarView.hideCalendarWithAnimation();
+
+               // compactCalendarView.showPreviousMonth();
             }
         });
 

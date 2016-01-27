@@ -229,6 +229,10 @@ public class CompactCalendarView extends View {
         animationHandler.openCalendar();
     }
 
+    public void hideCalendarWithAnimation(){
+        animationHandler.closeCalendar();
+    }
+
     public void showNextMonth(){
         compactCalendarController.showNextMonth();
         invalidate();
