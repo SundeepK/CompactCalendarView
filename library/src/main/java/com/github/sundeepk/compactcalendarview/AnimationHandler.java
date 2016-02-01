@@ -4,7 +4,6 @@ package com.github.sundeepk.compactcalendarview;
 import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.support.annotation.NonNull;
-import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.OvershootInterpolator;
@@ -54,16 +53,20 @@ class AnimationHandler {
 
             @Override
             public void onAnimationStart(Animation animation) {
-                compactCalendarView.setVisibility(View.VISIBLE);
-                compactCalendarView.invalidate();
+                if(!isCollapsing){
+                    compactCalendarController.setAnimatingHeight(false);
+                    compactCalendarController.setAnimation(true);
+                    animIndicator.start();
+                }
             }
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                compactCalendarController.setAnimatingHeight(false);
-                compactCalendarController.setAnimation(true);
-                animIndicator.start();
-
+                if(isCollapsing){
+                    compactCalendarController.setAnimatingHeight(false);
+                    compactCalendarController.setAnimation(true);
+                    animIndicator.start();
+                }
             }
         });
         return heightAnim;
