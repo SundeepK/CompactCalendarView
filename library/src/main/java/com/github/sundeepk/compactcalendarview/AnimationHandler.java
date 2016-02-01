@@ -55,7 +55,7 @@ class AnimationHandler {
             public void onAnimationStart(Animation animation) {
                 if(!isCollapsing){
                     compactCalendarController.setAnimatingHeight(false);
-                    compactCalendarController.setAnimation(true);
+                    compactCalendarController.setAnimatingIndicators(true);
                     animIndicator.start();
                 }
             }
@@ -64,8 +64,10 @@ class AnimationHandler {
             public void onAnimationEnd(Animation animation) {
                 if(isCollapsing){
                     compactCalendarController.setAnimatingHeight(false);
-                    compactCalendarController.setAnimation(true);
+                    compactCalendarController.setAnimatingIndicators(true);
                     animIndicator.start();
+                } else {
+                    compactCalendarController.setAnimatingIndicators(false);
                 }
             }
         });
@@ -87,7 +89,7 @@ class AnimationHandler {
         animIndicator.addListener(new AnimatorListener() {
             @Override
             public void onAnimationEnd(Animator animation) {
-                compactCalendarController.setAnimation(false);
+                compactCalendarController.setAnimatingIndicators(false);
                 compactCalendarView.invalidate();
             }
         });
