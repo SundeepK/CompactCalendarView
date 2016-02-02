@@ -25,6 +25,7 @@
         android:id="@+id/compactcalendar_view"
         android:layout_width="fill_parent"
         android:layout_height="250dp"
+        app:compactCalendarTargetHeight="250dp"
         app:compactCalendarTextSize="12sp"
         app:compactCalendarBackgroundColor="#ffe95451"
         app:compactCalendarTextColor="#fff"

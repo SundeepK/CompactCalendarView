@@ -24,7 +24,6 @@ class AnimationHandler {
         final Animator indicatorAnim = getIndicatorAnimator(1f, 55f);
         final Animation heightAnim = getCollapsingAnimation(indicatorAnim, true);
 
-        compactCalendarController.setTargetHeight(compactCalendarView.getHeight());
         compactCalendarController.setAnimatingHeight(true);
         compactCalendarView.getLayoutParams().height = 0;
         compactCalendarView.requestLayout();
@@ -36,7 +35,6 @@ class AnimationHandler {
         final Animator indicatorAnim = getIndicatorAnimator(55f, 1f);
         final Animation heightAnim = getCollapsingAnimation(indicatorAnim, false);
 
-        compactCalendarController.setTargetHeight(compactCalendarView.getHeight());
         compactCalendarController.setAnimatingHeight(true);
         compactCalendarView.getLayoutParams().height = compactCalendarView.getHeight();
         compactCalendarView.requestLayout();
@@ -46,7 +44,7 @@ class AnimationHandler {
 
     @NonNull
     private Animation getCollapsingAnimation(final Animator animIndicator, final boolean isCollapsing) {
-        Animation heightAnim = new CollapsingAnimation(compactCalendarView, compactCalendarController, compactCalendarView.getHeight(), isCollapsing);
+        Animation heightAnim = new CollapsingAnimation(compactCalendarView, compactCalendarController, compactCalendarController.getTargetHeight(), isCollapsing);
         heightAnim.setDuration(HEIGHT_ANIM_DURATION_MILLIS);
         heightAnim.setInterpolator(new AccelerateDecelerateInterpolator());
         heightAnim.setAnimationListener(new AnimationListener() {

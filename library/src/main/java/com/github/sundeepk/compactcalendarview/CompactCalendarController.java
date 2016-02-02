@@ -87,22 +87,6 @@ class CompactCalendarController {
     private boolean isAnimatingHeight;
     private int targetHeight;
 
-    public void setGrowFactorIndicator(float growfactorIndicator) {
-        this.growfactorIndicator = growfactorIndicator;
-    }
-
-    public float getGrowFactorIndicator() {
-        return growfactorIndicator;
-    }
-
-    public void setAnimatingHeight(boolean animatingHeight) {
-        this.isAnimatingHeight = animatingHeight;
-    }
-
-    public void setTargetHeight(int targetHeight) {
-        this.targetHeight = targetHeight;
-    }
-
     private enum Direction {
         NONE, HORIZONTAL, VERTICAL
     }
@@ -131,6 +115,8 @@ class CompactCalendarController {
                 calenderBackgroundColor = typedArray.getColor(R.styleable.CompactCalendarView_compactCalendarBackgroundColor, calenderBackgroundColor);
                 textSize = typedArray.getDimensionPixelSize(R.styleable.CompactCalendarView_compactCalendarTextSize,
                         (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, textSize, context.getResources().getDisplayMetrics()));
+                targetHeight = typedArray.getDimensionPixelSize(R.styleable.CompactCalendarView_compactCalendarTargetHeight,
+                        (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, targetHeight, context.getResources().getDisplayMetrics()));
             } finally {
                 typedArray.recycle();
             }
@@ -180,6 +166,21 @@ class CompactCalendarController {
         calendarWithFirstDayOfMonth.set(Calendar.MILLISECOND, 0);
     }
 
+    void setGrowFactorIndicator(float growfactorIndicator) {
+        this.growfactorIndicator = growfactorIndicator;
+    }
+
+    float getGrowFactorIndicator() {
+        return growfactorIndicator;
+    }
+
+    void setAnimatingHeight(boolean animatingHeight) {
+        this.isAnimatingHeight = animatingHeight;
+    }
+
+    int getTargetHeight() {
+        return targetHeight;
+    }
 
     void setListener(CompactCalendarView.CompactCalendarViewListener listener) {
         this.listener = listener;

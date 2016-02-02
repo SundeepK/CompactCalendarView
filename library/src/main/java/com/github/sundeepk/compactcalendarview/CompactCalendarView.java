@@ -226,10 +226,18 @@ public class CompactCalendarView extends View {
     }
 
     public void showCalendarWithAnimation(){
+        checkTargetHeight();
         animationHandler.openCalendar();
     }
 
+    private void checkTargetHeight() {
+        if (compactCalendarController.getTargetHeight() <= 0) {
+            throw new IllegalStateException("Target height must be set in xml properties in order to expand/collapse CompactCalendar.");
+        }
+    }
+
     public void hideCalendarWithAnimation(){
+        checkTargetHeight();
         animationHandler.closeCalendar();
     }
 
