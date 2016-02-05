@@ -37,6 +37,11 @@ dependencies {
     compile 'com.github.sundeepk:compact-calendar-view:1.8.1'
 }
 
+//smooth scrolling functionality
+dependencies {
+    compile 'com.github.sundeepk:compact-calendar-view:1.8.2-beta-smooth-scrolling'
+}
+
 ```
 
 Please let me know if you are using this in your app so that I can add you as a list of users in the readme :).
