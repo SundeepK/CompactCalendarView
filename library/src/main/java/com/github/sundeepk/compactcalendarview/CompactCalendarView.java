@@ -225,10 +225,6 @@ public class CompactCalendarView extends View {
         compactCalendarController.removeAllEvents();
     }
 
-    public void showCalendarWithAnimation(){
-        checkTargetHeight();
-        animationHandler.openCalendar();
-    }
 
     private void checkTargetHeight() {
         if (compactCalendarController.getTargetHeight() <= 0) {
@@ -236,9 +232,24 @@ public class CompactCalendarView extends View {
         }
     }
 
-    public void hideCalendarWithAnimation(){
+    public void showCalendar(){
+        checkTargetHeight();
+        animationHandler.openCalendar();
+    }
+
+    public void hideCalendar(){
         checkTargetHeight();
         animationHandler.closeCalendar();
+    }
+
+    public void showCalendarWithAnimation(){
+        checkTargetHeight();
+        animationHandler.openCalendarWithAnimation();
+    }
+
+    public void hideCalendarWithAnimation(){
+        checkTargetHeight();
+        animationHandler.closeCalendarWithAnimation();
     }
 
     public void showNextMonth(){

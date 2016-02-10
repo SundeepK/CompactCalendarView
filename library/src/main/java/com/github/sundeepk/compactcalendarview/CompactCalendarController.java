@@ -559,15 +559,15 @@ class CompactCalendarController {
     }
 
 
-    public void setGrowProgress(float grow) {
+    void setGrowProgress(float grow) {
         growFactor = grow;
     }
 
-    public float getGrowFactor() {
+    float getGrowFactor() {
         return growFactor;
     }
 
-    public void setAnimatingIndicators(boolean isAnimating){
+    void setAnimatingIndicators(boolean isAnimating){
         isAnimatingIndicator = isAnimating;
     }
 
@@ -644,7 +644,7 @@ class CompactCalendarController {
                 int weekNumberForMonth = eventsCalendar.get(Calendar.WEEK_OF_MONTH);
                 float xPosition = widthPerDay * dayOfWeek + paddingWidth + paddingLeft + accumulatedScrollOffset.x + offset - paddingRight;
                 float yPosition = weekNumberForMonth * heightPerDay + paddingHeight;
-                if (xPosition >= growFactor || yPosition >= growFactor ) continue;
+                if (xPosition >= growFactor  || yPosition >= growFactor) continue;
 
                 int dayOfMonth = eventsCalendar.get(Calendar.DAY_OF_MONTH);
                 boolean isSameDayAsCurrentDay = (todayDayOfMonth == dayOfMonth && shouldDrawCurrentDayCircle);
@@ -697,7 +697,7 @@ class CompactCalendarController {
             }
             float xPosition = widthPerDay * dayColumn + paddingWidth + paddingLeft + accumulatedScrollOffset.x + offset - paddingRight;
             float yPosition = dayRow * heightPerDay + paddingHeight;
-            if (xPosition > growFactor || yPosition > growFactor ) continue;
+            if (xPosition >= growFactor && isAnimatingHeight || yPosition >= growFactor ) continue;
             if (dayRow == 0) {
                 // first row, so draw the first letter of the day
                 if (shouldDrawDaysHeader) {
