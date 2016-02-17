@@ -13,6 +13,10 @@ It's possible to set the locale so that weekday column names are automatically s
 ```
 ![ScreenShot](https://github.com/SundeepK/CompactCalendarView/blob/master/images/chinese-locale-daynames.png)
 
+# Open/Close animations
+The library supports opening/closing with or without animations. This is currently in beta (in a branch and will be avaible in gradle soon as a beta).
+![ScreenShot](https://github.com/SundeepK/CompactCalendarView/blob/master/images/compact_calendar_animation.gif)
+
 # Example usage
 It is possible to change the apreance of the view via a few properties. This includes the background color, text color, textsize color of the current day and the color of the first day of the month.
 
