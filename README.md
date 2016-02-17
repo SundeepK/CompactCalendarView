@@ -15,6 +15,7 @@ It's possible to set the locale so that weekday column names are automatically s
 
 # Open/Close animations
 The library supports opening/closing with or without animations. This is currently in beta (in a branch and will be avaible in gradle soon as a beta).
+
 ![ScreenShot](https://github.com/SundeepK/CompactCalendarView/blob/master/images/compact_calendar_animation.gif)
 
 # Example usage
