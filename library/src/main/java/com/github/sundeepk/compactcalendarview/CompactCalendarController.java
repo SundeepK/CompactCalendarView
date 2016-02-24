@@ -673,7 +673,6 @@ class CompactCalendarController {
     }
 
     void drawMonth(Canvas canvas, Calendar monthToDrawCalender, int offset) {
-     //   Log.d("compactcontroller", "height "+  height);
         drawEvents(canvas, monthToDrawCalender, offset);
 
         //offset by one because we want to start from Monday

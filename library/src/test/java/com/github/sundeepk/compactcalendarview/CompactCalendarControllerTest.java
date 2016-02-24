@@ -122,6 +122,7 @@ public class CompactCalendarControllerTest {
         when(calendar.getActualMaximum(Calendar.DAY_OF_MONTH)).thenReturn(28);
 
         String[] dayNames = {"Mon", "Tue", "Wed", "Thur", "Fri", "Sat", "Sun"};
+        underTest.setGrowProgress(1000); //set grow progress so that it simulates the calendar being open
         underTest.setDayColumnNames(dayNames);
         underTest.drawMonth(canvas, calendar, 0);
 
@@ -162,6 +163,7 @@ public class CompactCalendarControllerTest {
         when(calendar.get(Calendar.MONTH)).thenReturn(1);
         when(calendar.getActualMaximum(Calendar.DAY_OF_MONTH)).thenReturn(28);
 
+        underTest.setGrowProgress(1000); //set grow progress so that it simulates the calendar being open
         underTest.setLocale(Locale.FRANCE);
         reset(canvas); //reset because invalidate is called
         underTest.setUseWeekDayAbbreviation(true);
@@ -215,6 +217,7 @@ public class CompactCalendarControllerTest {
         when(calendar.get(Calendar.MONTH)).thenReturn(1);
         when(calendar.getActualMaximum(Calendar.DAY_OF_MONTH)).thenReturn(28);
 
+        underTest.setGrowProgress(1000); //set grow progress so that it simulates the calendar being open
         underTest.setShouldShowMondayAsFirstDay(false);
         underTest.setUseWeekDayAbbreviation(true);
         underTest.drawMonth(canvas, calendar, 0);
@@ -236,6 +239,7 @@ public class CompactCalendarControllerTest {
         when(calendar.get(Calendar.MONTH)).thenReturn(1);
         when(calendar.getActualMaximum(Calendar.DAY_OF_MONTH)).thenReturn(28);
 
+        underTest.setGrowProgress(1000); //set grow progress so that it simulates the calendar being open
         underTest.drawMonth(canvas, calendar, 0);
 
         InOrder inOrder = inOrder(canvas);
@@ -251,6 +255,7 @@ public class CompactCalendarControllerTest {
     @Test
     public void testItDrawsDaysOnCalender(){
         //simulate Feb month
+        underTest.setGrowProgress(1000); //set grow progress so that it simulates the calendar being open
         when(calendar.get(Calendar.DAY_OF_WEEK)).thenReturn(1);
         when(calendar.get(Calendar.MONTH)).thenReturn(1);
         when(calendar.getActualMaximum(Calendar.DAY_OF_MONTH)).thenReturn(28);
@@ -371,6 +376,7 @@ public class CompactCalendarControllerTest {
         when(calendar.get(Calendar.MONTH)).thenReturn(5);
         when(calendar.get(Calendar.YEAR)).thenReturn(2015);
 
+        underTest.setGrowProgress(1000); //set grow progress so that it simulates the calendar being open
         underTest.drawEvents(canvas, calendar, 0);
 
         verify(canvas, times(30)).drawCircle(anyFloat(), anyFloat(), anyFloat(), eq(paint));
