@@ -47,10 +47,13 @@ dependencies {
     compile 'com.github.sundeepk:compact-calendar-view:1.8.2-beta-smooth-scrolling'
 }
 
+//smooth scrolling functionality with open/close calendar
+dependencies {
+    compile 'com.github.sundeepk:compact-calendar-view:1.8.2-beta-smooth-scrolling-with-animations'
+}
+
+
 ```
-
-Please let me know if you are using this in your app so that I can add you as a list of users in the readme :).
-
 #Contributing  
 Please raise an issue of the requirement so that a disscussion can take before any code is written.
 
