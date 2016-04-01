@@ -138,6 +138,11 @@ public class CompactCalendarView extends View {
         invalidate();
     }
 
+    public void setCurrentDayTextColor(int currentDayTextColor) {
+        compactCalendarController.setCurrentDayTextColor(currentDayTextColor);
+        invalidate();
+    }
+
     public int getHeightPerDay(){
         return compactCalendarController.getHeightPerDay();
     }
