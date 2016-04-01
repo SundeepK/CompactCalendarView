@@ -66,6 +66,7 @@ class CompactCalendarController {
     private boolean shouldShowMondayAsFirstDay = true;
     private boolean useThreeLetterAbbreviation = false;
     private float screenDensity = 1;
+    private int currentSelectedDayTextColor;
 
     private enum Direction {
         NONE, HORIZONTAL, VERTICAL
@@ -79,6 +80,7 @@ class CompactCalendarController {
         this.currentDayBackgroundColor = currentDayBackgroundColor;
         this.calenderTextColor = calenderTextColor;
         this.currentSelectedDayBackgroundColor = currentSelectedDayBackgroundColor;
+        this.currentSelectedDayTextColor=calenderTextColor;
         loadAttributes(attrs, context);
         init(context);
     }
@@ -93,6 +95,7 @@ class CompactCalendarController {
                 calenderBackgroundColor = typedArray.getColor(R.styleable.CompactCalendarView_compactCalendarBackgroundColor, calenderBackgroundColor);
                 textSize = typedArray.getDimensionPixelSize(R.styleable.CompactCalendarView_compactCalendarTextSize,
                         (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, textSize, context.getResources().getDisplayMetrics()));
+                currentSelectedDayTextColor=typedArray.getColor(R.styleable.CompactCalendarView_compactCalendarSelectedDayTextColor,currentSelectedDayTextColor);
             } finally {
                 typedArray.recycle();
             }
@@ -154,6 +157,9 @@ class CompactCalendarController {
 
     void setCurrentSelectedDayBackgroundColor(int currentSelectedDayBackgroundColor) {
         this.currentSelectedDayBackgroundColor = currentSelectedDayBackgroundColor;
+    }
+    void setCurrentSelectedDayTextColor(int currentSelectedDayTextColor) {
+        this.currentSelectedDayTextColor = currentSelectedDayTextColor;
     }
 
     void setCalenderBackgroundColor(int calenderBackgroundColor) {
@@ -538,13 +544,20 @@ class CompactCalendarController {
                 if (isSameYearAsToday && isSameMonthAsToday && todayDayOfMonth == day) {
                     // TODO calculate position of circle in a more reliable way
                     drawCircle(canvas, xPosition, yPosition, currentDayBackgroundColor);
-                } else if (currentCalender.get(Calendar.DAY_OF_MONTH) == day && isSameMonthAsCurrentCalendar) {
-                    drawCircle(canvas, xPosition, yPosition, currentSelectedDayBackgroundColor);
-                } else if (day == 1 && !isSameMonthAsCurrentCalendar) {
+                } else if ((currentCalender.get(Calendar.DAY_OF_MONTH) == day && isSameMonthAsCurrentCalendar) || (day == 1 && !isSameMonthAsCurrentCalendar)) {
                     drawCircle(canvas, xPosition, yPosition, currentSelectedDayBackgroundColor);
                 }
+
                 if (day <= monthToDrawCalender.getActualMaximum(Calendar.DAY_OF_MONTH) && day > 0) {
-                    canvas.drawText(String.valueOf(day), xPosition, yPosition, dayPaint);
+                    if ((currentCalender.get(Calendar.DAY_OF_MONTH) == day && isSameMonthAsCurrentCalendar) || (day == 1 && !isSameMonthAsCurrentCalendar)) {
+                        int previousColor=dayPaint.getColor();
+                        dayPaint.setColor(currentSelectedDayTextColor);
+                        canvas.drawText(String.valueOf(day), xPosition, yPosition, dayPaint);
+                        dayPaint.setColor(previousColor);
+                    }
+                    else {
+                        canvas.drawText(String.valueOf(day), xPosition, yPosition, dayPaint);
+                    }
                 }
             }
 

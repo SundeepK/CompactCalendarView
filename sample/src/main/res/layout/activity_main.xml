@@ -29,6 +29,7 @@
         app:compactCalendarTextColor="#fff"
         app:compactCalendarCurrentSelectedDayBackgroundColor="#E57373"
         app:compactCalendarCurrentDayBackgroundColor="#B71C1C"
+        app:compactCalendarSelectedDayTextColor="@color/orange"
         />
 
     <ListView
