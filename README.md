@@ -35,6 +35,7 @@ It is possible to change the apreance of the view via a few properties. This inc
         app:compactCalendarCurrentSelectedDayBackgroundColor="#E57373"
         app:compactCalendarCurrentDayBackgroundColor="#B71C1C"
         app:compactCalendarSelectedDayTextColor="#ff8000"
+        app:compactCalendarCurrentDayTextColor="#0000ff"
         />
 
 ```
