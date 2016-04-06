@@ -6,5 +6,7 @@
         <attr name="compactCalendarCurrentDayBackgroundColor" format="color"/>
         <attr name="compactCalendarCurrentSelectedDayBackgroundColor" format="color"/>
         <attr name="compactCalendarTextColor" format="color"/>
+        <attr name="compactCalendarSelectedDayTextColor" format="color"/>
+        <attr name="compactCalendarCurrentDayTextColor" format="color"/>
     </declare-styleable>
 </resources>

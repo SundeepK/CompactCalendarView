@@ -72,7 +72,10 @@ public class MainActivity extends ActionBarActivity {
         compactCalendarView.setCurrentDayBackgroundColor(getResources().getColor(R.color.black));
         // below allows you to configure colors for the current day the user has selected
         compactCalendarView.setCurrentSelectedDayBackgroundColor(getResources().getColor(R.color.dark_red));
-        
+
+        // below allows you to configure the text color for the day the user has selected
+        // compactCalendarView.setCurrentSelectedDayTextColor(getResources().getColor(R.color.orange));
+
         addEvents(compactCalendarView, -1);
         addEvents(compactCalendarView, Calendar.DECEMBER);
         addEvents(compactCalendarView, Calendar.AUGUST);

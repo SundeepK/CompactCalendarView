@@ -128,9 +128,18 @@ public class CompactCalendarView extends View {
         compactCalendarController.setCurrentSelectedDayBackgroundColor(currentSelectedDayBackgroundColor);
         invalidate();
     }
+    public void setCurrentSelectedDayTextColor(int currentSelectedDayTextColor) {
+        compactCalendarController.setCurrentSelectedDayTextColor(currentSelectedDayTextColor);
+        invalidate();
+    }
 
     public void setCurrentDayBackgroundColor(int currentDayBackgroundColor) {
         compactCalendarController.setCurrentDayBackgroundColor(currentDayBackgroundColor);
+        invalidate();
+    }
+
+    public void setCurrentDayTextColor(int currentDayTextColor) {
+        compactCalendarController.setCurrentDayTextColor(currentDayTextColor);
         invalidate();
     }
 
