@@ -31,6 +31,7 @@ public class MainActivity extends ActionBarActivity {
     private Calendar currentCalender = Calendar.getInstance(Locale.getDefault());
     private SimpleDateFormat dateFormatForMonth = new SimpleDateFormat("MMM - yyyy", Locale.getDefault());
     private Map<Date, List<Booking>> bookings = new HashMap<>();
+    private boolean shouldShow = false;
 
     public class Booking {
         private String title;
@@ -62,6 +63,8 @@ public class MainActivity extends ActionBarActivity {
         final ListView bookingsListView = (ListView) findViewById(R.id.bookings_listview);
         final Button showPreviousMonthBut = (Button) findViewById(R.id.prev_button);
         final Button showNextMonthBut = (Button) findViewById(R.id.next_button);
+        final Button slideCalendarBut = (Button) findViewById(R.id.slide_calendar);
+        final Button showCalendarWithAnimationBut = (Button) findViewById(R.id.show_with_animation_calendar);
 
         final ArrayAdapter adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, mutableBookings);
         bookingsListView.setAdapter(adapter);
@@ -113,21 +116,40 @@ public class MainActivity extends ActionBarActivity {
         showPreviousMonthBut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                compactCalendarView.hideCalendar();
-
-               // compactCalendarView.showPreviousMonth();
+               compactCalendarView.showPreviousMonth();
             }
         });
 
         showNextMonthBut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                compactCalendarView.showCalendar();
-
-                // compactCalendarView.showNextMonth();
+                 compactCalendarView.showNextMonth();
             }
         });
 
+        slideCalendarBut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (shouldShow) {
+                    compactCalendarView.showCalendar();
+                } else {
+                    compactCalendarView.hideCalendar();
+                }
+                shouldShow = !shouldShow;
+            }
+        });
+
+        showCalendarWithAnimationBut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (shouldShow) {
+                    compactCalendarView.showCalendarWithAnimation();
+                } else {
+                    compactCalendarView.hideCalendarWithAnimation();
+                }
+                shouldShow = !shouldShow;
+            }
+        });
 
     }
 
