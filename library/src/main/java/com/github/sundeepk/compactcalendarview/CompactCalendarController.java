@@ -72,7 +72,7 @@ class CompactCalendarController {
     private boolean shouldShowMondayAsFirstDay = true;
     private boolean useThreeLetterAbbreviation = false;
     private float growFactor = 0f;
-    private boolean isAnimatingIndicator;
+    private boolean isAnimatingIndicator = false;
     private float screenDensity = 1;
     private float growfactorIndicator;
     VelocityTracker velocityTracker = null;
@@ -84,7 +84,7 @@ class CompactCalendarController {
     private boolean isScrolling;
     private int distanceThresholdForAutoScroll;
     private long lastAutoScrollFromFling;
-    private boolean isAnimatingHeight;
+    private boolean isAnimatingHeight = false;
     private int targetHeight;
 
     private enum Direction {
@@ -150,6 +150,9 @@ class CompactCalendarController {
             densityAdjustedSnapVelocity = (int) (screenDensity * SNAP_VELOCITY_DIP_PER_SECOND);
             maximumVelocity = configuration.getScaledMaximumFlingVelocity();
         }
+
+        //just set a default growFactor to draw full calendar when initialised
+        growFactor = Integer.MAX_VALUE;
     }
 
     private void setCalenderToFirstDayOfMonth(Calendar calendarWithFirstDayOfMonth, Date currentDate, int scrollOffset, int monthOffset) {
@@ -644,7 +647,10 @@ class CompactCalendarController {
                 int weekNumberForMonth = eventsCalendar.get(Calendar.WEEK_OF_MONTH);
                 float xPosition = widthPerDay * dayOfWeek + paddingWidth + paddingLeft + accumulatedScrollOffset.x + offset - paddingRight;
                 float yPosition = weekNumberForMonth * heightPerDay + paddingHeight;
-                if (xPosition >= growFactor  || yPosition >= growFactor) continue;
+
+                if (xPosition >= growFactor  || yPosition >= growFactor) {
+                    continue;
+                }
 
                 int dayOfMonth = eventsCalendar.get(Calendar.DAY_OF_MONTH);
                 boolean isSameDayAsCurrentDay = (todayDayOfMonth == dayOfMonth && shouldDrawCurrentDayCircle);
@@ -696,7 +702,9 @@ class CompactCalendarController {
             }
             float xPosition = widthPerDay * dayColumn + paddingWidth + paddingLeft + accumulatedScrollOffset.x + offset - paddingRight;
             float yPosition = dayRow * heightPerDay + paddingHeight;
-            if (xPosition >= growFactor && isAnimatingHeight || yPosition >= growFactor ) continue;
+            if (xPosition >= growFactor && isAnimatingHeight|| yPosition >= growFactor){
+                continue;
+            }
             if (dayRow == 0) {
                 // first row, so draw the first letter of the day
                 if (shouldDrawDaysHeader) {
