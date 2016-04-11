@@ -207,6 +207,10 @@ class CompactCalendarController {
         this.currentSelectedDayBackgroundColor = currentSelectedDayBackgroundColor;
     }
 
+    void setCalenderBackgroundColor(int calenderBackgroundColor) {
+        this.calenderBackgroundColor = calenderBackgroundColor;
+    }
+
     void setCurrentDayBackgroundColor(int currentDayBackgroundColor) {
         this.currentDayBackgroundColor = currentDayBackgroundColor;
     }
@@ -687,6 +691,7 @@ class CompactCalendarController {
         //offset by one because of 0 index based calculations
         firstDayOfMonth = firstDayOfMonth - 1;
         boolean isSameMonthAsToday = monthToDrawCalender.get(Calendar.MONTH) == todayCalender.get(Calendar.MONTH);
+        boolean isSameYearAsToday = monthToDrawCalender.get(Calendar.YEAR) == todayCalender.get(Calendar.YEAR);
         boolean isSameMonthAsCurrentCalendar = monthToDrawCalender.get(Calendar.MONTH) == currentCalender.get(Calendar.MONTH);
         int todayDayOfMonth = todayCalender.get(Calendar.DAY_OF_MONTH);
 
@@ -714,7 +719,7 @@ class CompactCalendarController {
                 }
             } else {
                 int day = ((dayRow - 1) * 7 + dayColumn + 1) - firstDayOfMonth;
-                if (isSameMonthAsToday && todayDayOfMonth == day && !isAnimatingHeight) {
+                if (isSameYearAsToday && isSameMonthAsToday && todayDayOfMonth == day && !isAnimatingHeight) {
                     // TODO calculate position of circle in a more reliable way
                     drawCircle(canvas, xPosition, yPosition, currentDayBackgroundColor);
                 } else if (currentCalender.get(Calendar.DAY_OF_MONTH) == day && isSameMonthAsCurrentCalendar && !isAnimatingHeight) {

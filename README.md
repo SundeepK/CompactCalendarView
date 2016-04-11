@@ -1,5 +1,5 @@
 # CompactCalendarView
-CompactCalendarView is a simple calender view which provides scrolling between months. It's based on Java's Date and Calender classes. It provides a simple api to query for dates and listeners for specific events.  For example, when the calender has scrolled to a new month or a day has been selected.
+CompactCalendarView is a simple calendar view which provides scrolling between months. It's based on Java's Date and Calendar classes. It provides a simple api to query for dates and listeners for specific events.  For example, when the calendar has scrolled to a new month or a day has been selected.
 Still under active developmemt.
 ![ScreenShot](https://github.com/SundeepK/CompactCalendarView/blob/master/images/compact-calendar-view-example.png)
 
@@ -12,6 +12,11 @@ It's possible to set the locale so that weekday column names are automatically s
         compactCalendarView.setUseThreeLetterAbbreviation(true);
 ```
 ![ScreenShot](https://github.com/SundeepK/CompactCalendarView/blob/master/images/chinese-locale-daynames.png)
+
+# Open/Close animations
+The library supports opening/closing with or without animations. This is currently in beta (in a branch and will be avaible in gradle soon as a beta).
+
+![ScreenShot](https://github.com/SundeepK/CompactCalendarView/blob/master/images/compact_calendar_animation.gif)
 
 # Example usage
 It is possible to change the apreance of the view via a few properties. This includes the background color, text color, textsize color of the current day and the color of the first day of the month.
@@ -34,13 +39,21 @@ It is possible to change the apreance of the view via a few properties. This inc
 ```
 ```gradle
 dependencies {
-    compile 'com.github.sundeepk:compact-calendar-view:1.8.1'
+    compile 'com.github.sundeepk:compact-calendar-view:1.8.2'
 }
 
+//smooth scrolling functionality
+dependencies {
+    compile 'com.github.sundeepk:compact-calendar-view:1.8.2-beta-smooth-scrolling'
+}
+
+//smooth scrolling functionality with open/close calendar
+dependencies {
+    compile 'com.github.sundeepk:compact-calendar-view:1.8.2-beta-smooth-scrolling-with-animations'
+}
+
+
 ```
-
-Please let me know if you are using this in your app so that I can add you as a list of users in the readme :).
-
 #Contributing  
 Please raise an issue of the requirement so that a disscussion can take before any code is written.
 
