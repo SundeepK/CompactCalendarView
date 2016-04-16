@@ -42,14 +42,9 @@ dependencies {
     compile 'com.github.sundeepk:compact-calendar-view:1.8.2'
 }
 
-//smooth scrolling functionality
-dependencies {
-    compile 'com.github.sundeepk:compact-calendar-view:1.8.2-beta-smooth-scrolling'
-}
-
 //smooth scrolling functionality with open/close calendar
 dependencies {
-    compile 'com.github.sundeepk:compact-calendar-view:1.8.2-beta-smooth-scrolling-with-animations'
+    compile 'com.github.sundeepk:compact-calendar-view:1.8.3'
 }
 
 
