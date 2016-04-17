@@ -14,7 +14,7 @@ It's possible to set the locale so that weekday column names are automatically s
 ![ScreenShot](https://github.com/SundeepK/CompactCalendarView/blob/master/images/chinese-locale-daynames.png)
 
 # Open/Close animations
-The library supports opening/closing with or without animations. This is currently in beta (in a branch and will be avaible in gradle soon as a beta).
+The library supports opening/closing with or without animations. 
 
 ![ScreenShot](https://github.com/SundeepK/CompactCalendarView/blob/master/images/compact_calendar_animation.gif)
 
@@ -60,7 +60,7 @@ TODO:
 ```
 The MIT License (MIT)
 
-Copyright (c) [2015] [Sundeepk]
+Copyright (c) [2016] [Sundeepk]
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
