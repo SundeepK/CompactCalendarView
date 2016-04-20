@@ -105,13 +105,6 @@ public class CompactCalendarView extends View {
     }
 
     /*
-    Will draw the indicator for events as a small dot under the day rather than a circle behind the day.
-     */
-    public void drawSmallIndicatorForEvents(boolean shouldDrawDaysHeader){
-        compactCalendarController.showSmallIndicator(shouldDrawDaysHeader);
-    }
-
-    /*
     Sets the name for each day of the week. No attempt is made to adjust width or text size based on the length of each day name.
     Works best with 3-4 characters for each day.
      */
