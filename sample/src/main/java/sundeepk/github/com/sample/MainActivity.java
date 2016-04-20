@@ -70,8 +70,6 @@ public class MainActivity extends ActionBarActivity {
         final ArrayAdapter adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, mutableBookings);
         bookingsListView.setAdapter(adapter);
         final CompactCalendarView compactCalendarView = (CompactCalendarView) findViewById(R.id.compactcalendar_view);
-        compactCalendarView.drawSmallIndicatorForEvents(true);
-
 
         // below allows you to configure color for the current day in the month
         compactCalendarView.setCurrentDayBackgroundColor(getResources().getColor(R.color.black));
