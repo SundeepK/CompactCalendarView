@@ -671,6 +671,7 @@ class CompactCalendarController {
                                 canvas.drawLine(xPosition + (xIndicatorOffset * k) - smallIndicatorRadius, yPosition + yIndicatorOffset, xPosition + (xIndicatorOffset * k) + (smallIndicatorRadius), yPosition + yIndicatorOffset, dayPaint);
                                 canvas.drawLine(xPosition + (xIndicatorOffset * k), yPosition + yIndicatorOffset - smallIndicatorRadius, xPosition + (xIndicatorOffset * k), yPosition + yIndicatorOffset + smallIndicatorRadius, dayPaint);
                                 dayPaint.setStrokeWidth(0);
+                            } else {
                                 drawSmallIndicatorCircle(canvas, xPosition + (xIndicatorOffset * k), yPosition + yIndicatorOffset, event.getColor());
                             }
                         }
@@ -679,13 +680,11 @@ class CompactCalendarController {
                             Event event = eventsList.get(j);
                             //draw small indicators below the day in the calendar
                             drawSmallIndicatorCircle(canvas, xPosition + (xIndicatorOffset * k), yPosition + yIndicatorOffset, event.getColor());
-                            drawCircle(canvas, xPosition + (xIndicatorOffset * k), yPosition, event.getColor());
                         }
                     } else if (eventsList.size() == 1) {
                         Event event = eventsList.get(0);
                         //draw small indicators below the day in the calendar
                         drawSmallIndicatorCircle(canvas, xPosition, yPosition + yIndicatorOffset, event.getColor());
-                        drawCircle(canvas, xPosition, yPosition, event.getColor());
                     }
                 }
             }
