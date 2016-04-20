@@ -9,6 +9,7 @@ import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
@@ -16,6 +17,7 @@ import android.view.ViewConfiguration;
 import android.widget.OverScroller;
 
 import com.github.sundeepk.compactcalendarview.domain.CalendarDayEvent;
+import com.github.sundeepk.compactcalendarview.domain.Event;
 
 import java.text.DateFormatSymbols;
 import java.util.ArrayList;
@@ -86,6 +88,7 @@ class CompactCalendarController {
     private long lastAutoScrollFromFling;
     private boolean isAnimatingHeight = false;
     private int targetHeight;
+    private int plusColor = Color.argb(255, 100, 68, 65);
 
     private enum Direction {
         NONE, HORIZONTAL, VERTICAL
@@ -639,11 +642,13 @@ class CompactCalendarController {
 
         boolean shouldDrawCurrentDayCircle = currentMonthToDrawCalender.get(Calendar.MONTH) == todayCalender.get(Calendar.MONTH);
         int todayDayOfMonth = todayCalender.get(Calendar.DAY_OF_MONTH);
+        float eventSeperation = screenDensity * 3.5f;
+        float yIndicatorOffset = 12 * screenDensity;
 
         if (uniqCalendarDayEvents != null) {
             for (int i = 0; i < uniqCalendarDayEvents.size(); i++) {
-                CalendarDayEvent event = uniqCalendarDayEvents.get(i);
-                long timeMillis = event.getTimeInMillis();
+                CalendarDayEvent calendarDayEvent = uniqCalendarDayEvents.get(i);
+                long timeMillis = calendarDayEvent.getTimeInMillis();
                 eventsCalendar.setTimeInMillis(timeMillis);
 
                 int dayOfWeek = getDayOfWeek(eventsCalendar) - 1;
@@ -656,16 +661,56 @@ class CompactCalendarController {
                     continue;
                 }
 
+                List<Event> eventsList = calendarDayEvent.getEvents();
                 int dayOfMonth = eventsCalendar.get(Calendar.DAY_OF_MONTH);
                 boolean isSameDayAsCurrentDay = (todayDayOfMonth == dayOfMonth && shouldDrawCurrentDayCircle);
-                if (!isSameDayAsCurrentDay) {
-                    if (showSmallIndicator) {
-                        //draw small indicators below the day in the calendar
-                        drawSmallIndicatorCircle(canvas, xPosition, yPosition + 15, event.getColor());
-                    } else {
-                        drawCircle(canvas, xPosition, yPosition, event.getColor());
+
+                if (eventsList.size() >= 3) {
+                    for (int j = 0, k = -2 ; j < 3; j++, k+=2) {
+                        Event event = eventsList.get(j);
+                        if (!isSameDayAsCurrentDay) {
+                            if (j == 2) {
+                                dayPaint.setColor(plusColor);
+                                float originalWidth = dayPaint.getStrokeWidth();
+                                Log.d("controller", " originalWidth " + originalWidth);
+                                dayPaint.setStrokeWidth(4);
+                                canvas.drawLine(xPosition + (eventSeperation * k), yPosition + yIndicatorOffset, xPosition + (eventSeperation * k) + smallIndicatorRadius , yPosition + yIndicatorOffset, dayPaint);
+                                canvas.drawLine(xPosition + (eventSeperation * k), yPosition + yIndicatorOffset, xPosition + (eventSeperation * k) - smallIndicatorRadius , yPosition + yIndicatorOffset, dayPaint);
+                                canvas.drawLine(xPosition + (eventSeperation * k), yPosition + yIndicatorOffset, xPosition + (eventSeperation * k), yPosition + yIndicatorOffset + smallIndicatorRadius , dayPaint);
+                                canvas.drawLine(xPosition + (eventSeperation * k), yPosition + yIndicatorOffset, xPosition + (eventSeperation * k), yPosition + yIndicatorOffset - smallIndicatorRadius  , dayPaint);
+                                dayPaint.setStrokeWidth(0);
+                            } else if (showSmallIndicator) {
+                                //draw small indicators below the day in the calendar
+                                drawSmallIndicatorCircle(canvas, xPosition + (eventSeperation * k), yPosition + yIndicatorOffset, event.getColor());
+                            } else {
+                                drawCircle(canvas, xPosition + (eventSeperation * k), yPosition, event.getColor());
+                            }
+                        }
+                    }
+                } else if (eventsList.size() == 2)  {
+                    for (int j = 0, k = -1 ; j < eventsList.size(); j++, k+=2) {
+                        Event event = eventsList.get(j);
+                        if (!isSameDayAsCurrentDay) {
+                            if (showSmallIndicator) {
+                                //draw small indicators below the day in the calendar
+                                drawSmallIndicatorCircle(canvas, xPosition + (eventSeperation * k), yPosition + yIndicatorOffset, event.getColor());
+                            } else {
+                                drawCircle(canvas, xPosition + (eventSeperation * k), yPosition, event.getColor());
+                            }
+                        }
+                    }
+                } else if(eventsList.size() == 1) {
+                    Event event = eventsList.get(0);
+                    if (!isSameDayAsCurrentDay) {
+                        if (showSmallIndicator) {
+                            //draw small indicators below the day in the calendar
+                            drawSmallIndicatorCircle(canvas, xPosition, yPosition + yIndicatorOffset, event.getColor());
+                        } else {
+                            drawCircle(canvas, xPosition, yPosition, event.getColor());
+                        }
                     }
                 }
+
 
             }
         }
@@ -713,6 +758,7 @@ class CompactCalendarController {
             if (dayRow == 0) {
                 // first row, so draw the first letter of the day
                 if (shouldDrawDaysHeader) {
+                    dayPaint.setColor(calenderTextColor);
                     dayPaint.setTypeface(Typeface.DEFAULT_BOLD);
                     canvas.drawText(dayColumnNames[dayColumn], xPosition, paddingHeight, dayPaint);
                     dayPaint.setTypeface(Typeface.DEFAULT);

@@ -1,21 +1,23 @@
 package com.github.sundeepk.compactcalendarview.domain;
 
+import java.util.List;
+
 public class CalendarDayEvent {
 
+    private final List<Event> events;
     private final long timeInMillis;
-    private final int color;
 
-    public CalendarDayEvent(final long timeInMillis, final int color) {
+    public CalendarDayEvent(long timeInMillis, List<Event> events) {
         this.timeInMillis = timeInMillis;
-        this.color = color;
+        this.events = events;
     }
 
     public long getTimeInMillis() {
         return timeInMillis;
     }
 
-    public int getColor() {
-        return color;
+    public List<Event> getEvents() {
+        return events;
     }
 
     @Override
@@ -25,25 +27,24 @@ public class CalendarDayEvent {
 
         CalendarDayEvent event = (CalendarDayEvent) o;
 
-        if (color != event.color) return false;
         if (timeInMillis != event.timeInMillis) return false;
+        if (events != null ? !events.equals(event.events) : event.events != null) return false;
 
         return true;
     }
 
     @Override
     public int hashCode() {
-        int result = (int) (timeInMillis ^ (timeInMillis >>> 32));
-        result = 31 * result + color;
+        int result = events != null ? events.hashCode() : 0;
+        result = 31 * result + (int) (timeInMillis ^ (timeInMillis >>> 32));
         return result;
     }
 
     @Override
-    public String
-    toString() {
+    public String toString() {
         return "CalendarDayEvent{" +
-                "timeInMillis=" + timeInMillis +
-                ", color=" + color +
+                "events=" + events +
+                ", timeInMillis=" + timeInMillis +
                 '}';
     }
 }
