@@ -154,8 +154,8 @@ class CompactCalendarController {
             maximumVelocity = configuration.getScaledMaximumFlingVelocity();
         }
 
-        yIndicatorOffset = 12 * screenDensity;
-        xIndicatorOffset = screenDensity * 3.5f;
+        yIndicatorOffset = 9 * screenDensity;
+        xIndicatorOffset = 3.5f * screenDensity;
 
         //just set a default growFactor to draw full calendar when initialised
         growFactor = Integer.MAX_VALUE;
@@ -663,30 +663,46 @@ class CompactCalendarController {
 
                 if (!isSameDayAsCurrentDay) {
                     if (eventsList.size() >= 3) {
-                        for (int j = 0, k = -2; j < 3; j++, k += 2) {
-                            Event event = eventsList.get(j);
-                            if (j == 2) {
-                                dayPaint.setColor(plusColor);
-                                dayPaint.setStrokeWidth(4);
-                                canvas.drawLine(xPosition + (xIndicatorOffset * k) - smallIndicatorRadius, yPosition + yIndicatorOffset, xPosition + (xIndicatorOffset * k) + (smallIndicatorRadius), yPosition + yIndicatorOffset, dayPaint);
-                                canvas.drawLine(xPosition + (xIndicatorOffset * k), yPosition + yIndicatorOffset - smallIndicatorRadius, xPosition + (xIndicatorOffset * k), yPosition + yIndicatorOffset + smallIndicatorRadius, dayPaint);
-                                dayPaint.setStrokeWidth(0);
-                            } else {
-                                drawSmallIndicatorCircle(canvas, xPosition + (xIndicatorOffset * k), yPosition + yIndicatorOffset, event.getColor());
-                            }
-                        }
+                        drawEventsWithPlus(canvas, xPosition, yPosition, eventsList);
                     } else if (eventsList.size() == 2) {
-                        for (int j = 0, k = -1; j < eventsList.size(); j++, k += 2) {
-                            Event event = eventsList.get(j);
-                            //draw small indicators below the day in the calendar
-                            drawSmallIndicatorCircle(canvas, xPosition + (xIndicatorOffset * k), yPosition + yIndicatorOffset, event.getColor());
-                        }
+                        drawTwoEvents(canvas, xPosition, yPosition, eventsList);
                     } else if (eventsList.size() == 1) {
-                        Event event = eventsList.get(0);
-                        //draw small indicators below the day in the calendar
-                        drawSmallIndicatorCircle(canvas, xPosition, yPosition + yIndicatorOffset, event.getColor());
+                        drawSingleEvent(canvas, xPosition, yPosition, eventsList);
                     }
                 }
+            }
+        }
+    }
+
+    private void drawSingleEvent(Canvas canvas, float xPosition, float yPosition, List<Event> eventsList) {
+        Event event = eventsList.get(0);
+        drawSmallIndicatorCircle(canvas, xPosition, yPosition + yIndicatorOffset, event.getColor());
+    }
+
+    private void drawTwoEvents(Canvas canvas, float xPosition, float yPosition, List<Event> eventsList) {
+        //draw fist event just left of center
+        drawSmallIndicatorCircle(canvas, xPosition + (xIndicatorOffset * -1), yPosition + yIndicatorOffset, eventsList.get(0).getColor());
+        //draw second event just right of center
+        drawSmallIndicatorCircle(canvas, xPosition + (xIndicatorOffset * 1), yPosition + yIndicatorOffset, eventsList.get(1).getColor());
+    }
+
+    //draw 2 events followed by plus indicator to show there are more than 2 events
+    private void drawEventsWithPlus(Canvas canvas, float xPosition, float yPosition, List<Event> eventsList) {
+        // k = size() - 1, but since we don't want to draw more than 2 indicators, we just stop after 2 iterations so we can just hard k = -2 instead
+        // we can use the below loop to draw arbitrary events based on the current screen size, for example, larger screens should be able to
+        // display more than 2 evens before displaying plus indicator, but don't more than 3 indicators for now
+        for (int j = 0, k = -2; j < 3; j++, k += 2) {
+            Event event = eventsList.get(j);
+            float xStartPosition = xPosition + (xIndicatorOffset * k);
+            float yStartPosition = yPosition + yIndicatorOffset;
+            if (j == 2) {
+                dayPaint.setColor(plusColor);
+                dayPaint.setStrokeWidth(4);
+                canvas.drawLine(xStartPosition - smallIndicatorRadius, yStartPosition, xStartPosition + smallIndicatorRadius, yStartPosition, dayPaint);
+                canvas.drawLine(xStartPosition, yStartPosition - smallIndicatorRadius, xStartPosition, yStartPosition + smallIndicatorRadius, dayPaint);
+                dayPaint.setStrokeWidth(0);
+            } else {
+                drawSmallIndicatorCircle(canvas, xStartPosition, yStartPosition, event.getColor());
             }
         }
     }
