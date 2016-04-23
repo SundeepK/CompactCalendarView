@@ -698,7 +698,7 @@ class CompactCalendarController {
     private void drawEventsWithPlus(Canvas canvas, float xPosition, float yPosition, List<Event> eventsList) {
         // k = size() - 1, but since we don't want to draw more than 2 indicators, we just stop after 2 iterations so we can just hard k = -2 instead
         // we can use the below loop to draw arbitrary events based on the current screen size, for example, larger screens should be able to
-        // display more than 2 evens before displaying plus indicator, but don't more than 3 indicators for now
+        // display more than 2 evens before displaying plus indicator, but don't draw more than 3 indicators for now
         for (int j = 0, k = -2; j < 3; j++, k += 2) {
             Event event = eventsList.get(j);
             float xStartPosition = xPosition + (xIndicatorOffset * k);
