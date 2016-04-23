@@ -9,6 +9,7 @@ import android.view.VelocityTracker;
 import android.widget.OverScroller;
 
 import com.github.sundeepk.compactcalendarview.domain.CalendarDayEvent;
+import com.github.sundeepk.compactcalendarview.domain.Event;
 
 import junit.framework.Assert;
 
@@ -55,7 +56,7 @@ public class CompactCalendarControllerTest {
     @Before
     public void setUp(){
         when(velocityTracker.getXVelocity()).thenReturn(-200f);
-        underTest = new CompactCalendarController(paint, overScroller, rect, null, null, 0, 0, 0, velocityTracker);
+        underTest = new CompactCalendarController(paint, overScroller, rect, null, null, 0, 0, 0, velocityTracker, 0);
     }
 
     @Test(expected=IllegalArgumentException.class)
@@ -379,7 +380,8 @@ public class CompactCalendarControllerTest {
         underTest.setGrowProgress(1000); //set grow progress so that it simulates the calendar being open
         underTest.drawEvents(canvas, calendar, 0);
 
-        verify(canvas, times(30)).drawCircle(anyFloat(), anyFloat(), anyFloat(), eq(paint));
+        //draw events 29 times because we don't draw events for the current selected day since it wil be highlighted with another indicator
+        verify(canvas, times(29)).drawCircle(anyFloat(), anyFloat(), anyFloat(), eq(paint));
     }
 
 
@@ -394,7 +396,7 @@ public class CompactCalendarControllerTest {
             currentCalender.set(Calendar.SECOND, 0);
             currentCalender.set(Calendar.MILLISECOND, 0);
             currentCalender.add(Calendar.DATE, i);
-            eventList.add(new CalendarDayEvent(currentCalender.getTimeInMillis(), Color.BLUE));
+            eventList.add(new CalendarDayEvent(currentCalender.getTimeInMillis(), Arrays.asList(new Event(Color.BLUE, currentCalender.getTimeInMillis()))));
         }
         return eventList;
     }

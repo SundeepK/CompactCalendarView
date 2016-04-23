@@ -76,7 +76,8 @@ public class CompactCalendarView extends View {
         super(context, attrs, defStyleAttr);
         compactCalendarController = new CompactCalendarController(new Paint(), new OverScroller(getContext()),
                 new Rect(), attrs, getContext(),  Color.argb(255, 233, 84, 81),
-                Color.argb(255, 64, 64, 64), Color.argb(255, 219, 219, 219), VelocityTracker.obtain());
+                Color.argb(255, 64, 64, 64), Color.argb(255, 219, 219, 219), VelocityTracker.obtain(),
+                Color.argb(255, 100, 68, 65));
         gestureDetector = new GestureDetectorCompat(getContext(), gestureListener);
         animationHandler = new AnimationHandler(compactCalendarController, this);
     }

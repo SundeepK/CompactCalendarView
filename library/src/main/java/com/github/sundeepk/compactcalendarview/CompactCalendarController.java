@@ -88,7 +88,7 @@ class CompactCalendarController {
     private int distanceThresholdForAutoScroll;
     private long lastAutoScrollFromFling;
     private int targetHeight;
-    private int plusColor = Color.argb(255, 100, 68, 65);
+    private int plusColor;
     private float yIndicatorOffset;
     private float xIndicatorOffset;
     private int animationStatus = 0;
@@ -99,7 +99,8 @@ class CompactCalendarController {
 
     CompactCalendarController(Paint dayPaint, OverScroller scroller, Rect rect, AttributeSet attrs,
                               Context context, int currentDayBackgroundColor, int calenderTextColor,
-                              int currentSelectedDayBackgroundColor, VelocityTracker velocityTracker) {
+                              int currentSelectedDayBackgroundColor, VelocityTracker velocityTracker,
+                              int plusColor) {
         this.dayPaint = dayPaint;
         this.scroller = scroller;
         this.rect = rect;
@@ -107,6 +108,7 @@ class CompactCalendarController {
         this.calenderTextColor = calenderTextColor;
         this.currentSelectedDayBackgroundColor = currentSelectedDayBackgroundColor;
         this.velocityTracker = velocityTracker;
+        this.plusColor = plusColor;
         loadAttributes(attrs, context);
         init(context);
     }
@@ -776,7 +778,6 @@ class CompactCalendarController {
                     canvas.drawText(String.valueOf(day), xPosition, yPosition, dayPaint);
                 }
             }
-
         }
     }
 
