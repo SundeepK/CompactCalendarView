@@ -34,6 +34,9 @@ class CompactCalendarController {
     private static final int VELOCITY_UNIT_PIXELS_PER_SECOND = 1000;
     private static final float ANIMATION_SCREEN_SET_DURATION_MILLIS = 700;
     private static final int LAST_FLING_THRESHOLD_MILLIS = 300;
+    public static final int IDLE = 0;
+    public static final int EXPOSE_CALENDAR_ANIMATION = 1;
+    public static final int EXPAND_COLLAPSE_CALENDAR = 2;
     private int paddingWidth = 40;
     private int paddingHeight = 40;
     private Paint dayPaint = new Paint();
@@ -84,11 +87,11 @@ class CompactCalendarController {
     private boolean isScrolling;
     private int distanceThresholdForAutoScroll;
     private long lastAutoScrollFromFling;
-    private boolean isAnimatingHeight = false;
     private int targetHeight;
     private int plusColor = Color.argb(255, 100, 68, 65);
     private float yIndicatorOffset;
     private float xIndicatorOffset;
+    private int animationStatus = 0;
 
     private enum Direction {
         NONE, HORIZONTAL, VERTICAL
@@ -183,8 +186,8 @@ class CompactCalendarController {
         return growfactorIndicator;
     }
 
-    void setAnimatingHeight(boolean animatingHeight) {
-        this.isAnimatingHeight = animatingHeight;
+    void setAnimationStatus(int animationStatus) {
+        this.animationStatus = animationStatus;
     }
 
     int getTargetHeight() {
@@ -296,7 +299,7 @@ class CompactCalendarController {
         //makes easier to find radius
         double radiusAroundDay = 0.5 * Math.sqrt((heightPerDay * heightPerDay) + (heightPerDay * heightPerDay));
         //make radius based on screen density
-        bigCircleIndicatorRadius = (float) radiusAroundDay / ((1.8f) - 0.5f / screenDensity);
+        bigCircleIndicatorRadius = (float) radiusAroundDay / ((1.7f) - 0.5f / screenDensity);
     }
 
     void onDraw(Canvas canvas) {
@@ -304,7 +307,7 @@ class CompactCalendarController {
         paddingHeight = heightPerDay / 2;
         calculateXPositionOffset();
 
-        if (isAnimatingHeight) {
+        if (animationStatus == EXPOSE_CALENDAR_ANIMATION) {
             background.setColor(calenderBackgroundColor);
             background.setStyle(Paint.Style.FILL);
             canvas.drawCircle(0, 0, growFactor, background);
@@ -653,15 +656,18 @@ class CompactCalendarController {
                 float xPosition = widthPerDay * dayOfWeek + paddingWidth + paddingLeft + accumulatedScrollOffset.x + offset - paddingRight;
                 float yPosition = weekNumberForMonth * heightPerDay + paddingHeight;
 
-                if (xPosition >= growFactor || yPosition >= growFactor) {
+                if ((animationStatus == EXPOSE_CALENDAR_ANIMATION && xPosition >= growFactor ) || yPosition >= growFactor) {
+                    continue;
+                } else if (animationStatus == EXPAND_COLLAPSE_CALENDAR && yPosition >= growFactor){
                     continue;
                 }
 
                 List<Event> eventsList = calendarDayEvent.getEvents();
                 int dayOfMonth = eventsCalendar.get(Calendar.DAY_OF_MONTH);
                 boolean isSameDayAsCurrentDay = (todayDayOfMonth == dayOfMonth && shouldDrawCurrentDayCircle);
+                boolean isCurrentSelectedDay = currentCalender.get(Calendar.DAY_OF_MONTH) == dayOfMonth;
 
-                if (!isSameDayAsCurrentDay) {
+                if (!isSameDayAsCurrentDay && !isCurrentSelectedDay || animationStatus == EXPOSE_CALENDAR_ANIMATION) {
                     if (eventsList.size() >= 3) {
                         drawEventsWithPlus(canvas, xPosition, yPosition, eventsList);
                     } else if (eventsList.size() == 2) {
@@ -730,6 +736,7 @@ class CompactCalendarController {
         boolean isSameYearAsToday = monthToDrawCalender.get(Calendar.YEAR) == todayCalender.get(Calendar.YEAR);
         boolean isSameMonthAsCurrentCalendar = monthToDrawCalender.get(Calendar.MONTH) == currentCalender.get(Calendar.MONTH);
         int todayDayOfMonth = todayCalender.get(Calendar.DAY_OF_MONTH);
+        boolean isAnimatingWithExpose = animationStatus == EXPOSE_CALENDAR_ANIMATION;
 
         for (int dayColumn = 0, dayRow = 0; dayColumn <= 6; dayRow++) {
             if (dayRow == 7) {
@@ -743,7 +750,7 @@ class CompactCalendarController {
             }
             float xPosition = widthPerDay * dayColumn + paddingWidth + paddingLeft + accumulatedScrollOffset.x + offset - paddingRight;
             float yPosition = dayRow * heightPerDay + paddingHeight;
-            if (xPosition >= growFactor && isAnimatingHeight || yPosition >= growFactor) {
+            if (xPosition >= growFactor && isAnimatingWithExpose || yPosition >= growFactor) {
                 continue;
             }
             if (dayRow == 0) {
@@ -756,12 +763,13 @@ class CompactCalendarController {
                 }
             } else {
                 int day = ((dayRow - 1) * 7 + dayColumn + 1) - firstDayOfMonth;
-                if (isSameYearAsToday && isSameMonthAsToday && todayDayOfMonth == day && !isAnimatingHeight) {
+                if (isSameYearAsToday && isSameMonthAsToday && todayDayOfMonth == day && !isAnimatingWithExpose) {
                     // TODO calculate position of circle in a more reliable way
                     drawCircle(canvas, xPosition, yPosition, currentDayBackgroundColor);
-                } else if (currentCalender.get(Calendar.DAY_OF_MONTH) == day && isSameMonthAsCurrentCalendar && !isAnimatingHeight) {
+                } else if (currentCalender.get(Calendar.DAY_OF_MONTH) == day && isSameMonthAsCurrentCalendar && !isAnimatingWithExpose) {
                     drawCircle(canvas, xPosition, yPosition, currentSelectedDayBackgroundColor);
-                } else if (day == 1 && !isSameMonthAsCurrentCalendar && !isAnimatingHeight) {
+                } else if (day == 1 && !isSameMonthAsCurrentCalendar && !isAnimatingWithExpose
+                        ) {
                     drawCircle(canvas, xPosition, yPosition, currentSelectedDayBackgroundColor);
                 }
                 if (day <= monthToDrawCalender.getActualMaximum(Calendar.DAY_OF_MONTH) && day > 0) {
