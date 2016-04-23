@@ -76,6 +76,7 @@ class AnimationHandler {
             @Override
             public void onAnimationStart(Animation animation) {
                 if(!isCollapsing){
+                    compactCalendarController.setAnimationStatus(CompactCalendarController.ANIMATE_INDICATORS);
                     compactCalendarController.setAnimatingIndicators(true);
                     animIndicator.start();
                 }

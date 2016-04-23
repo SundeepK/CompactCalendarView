@@ -37,6 +37,7 @@ class CompactCalendarController {
     public static final int IDLE = 0;
     public static final int EXPOSE_CALENDAR_ANIMATION = 1;
     public static final int EXPAND_COLLAPSE_CALENDAR = 2;
+    public static final int ANIMATE_INDICATORS = 3;
     private int paddingWidth = 40;
     private int paddingHeight = 40;
     private Paint dayPaint = new Paint();
@@ -658,7 +659,7 @@ class CompactCalendarController {
                 float xPosition = widthPerDay * dayOfWeek + paddingWidth + paddingLeft + accumulatedScrollOffset.x + offset - paddingRight;
                 float yPosition = weekNumberForMonth * heightPerDay + paddingHeight;
 
-                if ((animationStatus == EXPOSE_CALENDAR_ANIMATION && xPosition >= growFactor ) || yPosition >= growFactor) {
+                if (((animationStatus == EXPOSE_CALENDAR_ANIMATION || animationStatus == ANIMATE_INDICATORS) && xPosition >= growFactor ) || yPosition >= growFactor) {
                     continue;
                 } else if (animationStatus == EXPAND_COLLAPSE_CALENDAR && yPosition >= growFactor){
                     continue;
