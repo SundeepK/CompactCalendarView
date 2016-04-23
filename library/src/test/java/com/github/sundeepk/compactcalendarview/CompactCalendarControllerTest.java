@@ -369,6 +369,7 @@ public class CompactCalendarControllerTest {
     @Test
     public void testItDrawsEventDaysOnCalendar(){
         //Sun, 07 Jun 2015 18:20:51 GMT
+        //get 30 events in total
         List<CalendarDayEvent> events = getEvents(0, 30, 1433701251000L);
         for(CalendarDayEvent event : events){
             underTest.addEvent(event);
@@ -384,21 +385,92 @@ public class CompactCalendarControllerTest {
         verify(canvas, times(29)).drawCircle(anyFloat(), anyFloat(), anyFloat(), eq(paint));
     }
 
+    @Test
+    public void testItDrawsMultipleEventDaysOnCalendar(){
+        //Sun, 07 Jun 2015 18:20:51 GMT
+        //get 60 events in total
+        List<CalendarDayEvent> events = getDayEventWith2EventsPerDay(0, 30, 1433701251000L);
+        for(CalendarDayEvent event : events){
+            underTest.addEvent(event);
+        }
+
+        when(calendar.get(Calendar.MONTH)).thenReturn(5);
+        when(calendar.get(Calendar.YEAR)).thenReturn(2015);
+
+        underTest.setGrowProgress(1000); //set grow progress so that it simulates the calendar being open
+        underTest.drawEvents(canvas, calendar, 0);
+
+        //draw events 58 times because we don't draw events for the current selected day since it wil be highlighted with another indicator
+        verify(canvas, times(58)).drawCircle(anyFloat(), anyFloat(), anyFloat(), eq(paint));
+    }
+
+    @Test
+    public void testItDrawsMultipleEventDaysOnCalendarWithPlusIndicator(){
+        //Sun, 07 Jun 2015 18:20:51 GMT
+        //get 120 events in total but only draw 3 event indicators per a day
+        List<CalendarDayEvent> events = getDayEventWithMultipleEventsPerDay(0, 30, 1433701251000L);
+        for(CalendarDayEvent event : events){
+            underTest.addEvent(event);
+        }
+
+        when(calendar.get(Calendar.MONTH)).thenReturn(5);
+        when(calendar.get(Calendar.YEAR)).thenReturn(2015);
+
+        underTest.setGrowProgress(1000); //set grow progress so that it simulates the calendar being open
+        underTest.drawEvents(canvas, calendar, 0);
+
+        //draw events 58 times because we don't draw more than 3 indicators
+        verify(canvas, times(58)).drawCircle(anyFloat(), anyFloat(), anyFloat(), eq(paint));
+
+        //draw event indicator with lines
+        // 2 calls for each plus event indicator since it takes 2 draw calls to make a plus sign
+        verify(canvas, times(58)).drawLine(anyFloat(), anyFloat(), anyFloat(), anyFloat(), eq(paint));
+    }
+
 
     private List<CalendarDayEvent> getEvents(int start, int days, long timeStamp) {
         Calendar currentCalender = Calendar.getInstance(Locale.getDefault());
         List<CalendarDayEvent> eventList = new ArrayList<>();
         for(int i = start; i < days; i++){
-            currentCalender.setTimeInMillis(timeStamp);
-            currentCalender.set(Calendar.DATE, 1);
-            currentCalender.set(Calendar.HOUR_OF_DAY, 0);
-            currentCalender.set(Calendar.MINUTE, 0);
-            currentCalender.set(Calendar.SECOND, 0);
-            currentCalender.set(Calendar.MILLISECOND, 0);
-            currentCalender.add(Calendar.DATE, i);
+            setDateTime(timeStamp, currentCalender, i);
             eventList.add(new CalendarDayEvent(currentCalender.getTimeInMillis(), Arrays.asList(new Event(Color.BLUE, currentCalender.getTimeInMillis()))));
         }
         return eventList;
+    }
+
+    private List<CalendarDayEvent> getDayEventWith2EventsPerDay(int start, int days, long timeStamp) {
+        Calendar currentCalender = Calendar.getInstance(Locale.getDefault());
+        List<CalendarDayEvent> eventList = new ArrayList<>();
+        for(int i = start; i < days; i++){
+            setDateTime(timeStamp, currentCalender, i);
+            List<Event> events = Arrays.asList(new Event(Color.BLUE, currentCalender.getTimeInMillis()), new Event(Color.RED, currentCalender.getTimeInMillis() + 3600 * 1000));
+            eventList.add(new CalendarDayEvent(currentCalender.getTimeInMillis(), events));
+        }
+        return eventList;
+    }
+
+    private List<CalendarDayEvent> getDayEventWithMultipleEventsPerDay(int start, int days, long timeStamp) {
+        Calendar currentCalender = Calendar.getInstance(Locale.getDefault());
+        List<CalendarDayEvent> eventList = new ArrayList<>();
+        for(int i = start; i < days; i++){
+            setDateTime(timeStamp, currentCalender, i);
+            List<Event> events = Arrays.asList(new Event(Color.BLUE, currentCalender.getTimeInMillis()),
+                    new Event(Color.RED, currentCalender.getTimeInMillis() + 3600 * 1000),
+                    new Event(Color.RED, currentCalender.getTimeInMillis() + (3600 * 2) * 1000),
+                    new Event(Color.RED, currentCalender.getTimeInMillis() + (3600 * 3) * 1000));
+            eventList.add(new CalendarDayEvent(currentCalender.getTimeInMillis(), events));
+        }
+        return eventList;
+    }
+
+    private void setDateTime(long timeStamp, Calendar currentCalender, int i) {
+        currentCalender.setTimeInMillis(timeStamp);
+        currentCalender.set(Calendar.DATE, 1);
+        currentCalender.set(Calendar.HOUR_OF_DAY, 0);
+        currentCalender.set(Calendar.MINUTE, 0);
+        currentCalender.set(Calendar.SECOND, 0);
+        currentCalender.set(Calendar.MILLISECOND, 0);
+        currentCalender.add(Calendar.DATE, i);
     }
 
     private Date setTimeAndGet(Calendar cal, long epoch) {
@@ -409,5 +481,4 @@ public class CompactCalendarControllerTest {
        cal.set(Calendar.MILLISECOND, 0);
        return cal.getTime();
     }
-
 }
