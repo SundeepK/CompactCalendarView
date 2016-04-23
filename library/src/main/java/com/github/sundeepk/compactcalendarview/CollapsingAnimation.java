@@ -8,7 +8,6 @@ class CollapsingAnimation extends Animation {
     private final int targetHeight;
     private final CompactCalendarView view;
     private final boolean down;
-    private float currentGrow;
     private CompactCalendarController compactCalendarController;
 
     public CollapsingAnimation(CompactCalendarView view, CompactCalendarController compactCalendarController, int targetHeight, boolean down) {
@@ -20,16 +19,15 @@ class CollapsingAnimation extends Animation {
 
     @Override
     protected void applyTransformation(float interpolatedTime, Transformation t) {
-        currentGrow+=2.4;
         float grow = 0;
         int newHeight;
         if (down) {
             newHeight = (int) (targetHeight * interpolatedTime);
-            grow = (float) (interpolatedTime * (targetHeight * 2));
+            grow = (interpolatedTime * (targetHeight * 2));
         } else {
             float progress = 1 - interpolatedTime;
             newHeight = (int) (targetHeight * progress);
-            grow = (float) (progress * (targetHeight * 2));
+            grow = (progress * (targetHeight * 2));
         }
         compactCalendarController.setGrowProgress(grow);
         view.getLayoutParams().height = newHeight;
