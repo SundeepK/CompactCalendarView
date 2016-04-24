@@ -8,6 +8,7 @@ import android.graphics.Paint;
 import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.Typeface;
+import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.MotionEvent;
@@ -527,8 +528,12 @@ class CompactCalendarController {
         if (uniqCalendarDayEvents == null) {
             uniqCalendarDayEvents = new ArrayList<>();
         }
-        if (!uniqCalendarDayEvents.contains(event)) {
+        CalendarDayEvent calendarDayEvent = getEventDayEvent(event.getTimeInMillis());
+        if (calendarDayEvent == null) {
             uniqCalendarDayEvents.add(event);
+        } else {
+            calendarDayEvent.getEvents().clear();
+            calendarDayEvent.getEvents().addAll(event.getEvents());
         }
         events.put(key, uniqCalendarDayEvents);
     }
@@ -538,6 +543,28 @@ class CompactCalendarController {
         for (int i = 0; i < count; i++) {
             addEvent(events.get(i));
         }
+    }
+
+    @Nullable
+    CalendarDayEvent getCalendarDayEvent(Date date) {
+        return getEventDayEvent(date.getTime());
+    }
+
+    private CalendarDayEvent getEventDayEvent(long eventTimeInMillis){
+        eventsCalendar.setTimeInMillis(eventTimeInMillis);
+        int dayInMonth = eventsCalendar.get(Calendar.DAY_OF_MONTH);
+        String keyForCalendarEvent = getKeyForCalendarEvent(eventsCalendar);
+        List<CalendarDayEvent> calendarDayEvents = events.get(keyForCalendarEvent);
+        if (calendarDayEvents != null) {
+            for (CalendarDayEvent calendarDayEvent : calendarDayEvents) {
+                eventsCalendar.setTimeInMillis(calendarDayEvent.getTimeInMillis());
+                int dayInMonthFromCache = eventsCalendar.get(Calendar.DAY_OF_MONTH);
+                if (dayInMonthFromCache == dayInMonth) {
+                    return calendarDayEvent;
+                }
+            }
+        }
+        return null;
     }
 
     void removeEvent(CalendarDayEvent event) {
@@ -556,7 +583,7 @@ class CompactCalendarController {
         }
     }
 
-    List<CalendarDayEvent> getEvents(Date date) {
+    List<CalendarDayEvent> getEventsForMonth(Date date) {
         eventsCalendar.setTimeInMillis(date.getTime());
         String key = getKeyForCalendarEvent(eventsCalendar);
         List<CalendarDayEvent> uniqEvents = events.get(key);

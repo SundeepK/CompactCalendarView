@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Locale;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.Matchers.anyFloat;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.eq;
@@ -73,12 +74,12 @@ public class CompactCalendarControllerTest {
         Calendar cal = Calendar.getInstance();
 
         //Sun, 08 Feb 2015 00:00:00 GMT
-        underTest.setCurrentDate(setTimeAndGet(cal, 1423353600000L));
+        underTest.setCurrentDate(setTimeToMidnightAndGet(cal, 1423353600000L));
 
         underTest.showNextMonth();
 
         //Sun, 01 Mar 2015 00:00:00 GMT - expected
-        assertEquals(setTimeAndGet(cal, 1425168000000L), underTest.getFirstDayOfCurrentMonth());
+        assertEquals(setTimeToMidnightAndGet(cal, 1425168000000L), underTest.getFirstDayOfCurrentMonth());
 
         when(motionEvent.getAction()).thenReturn(MotionEvent.ACTION_UP);
 
@@ -88,7 +89,7 @@ public class CompactCalendarControllerTest {
         underTest.onTouch(motionEvent);
 
         //Wed, 01 Apr 2015 00:00:00 GMT
-        assertEquals(setTimeAndGet(cal, 1427842800000L), underTest.getFirstDayOfCurrentMonth());
+        assertEquals(setTimeToMidnightAndGet(cal, 1427842800000L), underTest.getFirstDayOfCurrentMonth());
     }
 
     @Test
@@ -294,7 +295,7 @@ public class CompactCalendarControllerTest {
 
         underTest.removeAllEvents();
 
-        List<CalendarDayEvent> actualEvents = underTest.getEvents(new Date(1422748800000L));
+        List<CalendarDayEvent> actualEvents = underTest.getEventsForMonth(new Date(1422748800000L));
         Assert.assertEquals(new ArrayList<CalendarDayEvent>(), actualEvents);
     }
 
@@ -308,7 +309,7 @@ public class CompactCalendarControllerTest {
 
         events = getEvents(0, 28, 1422748800000L);
 
-        List<CalendarDayEvent> actualEvents = underTest.getEvents(new Date(1422748800000L));
+        List<CalendarDayEvent> actualEvents = underTest.getEventsForMonth(new Date(1422748800000L));
         Assert.assertEquals(events, actualEvents);
     }
 
@@ -321,7 +322,7 @@ public class CompactCalendarControllerTest {
 
         events = getEvents(0, 28, 1422748800000L);
 
-        List<CalendarDayEvent> actualEvents = underTest.getEvents(new Date(1422748800000L));
+        List<CalendarDayEvent> actualEvents = underTest.getEventsForMonth(new Date(1422748800000L));
         Assert.assertEquals(events, actualEvents);
     }
 
@@ -345,7 +346,7 @@ public class CompactCalendarControllerTest {
         expectedEvents.remove(events.get(5));
         expectedEvents.remove(events.get(20));
 
-        List<CalendarDayEvent> actualEvents = underTest.getEvents(new Date(1422748800000L));
+        List<CalendarDayEvent> actualEvents = underTest.getEventsForMonth(new Date(1422748800000L));
         Assert.assertEquals(expectedEvents, actualEvents);
     }
 
@@ -362,7 +363,7 @@ public class CompactCalendarControllerTest {
         List<CalendarDayEvent> expectedEvents = getEvents(0, 28, 1422748800000L);
         expectedEvents.removeAll(Arrays.asList(events.get(0), events.get(1), events.get(5), events.get(20)));
 
-        List<CalendarDayEvent> actualEvents = underTest.getEvents(new Date(1422748800000L));
+        List<CalendarDayEvent> actualEvents = underTest.getEventsForMonth(new Date(1422748800000L));
         Assert.assertEquals(expectedEvents, actualEvents);
     }
 
@@ -427,6 +428,36 @@ public class CompactCalendarControllerTest {
         verify(canvas, times(58)).drawLine(anyFloat(), anyFloat(), anyFloat(), anyFloat(), eq(paint));
     }
 
+    @Test
+    public void testItGetsEvents(){
+        //Sun, 07 Jun 2015 18:20:51 GMT
+        //get 30 events in total
+        List<CalendarDayEvent> events = getEvents(0, 30, 1433701251000L);
+        for(CalendarDayEvent event : events){
+            underTest.addEvent(event);
+        }
+
+        //Wed, 24 Aug 2016 09:21:09 GMT
+        //get 30 events in total
+        List<CalendarDayEvent> events2 = getEvents(0, 30, 1472030469000L);
+        for(CalendarDayEvent event : events2){
+            underTest.addEvent(event);
+        }
+
+        CalendarDayEvent calendarDayEvents = underTest.getCalendarDayEvent(setTimeToMidnightAndGet(Calendar.getInstance(), 1433701251000L));
+        assertNotNull(calendarDayEvents);
+        Calendar instance = Calendar.getInstance(Locale.getDefault());
+        instance.setTimeInMillis(events.get(6).getTimeInMillis());
+        System.out.println("expected date " + instance.getTime());
+        System.out.println("millis date " + events.get(6).getTimeInMillis());
+
+        instance.setTimeInMillis(calendarDayEvents.getTimeInMillis());
+        System.out.println("actual date " + instance.getTime());
+        System.out.println("actual millis date " + events.get(6).getTimeInMillis());
+
+        assertEquals(events.get(6), calendarDayEvents);
+
+    }
 
     private List<CalendarDayEvent> getEvents(int start, int days, long timeStamp) {
         Calendar currentCalender = Calendar.getInstance(Locale.getDefault());
@@ -473,7 +504,7 @@ public class CompactCalendarControllerTest {
         currentCalender.add(Calendar.DATE, i);
     }
 
-    private Date setTimeAndGet(Calendar cal, long epoch) {
+    private Date setTimeToMidnightAndGet(Calendar cal, long epoch) {
        cal.setTime(new Date(epoch));
        cal.set(Calendar.HOUR_OF_DAY, 0);
        cal.set(Calendar.MINUTE, 0);
