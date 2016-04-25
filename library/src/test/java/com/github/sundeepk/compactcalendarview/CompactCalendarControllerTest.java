@@ -444,19 +444,11 @@ public class CompactCalendarControllerTest {
             underTest.addEvent(event);
         }
 
+        //Sun, 07 Jun 2015 18:20:51 GMT
         CalendarDayEvent calendarDayEvents = underTest.getCalendarDayEvent(setTimeToMidnightAndGet(Calendar.getInstance(), 1433701251000L));
         assertNotNull(calendarDayEvents);
-        Calendar instance = Calendar.getInstance(Locale.getDefault());
-        instance.setTimeInMillis(events.get(6).getTimeInMillis());
-        System.out.println("expected date " + instance.getTime());
-        System.out.println("millis date " + events.get(6).getTimeInMillis());
-
-        instance.setTimeInMillis(calendarDayEvents.getTimeInMillis());
-        System.out.println("actual date " + instance.getTime());
-        System.out.println("actual millis date " + events.get(6).getTimeInMillis());
-
+        //Assert 6th item since it will represent Sun, 07 Jun 2015 which is the day that we queried for
         assertEquals(events.get(6), calendarDayEvents);
-
     }
 
     private List<CalendarDayEvent> getEvents(int start, int days, long timeStamp) {
