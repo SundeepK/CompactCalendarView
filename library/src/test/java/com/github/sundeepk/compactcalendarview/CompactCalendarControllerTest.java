@@ -476,13 +476,44 @@ public class CompactCalendarControllerTest {
         assertTrue(calendarDayEvents2.getEvents().contains(updateItem));
     }
 
+    @Test
+    public void testItReplacesEvents(){
+        //Sun, 07 Jun 2015 18:20:51 GMT
+        //get 30 events in total
+        List<CalendarDayEvent> events = getEvents(0, 30, 1433701251000L);
+        for(CalendarDayEvent event : events){
+            underTest.addEvent(event);
+        }
+
+        //Sun, 07 Jun 2015 18:20:51 GMT
+        CalendarDayEvent calendarDayEvents = underTest.getCalendarDayEvent(setTimeToMidnightAndGet(Calendar.getInstance(), 1433701251000L));
+        assertNotNull(calendarDayEvents);
+        //Assert 6th item since it will represent Sun, 07 Jun 2015 which is the day that we queried for
+        assertEquals(events.get(6), calendarDayEvents);
+
+        //replace event in Sun, 07 Jun 2015 18:20:51 GMT
+        Event replacedEvent = new Event(Color.GREEN, 1433701251000L);
+        underTest.addEvent(new CalendarDayEvent(1433701251000L, Arrays.asList(replacedEvent)));
+
+        //Sun, 07 Jun 2015 18:20:51 GMT
+        CalendarDayEvent calendarDayEvents2 = underTest.getCalendarDayEvent(setTimeToMidnightAndGet(Calendar.getInstance(), 1433701251000L));
+        assertNotNull(calendarDayEvents2);
+        //Assert 6th item since it will represent Sun, 07 Jun 2015 which is the day that we queried for
+        assertEquals(1, calendarDayEvents2.getEvents().size());
+        assertEquals(replacedEvent, calendarDayEvents2.getEvents().get(0));
+    }
+
     private List<CalendarDayEvent> getEvents(int start, int days, long timeStamp) {
+        return getEvents(start, days, timeStamp, Color.BLUE);
+    }
+
+    private List<CalendarDayEvent> getEvents(int start, int days, long timeStamp, int color) {
         Calendar currentCalender = Calendar.getInstance(Locale.getDefault());
         List<CalendarDayEvent> eventList = new ArrayList<>();
         for(int i = start; i < days; i++){
             setDateTime(timeStamp, currentCalender, i);
             List<Event> events = new ArrayList<>();
-            events.add(new Event(Color.BLUE, currentCalender.getTimeInMillis()));
+            events.add(new Event(color, currentCalender.getTimeInMillis()));
             eventList.add(new CalendarDayEvent(currentCalender.getTimeInMillis(), events));
         }
         return eventList;
