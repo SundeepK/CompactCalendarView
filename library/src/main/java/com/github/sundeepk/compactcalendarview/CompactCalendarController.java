@@ -25,6 +25,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -565,6 +566,25 @@ class CompactCalendarController {
             }
         }
         return null;
+    }
+
+    void removeEventByDate(Date dateToRemoveEventFor){
+        eventsCalendar.setTimeInMillis(dateToRemoveEventFor.getTime());
+        int dayInMonth = eventsCalendar.get(Calendar.DAY_OF_MONTH);
+        String key = getKeyForCalendarEvent(eventsCalendar);
+        List<CalendarDayEvent> uniqCalendarDayEvents = events.get(key);
+        if (uniqCalendarDayEvents != null) {
+            Iterator<CalendarDayEvent> calendarDayEventIterator = uniqCalendarDayEvents.iterator();
+            while (calendarDayEventIterator.hasNext()) {
+                CalendarDayEvent next = calendarDayEventIterator.next();
+                eventsCalendar.setTimeInMillis(next.getTimeInMillis());
+                int dayInMonthFromCache = eventsCalendar.get(Calendar.DAY_OF_MONTH);
+                if (dayInMonthFromCache == dayInMonth) {
+                    calendarDayEventIterator.remove();
+                    return;
+                }
+            }
+        }
     }
 
     void removeEvent(CalendarDayEvent event) {

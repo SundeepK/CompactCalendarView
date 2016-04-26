@@ -453,6 +453,22 @@ public class CompactCalendarControllerTest {
     }
 
     @Test
+    public void testItRemovesEventByDate(){
+        //Sun, 07 Jun 2015 18:20:51 GMT
+        //get 30 events in total
+        List<CalendarDayEvent> events = getEvents(0, 30, 1433701251000L);
+        for(CalendarDayEvent event : events){
+            underTest.addEvent(event);
+        }
+
+        //Sun, 07 Jun 2015 18:20:51 GMT
+        underTest.removeEventByDate(setTimeToMidnightAndGet(Calendar.getInstance(), 1433701251000L));
+        //Remove 6th item since it will represent Sun, 07 Jun 2015 which is the day that was removed
+        events.remove(6);
+        assertEquals(events, underTest.getEventsForMonth(setTimeToMidnightAndGet(Calendar.getInstance(), 1433701251000L)));
+    }
+
+    @Test
     public void testItUpdatesEvents(){
         //Sun, 07 Jun 2015 18:20:51 GMT
         //get 30 events in total
