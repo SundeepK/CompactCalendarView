@@ -183,6 +183,14 @@ class CompactCalendarController {
         calendarWithFirstDayOfMonth.set(Calendar.MILLISECOND, 0);
     }
 
+    float getScreenDensity(){
+        return screenDensity;
+    }
+
+    float getDayIndicatorRadius(){
+        return bigCircleIndicatorRadius;
+    }
+
     void setGrowFactorIndicator(float growfactorIndicator) {
         this.growfactorIndicator = growfactorIndicator;
     }
@@ -304,7 +312,7 @@ class CompactCalendarController {
         //makes easier to find radius
         double radiusAroundDay = 0.5 * Math.sqrt((heightPerDay * heightPerDay) + (heightPerDay * heightPerDay));
         //make radius based on screen density
-        bigCircleIndicatorRadius = (float) radiusAroundDay / ((1.7f) - 0.5f / screenDensity);
+        bigCircleIndicatorRadius = (float) radiusAroundDay / ((1.8f) - 0.5f / screenDensity);
     }
 
     void onDraw(Canvas canvas) {
@@ -833,7 +841,8 @@ class CompactCalendarController {
     private void drawCircle(Canvas canvas, float x, float y, int color) {
         dayPaint.setColor(color);
         if (isAnimatingIndicator) {
-            drawCircle(canvas, growfactorIndicator, x, y - (textHeight / 6));
+            float maxRadius = bigCircleIndicatorRadius * 1.4f;
+            drawCircle(canvas, growfactorIndicator > maxRadius ? maxRadius: growfactorIndicator, x, y - (textHeight / 6));
         } else {
             drawCircle(canvas, bigCircleIndicatorRadius, x, y - (textHeight / 6));
         }

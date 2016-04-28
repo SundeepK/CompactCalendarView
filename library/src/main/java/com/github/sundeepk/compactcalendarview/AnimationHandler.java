@@ -45,7 +45,7 @@ class AnimationHandler {
     }
 
     void openCalendarWithAnimation(){
-        final Animator indicatorAnim = getIndicatorAnimator(1f, 55f);
+        final Animator indicatorAnim = getIndicatorAnimator(1f, compactCalendarController.getDayIndicatorRadius());
         final Animation heightAnim = getCollapsingAnimation(indicatorAnim, true);
 
         compactCalendarController.setAnimationStatus(CompactCalendarController.EXPOSE_CALENDAR_ANIMATION);
@@ -56,7 +56,7 @@ class AnimationHandler {
     }
 
     void closeCalendarWithAnimation(){
-        final Animator indicatorAnim = getIndicatorAnimator(55f, 1f);
+        final Animator indicatorAnim = getIndicatorAnimator(compactCalendarController.getDayIndicatorRadius(), 1f);
         final Animation heightAnim = getCollapsingAnimation(indicatorAnim, false);
 
         compactCalendarController.setAnimationStatus(CompactCalendarController.EXPOSE_CALENDAR_ANIMATION);
