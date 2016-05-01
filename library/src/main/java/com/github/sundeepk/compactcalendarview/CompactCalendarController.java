@@ -163,7 +163,7 @@ class CompactCalendarController {
             maximumVelocity = configuration.getScaledMaximumFlingVelocity();
         }
 
-        yIndicatorOffset = 9 * screenDensity;
+        yIndicatorOffset = 8 * screenDensity;
         xIndicatorOffset = 3.5f * screenDensity;
 
         //just set a default growFactor to draw full calendar when initialised
@@ -311,9 +311,12 @@ class CompactCalendarController {
 
         //assume square around each day of width and height = heightPerDay and get diagonal line length
         //makes easier to find radius
-        double radiusAroundDay = 0.5 * Math.sqrt((heightPerDay * heightPerDay) + (heightPerDay * heightPerDay));
-        //make radius based on screen density
-        bigCircleIndicatorRadius = (float) radiusAroundDay / ((1.8f) - 0.5f / screenDensity);
+        //double radiusAroundDay = 0.5 * Math.sqrt((heightPerDay * heightPerDay) + (heightPerDay * heightPerDay));
+
+        // comment out calculating radius based on square around day since it doesn't work well with smaller screens
+
+        //make radius based on screen density, some arbitrary size for now
+        bigCircleIndicatorRadius = 15f * screenDensity;
     }
 
     void onDraw(Canvas canvas) {
