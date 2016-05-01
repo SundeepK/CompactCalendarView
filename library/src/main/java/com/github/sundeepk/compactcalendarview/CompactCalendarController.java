@@ -91,7 +91,7 @@ class CompactCalendarController {
     private int distanceThresholdForAutoScroll;
     private long lastAutoScrollFromFling;
     private int targetHeight;
-    private int plusColor;
+    private int multiEventIndicatorColor;
     private float yIndicatorOffset;
     private float xIndicatorOffset;
     private int animationStatus = 0;
@@ -103,7 +103,7 @@ class CompactCalendarController {
     CompactCalendarController(Paint dayPaint, OverScroller scroller, Rect rect, AttributeSet attrs,
                               Context context, int currentDayBackgroundColor, int calenderTextColor,
                               int currentSelectedDayBackgroundColor, VelocityTracker velocityTracker,
-                              int plusColor) {
+                              int multiEventIndicatorColor) {
         this.dayPaint = dayPaint;
         this.scroller = scroller;
         this.rect = rect;
@@ -111,7 +111,7 @@ class CompactCalendarController {
         this.calenderTextColor = calenderTextColor;
         this.currentSelectedDayBackgroundColor = currentSelectedDayBackgroundColor;
         this.velocityTracker = velocityTracker;
-        this.plusColor = plusColor;
+        this.multiEventIndicatorColor = multiEventIndicatorColor;
         loadAttributes(attrs, context);
         init(context);
     }
@@ -124,6 +124,7 @@ class CompactCalendarController {
                 calenderTextColor = typedArray.getColor(R.styleable.CompactCalendarView_compactCalendarTextColor, calenderTextColor);
                 currentSelectedDayBackgroundColor = typedArray.getColor(R.styleable.CompactCalendarView_compactCalendarCurrentSelectedDayBackgroundColor, currentSelectedDayBackgroundColor);
                 calenderBackgroundColor = typedArray.getColor(R.styleable.CompactCalendarView_compactCalendarBackgroundColor, calenderBackgroundColor);
+                multiEventIndicatorColor = typedArray.getColor(R.styleable.CompactCalendarView_compactCalendarMultiEventIndicatorColor, multiEventIndicatorColor);
                 textSize = typedArray.getDimensionPixelSize(R.styleable.CompactCalendarView_compactCalendarTextSize,
                         (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, textSize, context.getResources().getDisplayMetrics()));
                 targetHeight = typedArray.getDimensionPixelSize(R.styleable.CompactCalendarView_compactCalendarTargetHeight,
@@ -760,7 +761,7 @@ class CompactCalendarController {
             float xStartPosition = xPosition + (xIndicatorOffset * k);
             float yStartPosition = yPosition + yIndicatorOffset;
             if (j == 2) {
-                dayPaint.setColor(plusColor);
+                dayPaint.setColor(multiEventIndicatorColor);
                 dayPaint.setStrokeWidth(4);
                 canvas.drawLine(xStartPosition - smallIndicatorRadius, yStartPosition, xStartPosition + smallIndicatorRadius, yStartPosition, dayPaint);
                 canvas.drawLine(xStartPosition, yStartPosition - smallIndicatorRadius, xStartPosition, yStartPosition + smallIndicatorRadius, dayPaint);
