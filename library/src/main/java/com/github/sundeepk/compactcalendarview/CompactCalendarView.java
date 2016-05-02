@@ -5,6 +5,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.support.annotation.Nullable;
 import android.support.v4.view.GestureDetectorCompat;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
@@ -30,7 +31,6 @@ public class CompactCalendarView extends View {
         public void onDayClick(Date dateClicked);
         public void onMonthScroll(Date firstDayOfNewMonth);
     }
-
 
     private final GestureDetector.SimpleOnGestureListener gestureListener = new GestureDetector.SimpleOnGestureListener() {
         @Override
@@ -184,6 +184,37 @@ public class CompactCalendarView extends View {
         invalidate();
     }
 
+    /**
+     * Fetches the event for the date passed in
+     * @param date
+     * @return
+     */
+    @Nullable
+    public CalendarDayEvent getEvent(Date date){
+        return compactCalendarController.getCalendarDayEvent(date);
+    }
+
+    /**
+     * Fetches the event for the epochMillis passed in
+     * @param epochMillis
+     * @return
+     */
+    @Nullable
+    public CalendarDayEvent getEvent(long epochMillis){
+        return compactCalendarController.getCalendarDayEvent(epochMillis);
+    }
+
+    /**
+     * Remove the event associated with the Date passed in
+     * @param date
+     */
+    public void removeEvent(Date date){
+        compactCalendarController.removeEventByDate(date);
+    }
+
+    public void removeEvent(long epochMillis){
+        compactCalendarController.removeEventByEpochMillis(epochMillis);
+    }
 
     /**
      * see {@link #removeEvent(com.github.sundeepk.compactcalendarview.domain.CalendarDayEvent, boolean)} when removing single events

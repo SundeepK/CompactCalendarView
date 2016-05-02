@@ -563,6 +563,11 @@ class CompactCalendarController {
         return getEventDayEvent(date.getTime());
     }
 
+    @Nullable
+    CalendarDayEvent getCalendarDayEvent(long epochMillis) {
+        return getEventDayEvent(epochMillis);
+    }
+
     private CalendarDayEvent getEventDayEvent(long eventTimeInMillis){
         eventsCalendar.setTimeInMillis(eventTimeInMillis);
         int dayInMonth = eventsCalendar.get(Calendar.DAY_OF_MONTH);
@@ -581,7 +586,11 @@ class CompactCalendarController {
     }
 
     void removeEventByDate(Date dateToRemoveEventFor){
-        eventsCalendar.setTimeInMillis(dateToRemoveEventFor.getTime());
+        removeEventByEpochMillis(dateToRemoveEventFor.getTime());
+    }
+
+    void removeEventByEpochMillis(long epochMillis) {
+        eventsCalendar.setTimeInMillis(epochMillis);
         int dayInMonth = eventsCalendar.get(Calendar.DAY_OF_MONTH);
         String key = getKeyForCalendarEvent(eventsCalendar);
         List<CalendarDayEvent> uniqCalendarDayEvents = events.get(key);
