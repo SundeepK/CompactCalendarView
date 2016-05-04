@@ -8,7 +8,6 @@ import android.graphics.Paint;
 import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.Typeface;
-import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.MotionEvent;
@@ -588,7 +587,7 @@ class CompactCalendarController {
         return null;
     }
 
-    void removeEventByDate(Date dateToRemoveEventFor){
+    void removeEventsByDate(Date dateToRemoveEventFor){
         removeEventByEpochMillis(dateToRemoveEventFor.getTime());
     }
 
@@ -596,9 +595,9 @@ class CompactCalendarController {
         eventsCalendar.setTimeInMillis(epochMillis);
         int dayInMonth = eventsCalendar.get(Calendar.DAY_OF_MONTH);
         String key = getKeyForCalendarEvent(eventsCalendar);
-        List<Events> uniqEventses = eventsByMonthAndYearMap.get(key);
-        if (uniqEventses != null) {
-            Iterator<Events> calendarDayEventIterator = uniqEventses.iterator();
+        List<Events> eventsForMonthAndYear = eventsByMonthAndYearMap.get(key);
+        if (eventsForMonthAndYear != null) {
+            Iterator<Events> calendarDayEventIterator = eventsForMonthAndYear.iterator();
             while (calendarDayEventIterator.hasNext()) {
                 Events next = calendarDayEventIterator.next();
                 eventsCalendar.setTimeInMillis(next.getTimeInMillis());

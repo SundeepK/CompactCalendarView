@@ -473,7 +473,7 @@ public class CompactCalendarControllerTest {
 
 
         //Sun, 07 Jun 2015 18:20:51 GMT
-        underTest.removeEventByDate(setTimeToMidnightAndGet(Calendar.getInstance(), 1433701251000L));
+        underTest.removeEventsByDate(setTimeToMidnightAndGet(Calendar.getInstance(), 1433701251000L));
         //Remove 6th item since it will represent Sun, 07 Jun 2015 which is the day that was removed
         events.remove(6);
         assertEquals(0, underTest.getEventsForDay(setTimeToMidnightAndGet(Calendar.getInstance(), 1433701251000L)).size());
