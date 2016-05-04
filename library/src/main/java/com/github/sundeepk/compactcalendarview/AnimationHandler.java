@@ -14,6 +14,7 @@ class AnimationHandler {
     public static final int INDICATOR_ANIM_DURATION_MILLIS = 700;
     private CompactCalendarController compactCalendarController;
     private CompactCalendarView compactCalendarView;
+    private int targetGrowRadius;
 
     AnimationHandler(CompactCalendarController compactCalendarController, CompactCalendarView compactCalendarView) {
         this.compactCalendarController = compactCalendarController;
@@ -98,7 +99,7 @@ class AnimationHandler {
 
     @NonNull
     private Animation getCollapsingAnimation(boolean isCollapsing) {
-        return new CollapsingAnimation(compactCalendarView, compactCalendarController, compactCalendarController.getTargetHeight(), isCollapsing);
+        return new CollapsingAnimation(compactCalendarView, compactCalendarController, compactCalendarController.getTargetHeight(), getTargetGrowRadius(), isCollapsing);
     }
 
     @NonNull
@@ -123,4 +124,9 @@ class AnimationHandler {
         return animIndicator;
     }
 
+    private int getTargetGrowRadius() {
+        int heightSq = compactCalendarController.getTargetHeight() * compactCalendarController.getTargetHeight();
+        int widthSq = compactCalendarController.getWidth() * compactCalendarController.getWidth();
+        return (int) (0.5 * Math.sqrt(heightSq + widthSq));
+    }
 }

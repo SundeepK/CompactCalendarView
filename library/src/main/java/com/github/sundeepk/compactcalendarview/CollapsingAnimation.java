@@ -1,19 +1,22 @@
 package com.github.sundeepk.compactcalendarview;
 
 
+import android.util.Log;
 import android.view.animation.Animation;
 import android.view.animation.Transformation;
 
 class CollapsingAnimation extends Animation {
     private final int targetHeight;
     private final CompactCalendarView view;
+    private int targetGrowRadius;
     private final boolean down;
     private CompactCalendarController compactCalendarController;
 
-    public CollapsingAnimation(CompactCalendarView view, CompactCalendarController compactCalendarController, int targetHeight, boolean down) {
+    public CollapsingAnimation(CompactCalendarView view, CompactCalendarController compactCalendarController, int targetHeight, int targetGrowRadius, boolean down) {
         this.view = view;
         this.compactCalendarController = compactCalendarController;
         this.targetHeight = targetHeight;
+        this.targetGrowRadius = targetGrowRadius;
         this.down = down;
     }
 
@@ -23,11 +26,13 @@ class CollapsingAnimation extends Animation {
         int newHeight;
         if (down) {
             newHeight = (int) (targetHeight * interpolatedTime);
-            grow = (interpolatedTime * (targetHeight * 2));
+            grow = (interpolatedTime * (targetGrowRadius * 2));
+            Log.d("controller", " targetHeight " + targetHeight + " newHeight " + newHeight + " grow " + grow);
+
         } else {
             float progress = 1 - interpolatedTime;
             newHeight = (int) (targetHeight * progress);
-            grow = (progress * (targetHeight * 2));
+            grow = (progress * (targetGrowRadius * 2));
         }
         compactCalendarController.setGrowProgress(grow);
         view.getLayoutParams().height = newHeight;
