@@ -32,7 +32,6 @@ public class Event {
         return data;
     }
 
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

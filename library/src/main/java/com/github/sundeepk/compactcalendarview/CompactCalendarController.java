@@ -558,12 +558,10 @@ class CompactCalendarController {
         }
     }
 
-    @Nullable
     List<Event> getCalendarDayEvent(Date date) {
         return getCalendarDayEvent(date.getTime());
     }
 
-    @Nullable
     List<Event> getCalendarDayEvent(long epochMillis) {
         Events events = getEventDayEvent(epochMillis);
         if (events == null) {
@@ -635,7 +633,7 @@ class CompactCalendarController {
         }
     }
 
-    List<Event> getEventsForMonth(Date date) {
+    List<Event> getEventsForDay(Date date) {
         eventsCalendar.setTimeInMillis(date.getTime());
         int dayInMonth = eventsCalendar.get(Calendar.DAY_OF_MONTH);
         String key = getKeyForCalendarEvent(eventsCalendar);
