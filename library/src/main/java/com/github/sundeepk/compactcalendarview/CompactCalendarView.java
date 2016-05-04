@@ -5,7 +5,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.support.annotation.Nullable;
 import android.support.v4.view.GestureDetectorCompat;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
@@ -14,7 +13,7 @@ import android.view.VelocityTracker;
 import android.view.View;
 import android.widget.OverScroller;
 
-import com.github.sundeepk.compactcalendarview.domain.CalendarDayEvent;
+import com.github.sundeepk.compactcalendarview.domain.Event;
 
 import java.util.Date;
 import java.util.List;
@@ -154,12 +153,12 @@ public class CompactCalendarView extends View {
     }
 
     /**
-     * see {@link #addEvent(com.github.sundeepk.compactcalendarview.domain.CalendarDayEvent, boolean)} when adding single events
+     * see {@link #addEvent(Event, boolean)} when adding single events
      * or {@link #addEvents(java.util.List)}  when adding multiple events
      * @param event
      */
     @Deprecated
-    public void addEvent(CalendarDayEvent event){
+    public void addEvent(Event event){
         addEvent(event, false);
     }
 
@@ -169,7 +168,7 @@ public class CompactCalendarView extends View {
      * @param event to be added to the calendar
      * @param shouldInvalidate true if the view should invalidate
      */
-    public void addEvent(CalendarDayEvent event, boolean shouldInvalidate){
+    public void addEvent(Event event, boolean shouldInvalidate){
         compactCalendarController.addEvent(event);
         if(shouldInvalidate){
             invalidate();
@@ -179,7 +178,7 @@ public class CompactCalendarView extends View {
     /**
      * Adds multiple events to the calendar and invalidates the view once all events are added.
      */
-    public void addEvents(List<CalendarDayEvent> events){
+    public void addEvents(List<Event> events){
         compactCalendarController.addEvents(events);
         invalidate();
     }
@@ -189,8 +188,7 @@ public class CompactCalendarView extends View {
      * @param date
      * @return
      */
-    @Nullable
-    public CalendarDayEvent getEvent(Date date){
+    public List<Event> getEvent(Date date){
         return compactCalendarController.getCalendarDayEvent(date);
     }
 
@@ -199,8 +197,7 @@ public class CompactCalendarView extends View {
      * @param epochMillis
      * @return
      */
-    @Nullable
-    public CalendarDayEvent getEvent(long epochMillis){
+    public List<Event> getEvent(long epochMillis){
         return compactCalendarController.getCalendarDayEvent(epochMillis);
     }
 
@@ -217,12 +214,12 @@ public class CompactCalendarView extends View {
     }
 
     /**
-     * see {@link #removeEvent(com.github.sundeepk.compactcalendarview.domain.CalendarDayEvent, boolean)} when removing single events
+     * see {@link #removeEvent(Event, boolean)} when removing single events
      * or {@link #removeEvents(java.util.List)} (java.util.List)}  when removing multiple events
      * @param event
      */
     @Deprecated
-    public void removeEvent(CalendarDayEvent event){
+    public void removeEvent(Event event){
         removeEvent(event, false);
     }
 
@@ -233,7 +230,7 @@ public class CompactCalendarView extends View {
      * @param event event to remove from the calendar
      * @param shouldInvalidate true if the view should invalidate
      */
-    public void removeEvent(CalendarDayEvent event, boolean shouldInvalidate){
+    public void removeEvent(Event event, boolean shouldInvalidate){
         compactCalendarController.removeEvent(event);
         if(shouldInvalidate){
             invalidate();
@@ -243,7 +240,7 @@ public class CompactCalendarView extends View {
     /**
      * Adds multiple events to the calendar and invalidates the view once all events are added.
      */
-    public void removeEvents(List<CalendarDayEvent> events){
+    public void removeEvents(List<Event> events){
         compactCalendarController.removeEvents(events);
         invalidate();
     }

@@ -13,7 +13,6 @@ import android.widget.Button;
 import android.widget.ListView;
 
 import com.github.sundeepk.compactcalendarview.CompactCalendarView;
-import com.github.sundeepk.compactcalendarview.domain.CalendarDayEvent;
 import com.github.sundeepk.compactcalendarview.domain.Event;
 
 import java.text.SimpleDateFormat;
@@ -167,7 +166,7 @@ public class MainActivity extends ActionBarActivity {
 
             List<Event> events = getEvents(timeInMillis, i);
 
-            compactCalendarView.addEvent(new CalendarDayEvent(timeInMillis, events), false);
+            compactCalendarView.addEvents(events);
             bookings.put(currentCalender.getTime(), createBookings());
         }
     }

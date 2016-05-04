@@ -5,17 +5,17 @@ import android.support.annotation.Nullable;
 public class Event {
 
     private int color;
-    private long timeStamp;
+    private long timeInMillis;
     private Object data;
 
-    public Event(int color, long timeStamp) {
+    public Event(int color, long timeInMillis) {
         this.color = color;
-        this.timeStamp = timeStamp;
+        this.timeInMillis = timeInMillis;
     }
 
-    public Event(int color, long timeStamp, Object data) {
+    public Event(int color, long timeInMillis, Object data) {
         this.color = color;
-        this.timeStamp = timeStamp;
+        this.timeInMillis = timeInMillis;
         this.data = data;
     }
 
@@ -23,8 +23,8 @@ public class Event {
         return color;
     }
 
-    public long getTimeStamp() {
-        return timeStamp;
+    public long getTimeInMillis() {
+        return timeInMillis;
     }
 
     @Nullable
@@ -41,7 +41,7 @@ public class Event {
         Event event = (Event) o;
 
         if (color != event.color) return false;
-        if (timeStamp != event.timeStamp) return false;
+        if (timeInMillis != event.timeInMillis) return false;
         if (data != null ? !data.equals(event.data) : event.data != null) return false;
 
         return true;
@@ -50,7 +50,7 @@ public class Event {
     @Override
     public int hashCode() {
         int result = color;
-        result = 31 * result + (int) (timeStamp ^ (timeStamp >>> 32));
+        result = 31 * result + (int) (timeInMillis ^ (timeInMillis >>> 32));
         result = 31 * result + (data != null ? data.hashCode() : 0);
         return result;
     }
@@ -59,7 +59,7 @@ public class Event {
     public String toString() {
         return "Event{" +
                 "color=" + color +
-                ", timeStamp=" + timeStamp +
+                ", timeInMillis=" + timeInMillis +
                 ", data=" + data +
                 '}';
     }

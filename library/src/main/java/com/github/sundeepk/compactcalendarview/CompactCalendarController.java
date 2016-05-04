@@ -16,7 +16,6 @@ import android.view.VelocityTracker;
 import android.view.ViewConfiguration;
 import android.widget.OverScroller;
 
-import com.github.sundeepk.compactcalendarview.domain.CalendarDayEvent;
 import com.github.sundeepk.compactcalendarview.domain.Event;
 
 import java.text.DateFormatSymbols;
@@ -72,7 +71,7 @@ class CompactCalendarController {
     private int paddingRight;
     private int paddingLeft;
     private boolean shouldDrawDaysHeader = true;
-    private Map<String, List<CalendarDayEvent>> events = new HashMap<>();
+    private Map<String, List<Events>> eventsByMonthAndYearMap = new HashMap<>();
     private float bigCircleIndicatorRadius;
     private float smallIndicatorRadius;
     private boolean shouldShowMondayAsFirstDay = true;
@@ -213,7 +212,7 @@ class CompactCalendarController {
     }
 
     void removeAllEvents() {
-        events.clear();
+        eventsByMonthAndYearMap.clear();
     }
 
     void setShouldShowMondayAsFirstDay(boolean shouldShowMondayAsFirstDay) {
@@ -534,24 +533,25 @@ class CompactCalendarController {
         calendar.set(Calendar.MILLISECOND, 0);
     }
 
-    void addEvent(CalendarDayEvent event) {
+    void addEvent(Event event) {
         eventsCalendar.setTimeInMillis(event.getTimeInMillis());
         String key = getKeyForCalendarEvent(eventsCalendar);
-        List<CalendarDayEvent> uniqCalendarDayEvents = events.get(key);
-        if (uniqCalendarDayEvents == null) {
-            uniqCalendarDayEvents = new ArrayList<>();
+        List<Events> eventsForMonth = eventsByMonthAndYearMap.get(key);
+        if (eventsForMonth == null) {
+            eventsForMonth = new ArrayList<>();
         }
-        CalendarDayEvent calendarDayEvent = getEventDayEvent(event.getTimeInMillis());
-        if (calendarDayEvent == null) {
-            uniqCalendarDayEvents.add(event);
+        Events eventsForTargetDay = getEventDayEvent(event.getTimeInMillis());
+        if (eventsForTargetDay == null) {
+            List<Event> events = new ArrayList<>();
+            events.add(event);
+            eventsForMonth.add(new Events(event.getTimeInMillis(), events));
         } else {
-            calendarDayEvent.getEvents().clear();
-            calendarDayEvent.getEvents().addAll(event.getEvents());
+            eventsForTargetDay.getEvents().add(event);
         }
-        events.put(key, uniqCalendarDayEvents);
+        eventsByMonthAndYearMap.put(key, eventsForMonth);
     }
 
-    void addEvents(List<CalendarDayEvent> events) {
+    void addEvents(List<Event> events) {
         int count = events.size();
         for (int i = 0; i < count; i++) {
             addEvent(events.get(i));
@@ -559,26 +559,31 @@ class CompactCalendarController {
     }
 
     @Nullable
-    CalendarDayEvent getCalendarDayEvent(Date date) {
-        return getEventDayEvent(date.getTime());
+    List<Event> getCalendarDayEvent(Date date) {
+        return getCalendarDayEvent(date.getTime());
     }
 
     @Nullable
-    CalendarDayEvent getCalendarDayEvent(long epochMillis) {
-        return getEventDayEvent(epochMillis);
+    List<Event> getCalendarDayEvent(long epochMillis) {
+        Events events = getEventDayEvent(epochMillis);
+        if (events == null) {
+            return new ArrayList<>();
+        } else {
+            return events.getEvents();
+        }
     }
 
-    private CalendarDayEvent getEventDayEvent(long eventTimeInMillis){
+    private Events getEventDayEvent(long eventTimeInMillis){
         eventsCalendar.setTimeInMillis(eventTimeInMillis);
         int dayInMonth = eventsCalendar.get(Calendar.DAY_OF_MONTH);
         String keyForCalendarEvent = getKeyForCalendarEvent(eventsCalendar);
-        List<CalendarDayEvent> calendarDayEvents = events.get(keyForCalendarEvent);
-        if (calendarDayEvents != null) {
-            for (CalendarDayEvent calendarDayEvent : calendarDayEvents) {
-                eventsCalendar.setTimeInMillis(calendarDayEvent.getTimeInMillis());
+        List<Events> eventsForMonthsAndYear = eventsByMonthAndYearMap.get(keyForCalendarEvent);
+        if (eventsForMonthsAndYear != null) {
+            for (Events events : eventsForMonthsAndYear) {
+                eventsCalendar.setTimeInMillis(events.getTimeInMillis());
                 int dayInMonthFromCache = eventsCalendar.get(Calendar.DAY_OF_MONTH);
                 if (dayInMonthFromCache == dayInMonth) {
-                    return calendarDayEvent;
+                    return events;
                 }
             }
         }
@@ -593,11 +598,11 @@ class CompactCalendarController {
         eventsCalendar.setTimeInMillis(epochMillis);
         int dayInMonth = eventsCalendar.get(Calendar.DAY_OF_MONTH);
         String key = getKeyForCalendarEvent(eventsCalendar);
-        List<CalendarDayEvent> uniqCalendarDayEvents = events.get(key);
-        if (uniqCalendarDayEvents != null) {
-            Iterator<CalendarDayEvent> calendarDayEventIterator = uniqCalendarDayEvents.iterator();
+        List<Events> uniqEventses = eventsByMonthAndYearMap.get(key);
+        if (uniqEventses != null) {
+            Iterator<Events> calendarDayEventIterator = uniqEventses.iterator();
             while (calendarDayEventIterator.hasNext()) {
-                CalendarDayEvent next = calendarDayEventIterator.next();
+                Events next = calendarDayEventIterator.next();
                 eventsCalendar.setTimeInMillis(next.getTimeInMillis());
                 int dayInMonthFromCache = eventsCalendar.get(Calendar.DAY_OF_MONTH);
                 if (dayInMonthFromCache == dayInMonth) {
@@ -608,28 +613,44 @@ class CompactCalendarController {
         }
     }
 
-    void removeEvent(CalendarDayEvent event) {
+    void removeEvent(Event event) {
         eventsCalendar.setTimeInMillis(event.getTimeInMillis());
         String key = getKeyForCalendarEvent(eventsCalendar);
-        List<CalendarDayEvent> uniqCalendarDayEvents = events.get(key);
-        if (uniqCalendarDayEvents != null) {
-            uniqCalendarDayEvents.remove(event);
+        List<Events> eventsForMonthAndYear = eventsByMonthAndYearMap.get(key);
+        if (eventsForMonthAndYear != null) {
+            for(Events events : eventsForMonthAndYear){
+                int indexOfEvent = events.getEvents().indexOf(event);
+                if (indexOfEvent >= 0) {
+                    events.getEvents().remove(indexOfEvent);
+                    return;
+                }
+            }
         }
     }
 
-    void removeEvents(List<CalendarDayEvent> events) {
+    void removeEvents(List<Event> events) {
         int count = events.size();
         for (int i = 0; i < count; i++) {
             removeEvent(events.get(i));
         }
     }
 
-    List<CalendarDayEvent> getEventsForMonth(Date date) {
+    List<Event> getEventsForMonth(Date date) {
         eventsCalendar.setTimeInMillis(date.getTime());
+        int dayInMonth = eventsCalendar.get(Calendar.DAY_OF_MONTH);
         String key = getKeyForCalendarEvent(eventsCalendar);
-        List<CalendarDayEvent> uniqEvents = events.get(key);
+        List<Events> uniqEvents = eventsByMonthAndYearMap.get(key);
         if (uniqEvents != null) {
-            return uniqEvents;
+            int count = uniqEvents.size();
+            for (int i = 0; i < count; i++) {
+                Events events = uniqEvents.get(i);
+                eventsCalendar.setTimeInMillis(events.getTimeInMillis());
+                int dayInMonthFromCache = eventsCalendar.get(Calendar.DAY_OF_MONTH);
+                if (dayInMonthFromCache == dayInMonth) {
+                   return events.getEvents();
+                }
+            }
+            return new ArrayList<>();
         } else {
             return new ArrayList<>();
         }
@@ -709,16 +730,16 @@ class CompactCalendarController {
     }
 
     void drawEvents(Canvas canvas, Calendar currentMonthToDrawCalender, int offset) {
-        List<CalendarDayEvent> uniqCalendarDayEvents =
-                events.get(getKeyForCalendarEvent(currentMonthToDrawCalender));
+        List<Events> uniqEventses =
+                eventsByMonthAndYearMap.get(getKeyForCalendarEvent(currentMonthToDrawCalender));
 
         boolean shouldDrawCurrentDayCircle = currentMonthToDrawCalender.get(Calendar.MONTH) == todayCalender.get(Calendar.MONTH);
         int todayDayOfMonth = todayCalender.get(Calendar.DAY_OF_MONTH);
 
-        if (uniqCalendarDayEvents != null) {
-            for (int i = 0; i < uniqCalendarDayEvents.size(); i++) {
-                CalendarDayEvent calendarDayEvent = uniqCalendarDayEvents.get(i);
-                long timeMillis = calendarDayEvent.getTimeInMillis();
+        if (uniqEventses != null) {
+            for (int i = 0; i < uniqEventses.size(); i++) {
+                Events events = uniqEventses.get(i);
+                long timeMillis = events.getTimeInMillis();
                 eventsCalendar.setTimeInMillis(timeMillis);
 
                 int dayOfWeek = getDayOfWeek(eventsCalendar) - 1;
@@ -733,7 +754,7 @@ class CompactCalendarController {
                     continue;
                 }
 
-                List<Event> eventsList = calendarDayEvent.getEvents();
+                List<Event> eventsList = events.getEvents();
                 int dayOfMonth = eventsCalendar.get(Calendar.DAY_OF_MONTH);
                 boolean isSameDayAsCurrentDay = (todayDayOfMonth == dayOfMonth && shouldDrawCurrentDayCircle);
                 boolean isCurrentSelectedDay = currentCalender.get(Calendar.DAY_OF_MONTH) == dayOfMonth;
@@ -763,10 +784,10 @@ class CompactCalendarController {
         drawSmallIndicatorCircle(canvas, xPosition + (xIndicatorOffset * 1), yPosition + yIndicatorOffset, eventsList.get(1).getColor());
     }
 
-    //draw 2 events followed by plus indicator to show there are more than 2 events
+    //draw 2 eventsByMonthAndYearMap followed by plus indicator to show there are more than 2 eventsByMonthAndYearMap
     private void drawEventsWithPlus(Canvas canvas, float xPosition, float yPosition, List<Event> eventsList) {
         // k = size() - 1, but since we don't want to draw more than 2 indicators, we just stop after 2 iterations so we can just hard k = -2 instead
-        // we can use the below loop to draw arbitrary events based on the current screen size, for example, larger screens should be able to
+        // we can use the below loop to draw arbitrary eventsByMonthAndYearMap based on the current screen size, for example, larger screens should be able to
         // display more than 2 evens before displaying plus indicator, but don't draw more than 3 indicators for now
         for (int j = 0, k = -2; j < 3; j++, k += 2) {
             Event event = eventsList.get(j);
