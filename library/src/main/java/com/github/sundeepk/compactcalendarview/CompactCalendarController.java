@@ -43,7 +43,7 @@ class CompactCalendarController {
     private int paddingHeight = 40;
     private Paint dayPaint = new Paint();
     private Paint background = new Paint();
-    private Rect rect;
+    private Rect textSizeRect;
     private int textHeight;
     private int textWidth;
     private static final int DAYS_IN_WEEK = 7;
@@ -99,13 +99,13 @@ class CompactCalendarController {
         NONE, HORIZONTAL, VERTICAL
     }
 
-    CompactCalendarController(Paint dayPaint, OverScroller scroller, Rect rect, AttributeSet attrs,
+    CompactCalendarController(Paint dayPaint, OverScroller scroller, Rect textSizeRect, AttributeSet attrs,
                               Context context, int currentDayBackgroundColor, int calenderTextColor,
                               int currentSelectedDayBackgroundColor, VelocityTracker velocityTracker,
                               int multiEventIndicatorColor) {
         this.dayPaint = dayPaint;
         this.scroller = scroller;
-        this.rect = rect;
+        this.textSizeRect = textSizeRect;
         this.currentDayBackgroundColor = currentDayBackgroundColor;
         this.calenderTextColor = calenderTextColor;
         this.currentSelectedDayBackgroundColor = currentSelectedDayBackgroundColor;
@@ -142,9 +142,9 @@ class CompactCalendarController {
         dayPaint.setTypeface(Typeface.SANS_SERIF);
         dayPaint.setTextSize(textSize);
         dayPaint.setColor(calenderTextColor);
-        dayPaint.getTextBounds("31", 0, "31".length(), rect);
-        textHeight = rect.height() * 3;
-        textWidth = rect.width() * 2;
+        dayPaint.getTextBounds("31", 0, "31".length(), textSizeRect);
+        textHeight = textSizeRect.height() * 3;
+        textWidth = textSizeRect.width() * 2;
 
         todayCalender.setTime(currentDate);
         setToMidnight(todayCalender);
@@ -313,14 +313,21 @@ class CompactCalendarController {
         //scale small indicator by screen density
         smallIndicatorRadius = 2.5f * screenDensity;
 
-        //assume square around each day of width and height = heightPerDay and get diagonal line length
         //makes easier to find radius
-        //double radiusAroundDay = 0.5 * Math.sqrt((heightPerDay * heightPerDay) + (heightPerDay * heightPerDay));
+        bigCircleIndicatorRadius = getInterpolatedBigCircleIndicator();
+    }
 
-        // comment out calculating radius based on square around day since it doesn't work well with smaller screens
+    //assume square around each day of width and height = heightPerDay and get diagonal line length
+    //interpolate height and radius
+    //https://en.wikipedia.org/wiki/Linear_interpolation
+    private float getInterpolatedBigCircleIndicator() {
+        float x0 = textSizeRect.height();
+        float x1 = (heightPerDay - yIndicatorOffset); // take into account indicator offset
+        float x =  (x1 + textSizeRect.height()) / 1.7f; // pick a point which is almost half way through heightPerDay and textSizeRect
+        double y1 = 0.5 * Math.sqrt((x1 * x1) + (x1 * x1));
+        double y0 = 0.5 * Math.sqrt((x0 * x0) + (x0 * x0));
 
-        //make radius based on screen density, some arbitrary size for now
-        bigCircleIndicatorRadius = 15f * screenDensity;
+        return (float) (y0 + ((y1 - y0) * ((x - x0) / (x1 - x0))));
     }
 
     void onDraw(Canvas canvas) {
