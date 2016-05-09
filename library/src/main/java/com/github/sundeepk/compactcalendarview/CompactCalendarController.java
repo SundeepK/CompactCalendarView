@@ -9,7 +9,6 @@ import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
@@ -208,7 +207,6 @@ class CompactCalendarController {
     }
 
     int getWidth(){
-        Log.d("controlerwidth", " width " + width);
         return width;
     }
 

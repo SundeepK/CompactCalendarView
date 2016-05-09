@@ -1,7 +1,6 @@
 package com.github.sundeepk.compactcalendarview;
 
 
-import android.util.Log;
 import android.view.animation.Animation;
 import android.view.animation.Transformation;
 
@@ -27,8 +26,6 @@ class CollapsingAnimation extends Animation {
         if (down) {
             newHeight = (int) (targetHeight * interpolatedTime);
             grow = (interpolatedTime * (targetGrowRadius * 2));
-            Log.d("controller", " targetHeight " + targetHeight + " newHeight " + newHeight + " grow " + grow);
-
         } else {
             float progress = 1 - interpolatedTime;
             newHeight = (int) (targetHeight * progress);
