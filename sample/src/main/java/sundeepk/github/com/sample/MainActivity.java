@@ -20,37 +20,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 
 public class MainActivity extends ActionBarActivity {
 
+    private static final String TAG = "MainActivity";
     private Calendar currentCalender = Calendar.getInstance(Locale.getDefault());
     private SimpleDateFormat dateFormatForMonth = new SimpleDateFormat("MMM - yyyy", Locale.getDefault());
-    private Map<Date, List<Booking>> bookings = new HashMap<>();
     private boolean shouldShow = false;
-
-    public class Booking {
-        private String title;
-        private Date date;
-
-        public Booking(String title, Date date) {
-            this.title = title;
-            this.date = date;
-        }
-
-
-        @Override
-        public String toString() {
-            return "Booking{" +
-                    "title='" + title + '\'' +
-                    ", date=" + date +
-                    '}';
-        }
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,13 +69,13 @@ public class MainActivity extends ActionBarActivity {
         compactCalendarView.setListener(new CompactCalendarView.CompactCalendarViewListener() {
             @Override
             public void onDayClick(Date dateClicked) {
-                List<Booking> bookingsFromMap = bookings.get(dateClicked);
-                Log.d("MainActivity", "inside onclick " + dateClicked);
+                List<Event> bookingsFromMap = compactCalendarView.getEvents(dateClicked);
+                Log.d(TAG, "inside onclick " + dateClicked);
                 if(bookingsFromMap != null){
-                    Log.d("MainActivity", bookingsFromMap.toString());
+                    Log.d(TAG, bookingsFromMap.toString());
                     mutableBookings.clear();
-                    for(Booking booking : bookingsFromMap){
-                        mutableBookings.add(booking.title);
+                    for(Event booking : bookingsFromMap){
+                        mutableBookings.add((String)booking.getData());
                     }
                     adapter.notifyDataSetChanged();
                 }
@@ -165,31 +144,22 @@ public class MainActivity extends ActionBarActivity {
             List<Event> events = getEvents(timeInMillis, i);
 
             compactCalendarView.addEvents(events);
-            bookings.put(currentCalender.getTime(), createBookings());
         }
     }
 
     private List<Event> getEvents(long timeInMillis, int day) {
         if (day < 2) {
-            return Arrays.asList(new Event(Color.argb(255, 169, 68, 65), timeInMillis));
+            return Arrays.asList(new Event(Color.argb(255, 169, 68, 65), timeInMillis, "Event at " + new Date(timeInMillis)));
         } else if ( day > 2 && day <= 4) {
             return Arrays.asList(
-                    new Event(Color.argb(255, 169, 68, 65), timeInMillis),
-                    new Event(Color.argb(255, 100, 68, 65), timeInMillis));
+                    new Event(Color.argb(255, 169, 68, 65), timeInMillis, "Event at " + new Date(timeInMillis)),
+                    new Event(Color.argb(255, 100, 68, 65), timeInMillis, "Event 2 at " + new Date(timeInMillis)));
         } else {
             return Arrays.asList(
-                    new Event(Color.argb(255, 169, 68, 65), timeInMillis),
-                    new Event(Color.argb(255, 100, 68, 65), timeInMillis),
-                    new Event(Color.argb(255, 70, 68, 65), timeInMillis));
+                    new Event(Color.argb(255, 169, 68, 65), timeInMillis, "Event at " + new Date(timeInMillis) ),
+                    new Event(Color.argb(255, 100, 68, 65), timeInMillis, "Event 2 at " + new Date(timeInMillis)),
+                    new Event(Color.argb(255, 70, 68, 65), timeInMillis, "Event 3 at " + new Date(timeInMillis)));
         }
-
-    }
-
-    private List<Booking> createBookings() {
-        return Arrays.asList(
-                new Booking("Test title with time - " + currentCalender.getTimeInMillis(), currentCalender.getTime()),
-                new Booking("Test title 2 with time - " + currentCalender.getTimeInMillis(), currentCalender.getTime()),
-                new Booking("Test title 3 with time - " + currentCalender.getTimeInMillis(), currentCalender.getTime()));
     }
 
     private void setToMidnight(Calendar calendar) {
