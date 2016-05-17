@@ -24,8 +24,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -327,7 +329,6 @@ public class CompactCalendarControllerTest {
         Assert.assertEquals(events.get(0), actualEvents.get(0));
     }
 
-
     @Test
     public void testItRemovesEvents(){
         //Sun, 01 Feb 2015 00:00:00 GMT
@@ -351,6 +352,23 @@ public class CompactCalendarControllerTest {
             List<Event> actualEvents = underTest.getEventsForDay(new Date(e.getTimeInMillis()));
             Assert.assertEquals(1, actualEvents.size());
             Assert.assertEquals(e, actualEvents.get(0));
+        }
+    }
+
+    @Test
+    public void testItGetsMultipleEventsThatWereAddedForADay(){
+        //Add 3 events per a day for Feb starting from Sun, 01 Feb 2015 00:00:00 GMT
+        Map<Long, List<Event>> events = getMultipleEventsForEachDayAsMap(0, 30, 1422748800000L);
+        for(Map.Entry<Long, List<Event>> entry : events.entrySet()){
+            for (Event event: entry.getValue()) {
+                underTest.addEvent(event);
+            }
+        }
+
+        //if multiple events were added for every day, then check that all events are present by day
+        for(Map.Entry<Long, List<Event>> entry : events.entrySet()){
+            List<Event> actualEvents = underTest.getEventsForDay(new Date(entry.getKey()));
+            Assert.assertEquals(entry.getValue(), actualEvents);
         }
     }
 
@@ -436,7 +454,7 @@ public class CompactCalendarControllerTest {
     }
 
     @Test
-    public void testItGetsEvents(){
+    public void testItGetsEventsForSpecificDay(){
         //Sun, 07 Jun 2015 18:20:51 GMT
         //get 30 events in total
         List<Event> events = getEvents(0, 30, 1433701251000L);
@@ -504,7 +522,7 @@ public class CompactCalendarControllerTest {
     }
 
     @Test
-    public void testItAddsEventsToExistsList(){
+    public void testItAddsEventsToExistingList(){
         //Sun, 07 Jun 2015 18:20:51 GMT
         //get 30 events in total
         List<Event> events = getEvents(0, 30, 1433701251000L);
@@ -515,12 +533,13 @@ public class CompactCalendarControllerTest {
         //Assert 6th item since it will represent Sun, 07 Jun 2015 which is the day that we queried for
         assertEquals(events.get(6), calendarDayEvents.get(0));
 
-        //add event in Sun, 07 Jun 2015 18:20:51 GMT
+        //add event in Sun, 07 Jun 2015 18:20:51 GMT for same day, making total 2 events for same day now
         Event extraEventAdded = new Event(Color.GREEN, 1433701251000L);
         underTest.addEvent(extraEventAdded);
 
         //Sun, 07 Jun 2015 18:20:51 GMT
         List<Event> calendarDayEvents2 = underTest.getCalendarDayEvent(setTimeToMidnightAndGet(Calendar.getInstance(), 1433701251000L));
+
         assertNotNull(calendarDayEvents2);
         //Assert 6th item since it will represent Sun, 07 Jun 2015 which is the day that we queried for
         assertEquals(2, calendarDayEvents2.size());
@@ -532,6 +551,7 @@ public class CompactCalendarControllerTest {
         return getEvents(start, days, timeStamp, Color.BLUE);
     }
 
+    //generate one event per a day for a month
     private List<Event> getEvents(int start, int days, long timeStamp, int color) {
         Calendar currentCalender = Calendar.getInstance(Locale.getDefault());
         List<Event> events = new ArrayList<>();
@@ -565,6 +585,22 @@ public class CompactCalendarControllerTest {
             eventList.addAll(events);
         }
         return eventList;
+    }
+
+    private Map<Long, List<Event>> getMultipleEventsForEachDayAsMap(int start, int days, long timeStamp) {
+        Calendar currentCalender = Calendar.getInstance(Locale.getDefault());
+        Map<Long, List<Event>> epochMillisToEvents = new HashMap<>();
+        for(int i = start; i < days; i++){
+            setDateTime(timeStamp, currentCalender, i);
+            List<Event> eventList = new ArrayList<>();
+            List<Event> events = Arrays.asList(new Event(Color.BLUE, currentCalender.getTimeInMillis()),
+                    new Event(Color.RED, currentCalender.getTimeInMillis() + 3600 * 1000),
+                    new Event(Color.RED, currentCalender.getTimeInMillis() + (3600 * 2) * 1000),
+                    new Event(Color.RED, currentCalender.getTimeInMillis() + (3600 * 3) * 1000));
+            eventList.addAll(events);
+            epochMillisToEvents.put(currentCalender.getTimeInMillis(), eventList);
+        }
+        return epochMillisToEvents;
     }
 
     private void setDateTime(long timeStamp, Calendar currentCalender, int i) {
