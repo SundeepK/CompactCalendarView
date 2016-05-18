@@ -31,13 +31,14 @@ import java.util.Map;
 
 class CompactCalendarController {
 
-    private static final int VELOCITY_UNIT_PIXELS_PER_SECOND = 1000;
-    private static final float ANIMATION_SCREEN_SET_DURATION_MILLIS = 700;
-    private static final int LAST_FLING_THRESHOLD_MILLIS = 300;
     public static final int IDLE = 0;
     public static final int EXPOSE_CALENDAR_ANIMATION = 1;
     public static final int EXPAND_COLLAPSE_CALENDAR = 2;
     public static final int ANIMATE_INDICATORS = 3;
+    private static final int VELOCITY_UNIT_PIXELS_PER_SECOND = 1000;
+    private static final float ANIMATION_SCREEN_SET_DURATION_MILLIS = 700;
+    private static final int LAST_FLING_THRESHOLD_MILLIS = 300;
+    private static final float SNAP_VELOCITY_DIP_PER_SECOND = 400;
     private int paddingWidth = 40;
     private int paddingHeight = 40;
     private Paint dayPaint = new Paint();
@@ -79,9 +80,8 @@ class CompactCalendarController {
     private boolean isAnimatingIndicator = false;
     private float screenDensity = 1;
     private float growfactorIndicator;
-    VelocityTracker velocityTracker = null;
+    private VelocityTracker velocityTracker = null;
     private int maximumVelocity;
-    private float SNAP_VELOCITY_DIP_PER_SECOND = 400;
     private int densityAdjustedSnapVelocity;
     private boolean isSmoothScrolling;
     private CompactCalendarView.CompactCalendarViewListener listener;
@@ -334,30 +334,31 @@ class CompactCalendarController {
         calculateXPositionOffset();
 
         if (animationStatus == EXPOSE_CALENDAR_ANIMATION) {
-            background.setColor(calenderBackgroundColor);
-            background.setStyle(Paint.Style.FILL);
-            canvas.drawCircle(0, 0, growFactor, background);
-            dayPaint.setStyle(Paint.Style.STROKE);
-            dayPaint.setColor(Color.WHITE);
-
-            drawScrollableCalender(canvas);
+            drawCalendarWhileAnimating(canvas);
         } else if (isAnimatingIndicator) {
-
-            dayPaint.setColor(calenderBackgroundColor);
-            dayPaint.setStyle(Paint.Style.FILL);
-            canvas.drawCircle(0, 0, growFactor, dayPaint);
-            dayPaint.setStyle(Paint.Style.STROKE);
-            dayPaint.setColor(Color.WHITE);
-
-            drawScrollableCalender(canvas);
-
-
+            drawCalendarWhileAnimatingIndicators(canvas);
         } else {
-
             drawCalenderBackground(canvas);
-
             drawScrollableCalender(canvas);
         }
+    }
+
+    private void drawCalendarWhileAnimatingIndicators(Canvas canvas) {
+        dayPaint.setColor(calenderBackgroundColor);
+        dayPaint.setStyle(Paint.Style.FILL);
+        canvas.drawCircle(0, 0, growFactor, dayPaint);
+        dayPaint.setStyle(Paint.Style.STROKE);
+        dayPaint.setColor(Color.WHITE);
+        drawScrollableCalender(canvas);
+    }
+
+    private void drawCalendarWhileAnimating(Canvas canvas) {
+        background.setColor(calenderBackgroundColor);
+        background.setStyle(Paint.Style.FILL);
+        canvas.drawCircle(0, 0, growFactor, background);
+        dayPaint.setStyle(Paint.Style.STROKE);
+        dayPaint.setColor(Color.WHITE);
+        drawScrollableCalender(canvas);
     }
 
     void onSingleTapConfirmed(MotionEvent e) {
