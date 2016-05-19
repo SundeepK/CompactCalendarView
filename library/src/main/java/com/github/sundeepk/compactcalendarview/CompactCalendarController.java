@@ -9,6 +9,7 @@ import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
+import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
@@ -93,6 +94,7 @@ class CompactCalendarController {
     private float yIndicatorOffset;
     private float xIndicatorOffset;
     private int animationStatus = 0;
+    private float multiDayIndicatorStrokeWidth;
 
     private enum Direction {
         NONE, HORIZONTAL, VERTICAL
@@ -159,6 +161,9 @@ class CompactCalendarController {
                     .get(context);
             densityAdjustedSnapVelocity = (int) (screenDensity * SNAP_VELOCITY_DIP_PER_SECOND);
             maximumVelocity = configuration.getScaledMaximumFlingVelocity();
+
+            final DisplayMetrics dm = context.getResources().getDisplayMetrics() ;
+            multiDayIndicatorStrokeWidth = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1, dm);
         }
 
         yIndicatorOffset = 8 * screenDensity;
@@ -804,7 +809,7 @@ class CompactCalendarController {
             float yStartPosition = yPosition + yIndicatorOffset;
             if (j == 2) {
                 dayPaint.setColor(multiEventIndicatorColor);
-                dayPaint.setStrokeWidth(4);
+                dayPaint.setStrokeWidth(multiDayIndicatorStrokeWidth);
                 canvas.drawLine(xStartPosition - smallIndicatorRadius, yStartPosition, xStartPosition + smallIndicatorRadius, yStartPosition, dayPaint);
                 canvas.drawLine(xStartPosition, yStartPosition - smallIndicatorRadius, xStartPosition, yStartPosition + smallIndicatorRadius, dayPaint);
                 dayPaint.setStrokeWidth(0);
