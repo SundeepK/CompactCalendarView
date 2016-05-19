@@ -297,7 +297,7 @@ public class CompactCalendarControllerTest {
 
         underTest.removeAllEvents();
 
-        List<Event> actualEvents = underTest.getEventsForDay(new Date(1422748800000L));
+        List<Event> actualEvents = underTest.getCalendarEventsFor(new Date(1422748800000L));
         Assert.assertEquals(new ArrayList<Event>(), actualEvents);
     }
 
@@ -311,7 +311,7 @@ public class CompactCalendarControllerTest {
 
         events = getEvents(0, 28, 1422748800000L);
 
-        List<Event> actualEvents = underTest.getEventsForDay(new Date(1422748800000L));
+        List<Event> actualEvents = underTest.getCalendarEventsFor(new Date(1422748800000L));
         Assert.assertEquals(events.get(0), actualEvents.get(0));
     }
 
@@ -324,7 +324,7 @@ public class CompactCalendarControllerTest {
 
         events = getEvents(0, 28, 1422748800000L);
 
-        List<Event> actualEvents = underTest.getEventsForDay(new Date(1422748800000L));
+        List<Event> actualEvents = underTest.getCalendarEventsFor(new Date(1422748800000L));
         Assert.assertEquals(1, actualEvents.size());
         Assert.assertEquals(events.get(0), actualEvents.get(0));
     }
@@ -349,7 +349,7 @@ public class CompactCalendarControllerTest {
         expectedEvents.remove(events.get(20));
 
         for (Event e : expectedEvents) {
-            List<Event> actualEvents = underTest.getEventsForDay(new Date(e.getTimeInMillis()));
+            List<Event> actualEvents = underTest.getCalendarEventsFor(new Date(e.getTimeInMillis()));
             Assert.assertEquals(1, actualEvents.size());
             Assert.assertEquals(e, actualEvents.get(0));
         }
@@ -367,7 +367,7 @@ public class CompactCalendarControllerTest {
 
         //if multiple events were added for every day, then check that all events are present by day
         for(Map.Entry<Long, List<Event>> entry : events.entrySet()){
-            List<Event> actualEvents = underTest.getEventsForDay(new Date(entry.getKey()));
+            List<Event> actualEvents = underTest.getCalendarEventsFor(new Date(entry.getKey()));
             Assert.assertEquals(entry.getValue(), actualEvents);
         }
     }
@@ -386,7 +386,7 @@ public class CompactCalendarControllerTest {
         expectedEvents.removeAll(Arrays.asList(events.get(0), events.get(1), events.get(5), events.get(20)));
 
         for (Event e : expectedEvents) {
-            List<Event> actualEvents = underTest.getEventsForDay(new Date(e.getTimeInMillis()));
+            List<Event> actualEvents = underTest.getCalendarEventsFor(new Date(e.getTimeInMillis()));
             Assert.assertEquals(1, actualEvents.size());
             Assert.assertEquals(e, actualEvents.get(0));
         }
@@ -470,7 +470,7 @@ public class CompactCalendarControllerTest {
         }
 
         //Sun, 07 Jun 2015 18:20:51 GMT
-        List<Event> calendarDayEvents = underTest.getCalendarDayEvent(setTimeToMidnightAndGet(Calendar.getInstance(), 1433701251000L));
+        List<Event> calendarDayEvents = underTest.getCalendarEventsFor(setTimeToMidnightAndGet(Calendar.getInstance(), 1433701251000L));
         assertNotNull(calendarDayEvents);
         //Assert 6th item since it will represent Sun, 07 Jun 2015 which is the day that we queried for
         assertEquals(1, calendarDayEvents.size());
@@ -486,15 +486,15 @@ public class CompactCalendarControllerTest {
             underTest.addEvent(event);
         }
 
-        assertEquals(1, underTest.getEventsForDay(setTimeToMidnightAndGet(Calendar.getInstance(), 1433701251000L)).size());
-        assertEquals(events.get(6), underTest.getEventsForDay(setTimeToMidnightAndGet(Calendar.getInstance(), 1433701251000L)).get(0));
+        assertEquals(1, underTest.getCalendarEventsFor(setTimeToMidnightAndGet(Calendar.getInstance(), 1433701251000L)).size());
+        assertEquals(events.get(6), underTest.getCalendarEventsFor(setTimeToMidnightAndGet(Calendar.getInstance(), 1433701251000L)).get(0));
 
 
         //Sun, 07 Jun 2015 18:20:51 GMT
         underTest.removeEventsByDate(setTimeToMidnightAndGet(Calendar.getInstance(), 1433701251000L));
         //Remove 6th item since it will represent Sun, 07 Jun 2015 which is the day that was removed
         events.remove(6);
-        assertEquals(0, underTest.getEventsForDay(setTimeToMidnightAndGet(Calendar.getInstance(), 1433701251000L)).size());
+        assertEquals(0, underTest.getCalendarEventsFor(setTimeToMidnightAndGet(Calendar.getInstance(), 1433701251000L)).size());
     }
 
     @Test
@@ -507,7 +507,7 @@ public class CompactCalendarControllerTest {
         }
 
         //Sun, 07 Jun 2015 18:20:51 GMT
-        List<Event> calendarDayEvents = underTest.getCalendarDayEvent(setTimeToMidnightAndGet(Calendar.getInstance(), 1433701251000L));
+        List<Event> calendarDayEvents = underTest.getCalendarEventsFor(setTimeToMidnightAndGet(Calendar.getInstance(), 1433701251000L));
         assertNotNull(calendarDayEvents);
         //Assert 6th item since it will represent Sun, 07 Jun 2015 which is the day that we queried for
         assertEquals(events.get(6), calendarDayEvents.get(0));
@@ -517,7 +517,7 @@ public class CompactCalendarControllerTest {
         calendarDayEvents.add(updateItem);
 
         //Query again Sun, 07 Jun 2015 18:20:51 GMT to make sure list is updated
-        List<Event> calendarDayEvents2 = underTest.getCalendarDayEvent(setTimeToMidnightAndGet(Calendar.getInstance(), 1433701251000L));
+        List<Event> calendarDayEvents2 = underTest.getCalendarEventsFor(setTimeToMidnightAndGet(Calendar.getInstance(), 1433701251000L));
         assertTrue(calendarDayEvents2.contains(updateItem));
     }
 
@@ -529,7 +529,7 @@ public class CompactCalendarControllerTest {
         underTest.addEvents(events);
 
         //Sun, 07 Jun 2015 18:20:51 GMT
-        List<Event> calendarDayEvents = underTest.getCalendarDayEvent(setTimeToMidnightAndGet(Calendar.getInstance(), 1433701251000L));
+        List<Event> calendarDayEvents = underTest.getCalendarEventsFor(setTimeToMidnightAndGet(Calendar.getInstance(), 1433701251000L));
         //Assert 6th item since it will represent Sun, 07 Jun 2015 which is the day that we queried for
         assertEquals(events.get(6), calendarDayEvents.get(0));
 
@@ -538,7 +538,7 @@ public class CompactCalendarControllerTest {
         underTest.addEvent(extraEventAdded);
 
         //Sun, 07 Jun 2015 18:20:51 GMT
-        List<Event> calendarDayEvents2 = underTest.getCalendarDayEvent(setTimeToMidnightAndGet(Calendar.getInstance(), 1433701251000L));
+        List<Event> calendarDayEvents2 = underTest.getCalendarEventsFor(setTimeToMidnightAndGet(Calendar.getInstance(), 1433701251000L));
 
         assertNotNull(calendarDayEvents2);
         //Assert 6th item since it will represent Sun, 07 Jun 2015 which is the day that we queried for

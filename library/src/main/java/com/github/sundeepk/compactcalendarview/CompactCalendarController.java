@@ -37,64 +37,69 @@ class CompactCalendarController {
     public static final int EXPAND_COLLAPSE_CALENDAR = 2;
     public static final int ANIMATE_INDICATORS = 3;
     private static final int VELOCITY_UNIT_PIXELS_PER_SECOND = 1000;
-    private static final float ANIMATION_SCREEN_SET_DURATION_MILLIS = 700;
     private static final int LAST_FLING_THRESHOLD_MILLIS = 300;
+    private static final int DAYS_IN_WEEK = 7;
     private static final float SNAP_VELOCITY_DIP_PER_SECOND = 400;
+    private static final float ANIMATION_SCREEN_SET_DURATION_MILLIS = 700;
+
     private int paddingWidth = 40;
     private int paddingHeight = 40;
-    private Paint dayPaint = new Paint();
-    private Paint background = new Paint();
-    private Rect textSizeRect;
     private int textHeight;
     private int textWidth;
-    private static final int DAYS_IN_WEEK = 7;
     private int widthPerDay;
-    private String[] dayColumnNames;
-    private float distanceX;
-    private PointF accumulatedScrollOffset = new PointF();
-    private OverScroller scroller;
     private int monthsScrolledSoFar;
+    private int heightPerDay;
+    private int textSize = 30;
+    private int width;
+    private int height;
+    private int paddingRight;
+    private int paddingLeft;
+    private int maximumVelocity;
+    private int densityAdjustedSnapVelocity;
+    private int distanceThresholdForAutoScroll;
+    private int targetHeight;
+    private int animationStatus = 0;
+    private float yIndicatorOffset;
+    private float xIndicatorOffset;
+    private float multiDayIndicatorStrokeWidth;
+    private float bigCircleIndicatorRadius;
+    private float smallIndicatorRadius;
+    private float growFactor = 0f;
+    private float screenDensity = 1;
+    private float growfactorIndicator;
+    private float distanceX;
+    private long lastAutoScrollFromFling;
+
+    private boolean shouldShowMondayAsFirstDay = true;
+    private boolean useThreeLetterAbbreviation = false;
+    private boolean isSmoothScrolling;
+    private boolean isScrolling;
+    private boolean isAnimatingIndicator = false;
+    private boolean shouldDrawDaysHeader = true;
+
+    private CompactCalendarView.CompactCalendarViewListener listener;
+    private Map<String, List<Events>> eventsByMonthAndYearMap = new HashMap<>();
+    private VelocityTracker velocityTracker = null;
+    private Direction currentDirection = Direction.NONE;
     private Date currentDate = new Date();
     private Locale locale = Locale.getDefault();
     private Calendar currentCalender = Calendar.getInstance(locale);
     private Calendar todayCalender = Calendar.getInstance(locale);
     private Calendar calendarWithFirstDayOfMonth = Calendar.getInstance(locale);
     private Calendar eventsCalendar = Calendar.getInstance(locale);
-    private Direction currentDirection = Direction.NONE;
-    private int heightPerDay;
+    private PointF accumulatedScrollOffset = new PointF();
+    private OverScroller scroller;
+    private Paint dayPaint = new Paint();
+    private Paint background = new Paint();
+    private Rect textSizeRect;
+    private String[] dayColumnNames;
+
+    // colors
+    private int multiEventIndicatorColor;
     private int currentDayBackgroundColor;
     private int calenderTextColor;
     private int currentSelectedDayBackgroundColor;
     private int calenderBackgroundColor = Color.WHITE;
-    private int textSize = 30;
-    private int width;
-    private int height;
-    private int paddingRight;
-    private int paddingLeft;
-    private boolean shouldDrawDaysHeader = true;
-    private Map<String, List<Events>> eventsByMonthAndYearMap = new HashMap<>();
-    private float bigCircleIndicatorRadius;
-    private float smallIndicatorRadius;
-    private boolean shouldShowMondayAsFirstDay = true;
-    private boolean useThreeLetterAbbreviation = false;
-    private float growFactor = 0f;
-    private boolean isAnimatingIndicator = false;
-    private float screenDensity = 1;
-    private float growfactorIndicator;
-    private VelocityTracker velocityTracker = null;
-    private int maximumVelocity;
-    private int densityAdjustedSnapVelocity;
-    private boolean isSmoothScrolling;
-    private CompactCalendarView.CompactCalendarViewListener listener;
-    private boolean isScrolling;
-    private int distanceThresholdForAutoScroll;
-    private long lastAutoScrollFromFling;
-    private int targetHeight;
-    private int multiEventIndicatorColor;
-    private float yIndicatorOffset;
-    private float xIndicatorOffset;
-    private int animationStatus = 0;
-    private float multiDayIndicatorStrokeWidth;
 
     private enum Direction {
         NONE, HORIZONTAL, VERTICAL
@@ -168,6 +173,9 @@ class CompactCalendarController {
 
         yIndicatorOffset = 8 * screenDensity;
         xIndicatorOffset = 3.5f * screenDensity;
+
+        //scale small indicator by screen density
+        smallIndicatorRadius = 2.5f * screenDensity;
 
         //just set a default growFactor to draw full calendar when initialised
         growFactor = Integer.MAX_VALUE;
@@ -312,9 +320,6 @@ class CompactCalendarController {
         this.height = height;
         this.paddingRight = paddingRight;
         this.paddingLeft = paddingLeft;
-
-        //scale small indicator by screen density
-        smallIndicatorRadius = 2.5f * screenDensity;
 
         //makes easier to find radius
         bigCircleIndicatorRadius = getInterpolatedBigCircleIndicator();
@@ -574,11 +579,11 @@ class CompactCalendarController {
         }
     }
 
-    List<Event> getCalendarDayEvent(Date date) {
-        return getCalendarDayEvent(date.getTime());
+    List<Event> getCalendarEventsFor(Date date) {
+        return getCalendarEventsFor(date.getTime());
     }
 
-    List<Event> getCalendarDayEvent(long epochMillis) {
+    List<Event> getCalendarEventsFor(long epochMillis) {
         Events events = getEventDayEvent(epochMillis);
         if (events == null) {
             return new ArrayList<>();
@@ -646,27 +651,6 @@ class CompactCalendarController {
         int count = events.size();
         for (int i = 0; i < count; i++) {
             removeEvent(events.get(i));
-        }
-    }
-
-    List<Event> getEventsForDay(Date date) {
-        eventsCalendar.setTimeInMillis(date.getTime());
-        int dayInMonth = eventsCalendar.get(Calendar.DAY_OF_MONTH);
-        String key = getKeyForCalendarEvent(eventsCalendar);
-        List<Events> uniqEvents = eventsByMonthAndYearMap.get(key);
-        if (uniqEvents != null) {
-            int count = uniqEvents.size();
-            for (int i = 0; i < count; i++) {
-                Events events = uniqEvents.get(i);
-                eventsCalendar.setTimeInMillis(events.getTimeInMillis());
-                int dayInMonthFromCache = eventsCalendar.get(Calendar.DAY_OF_MONTH);
-                if (dayInMonthFromCache == dayInMonth) {
-                   return events.getEvents();
-                }
-            }
-            return new ArrayList<>();
-        } else {
-            return new ArrayList<>();
         }
     }
 

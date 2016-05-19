@@ -189,7 +189,7 @@ public class CompactCalendarView extends View {
      * @return
      */
     public List<Event> getEvents(Date date){
-        return compactCalendarController.getCalendarDayEvent(date);
+        return compactCalendarController.getCalendarEventsFor(date);
     }
 
     /**
@@ -198,7 +198,7 @@ public class CompactCalendarView extends View {
      * @return
      */
     public List<Event> getEvents(long epochMillis){
-        return compactCalendarController.getCalendarDayEvent(epochMillis);
+        return compactCalendarController.getCalendarEventsFor(epochMillis);
     }
 
     /**
