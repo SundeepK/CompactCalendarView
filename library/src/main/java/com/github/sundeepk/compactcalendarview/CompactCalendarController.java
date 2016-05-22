@@ -74,7 +74,6 @@ class CompactCalendarController {
     private boolean useThreeLetterAbbreviation = false;
     private boolean isSmoothScrolling;
     private boolean isScrolling;
-    private boolean isAnimatingIndicator = false;
     private boolean shouldDrawDaysHeader = true;
 
     private CompactCalendarView.CompactCalendarViewListener listener;
@@ -345,7 +344,7 @@ class CompactCalendarController {
 
         if (animationStatus == EXPOSE_CALENDAR_ANIMATION) {
             drawCalendarWhileAnimating(canvas);
-        } else if (isAnimatingIndicator) {
+        } else if (animationStatus == ANIMATE_INDICATORS) {
             drawCalendarWhileAnimatingIndicators(canvas);
         } else {
             drawCalenderBackground(canvas);
@@ -668,10 +667,6 @@ class CompactCalendarController {
         return growFactor;
     }
 
-    void setAnimatingIndicators(boolean isAnimating) {
-        isAnimatingIndicator = isAnimating;
-    }
-
     boolean onDown(MotionEvent e) {
         scroller.forceFinished(true);
         return true;
@@ -872,7 +867,7 @@ class CompactCalendarController {
     // Draw Circle on certain days to highlight them
     private void drawCircle(Canvas canvas, float x, float y, int color) {
         dayPaint.setColor(color);
-        if (isAnimatingIndicator) {
+        if (animationStatus == ANIMATE_INDICATORS) {
             float maxRadius = bigCircleIndicatorRadius * 1.4f;
             drawCircle(canvas, growfactorIndicator > maxRadius ? maxRadius: growfactorIndicator, x, y - (textHeight / 6));
         } else {
