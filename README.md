@@ -39,14 +39,8 @@ It is possible to change the apreance of the view via a few properties. This inc
 ```
 ```gradle
 dependencies {
-    compile 'com.github.sundeepk:compact-calendar-view:1.8.2'
+    compile 'com.github.sundeepk:compact-calendar-view:1.8.4'
 }
-
-//smooth scrolling functionality with open/close calendar
-dependencies {
-    compile 'com.github.sundeepk:compact-calendar-view:1.8.3'
-}
-
 
 ```
 #Contributing  
