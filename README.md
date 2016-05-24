@@ -82,7 +82,6 @@ Note that the calendar makes no attempt to de-duplicate events for the same exac
 It's possible to set the locale so that weekday column names are automatically set by the calendar.
 ```java
         CompactCalendarView compactCalendarView = (CompactCalendarView) findViewById(R.id.compactcalendar_view);
-        compactCalendarView.drawSmallIndicatorForEvents(true);
         compactCalendarView.setLocale(Locale.CHINESE);
         compactCalendarView.setUseThreeLetterAbbreviation(true);
 ```
