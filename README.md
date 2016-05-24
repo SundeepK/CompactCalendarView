@@ -1,7 +1,10 @@
 # CompactCalendarView
 CompactCalendarView is a simple calendar view which provides scrolling between months. It's based on Java's Date and Calendar classes. It provides a simple api to query for dates and listeners for specific events.  For example, when the calendar has scrolled to a new month or a day has been selected.
 Still under active developmemt.
-![ScreenShot](https://github.com/SundeepK/CompactCalendarView/blob/master/images/compact-calendar-view-example.png)
+<img src="https://github.com/SundeepK/CompactCalendarView/blob/master/images/compact-calendar-view-example.png" width="450">
+
+#Contributing  
+Please raise an issue of the requirement so that a disscussion can take before any code is written, even if you intend to raise a pull request.
 
 # Locale specific settings
 It's possible to set the locale so that weekday column names are automatically set by the calendar.
@@ -11,7 +14,8 @@ It's possible to set the locale so that weekday column names are automatically s
         compactCalendarView.setLocale(Locale.CHINESE);
         compactCalendarView.setUseThreeLetterAbbreviation(true);
 ```
-![ScreenShot](https://github.com/SundeepK/CompactCalendarView/blob/master/images/chinese-locale-daynames.png)
+
+<img src="https://github.com/SundeepK/CompactCalendarView/blob/master/images/chinese-locale-daynames.png" width="400">
 
 # Open/Close animations
 The library supports opening/closing with or without animations. 
@@ -34,23 +38,18 @@ It is possible to change the apreance of the view via a few properties. This inc
         app:compactCalendarTextColor="#fff"
         app:compactCalendarCurrentSelectedDayBackgroundColor="#E57373"
         app:compactCalendarCurrentDayBackgroundColor="#B71C1C"
+        app:compactCalendarMultiEventIndicatorColor="#fff"
         />
 
 ```
+
 ```gradle
 dependencies {
     compile 'com.github.sundeepk:compact-calendar-view:1.8.4'
 }
 
 ```
-#Contributing  
-Please raise an issue of the requirement so that a disscussion can take before any code is written.
 
-TODO:
-* Make drawing calendar more efficient by drawing all in one loop (currently requires 3).
-* Make drawing circles on current/first day based on width/height for each cell and remove any magic numbers there.
-* Benchmark code and add results on readme. 
- 
 ```
 The MIT License (MIT)
 
