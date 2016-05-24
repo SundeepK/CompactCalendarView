@@ -3,19 +3,9 @@ CompactCalendarView is a simple calendar view which provides scrolling between m
 Still under active developmemt.
 <img src="https://github.com/SundeepK/CompactCalendarView/blob/master/images/compact-calendar-view-example.png" width="450">
 
-#Contributing  
+# Contributing  
 Please raise an issue of the requirement so that a disscussion can take before any code is written, even if you intend to raise a pull request.
 
-# Locale specific settings
-It's possible to set the locale so that weekday column names are automatically set by the calendar.
-```java
-        CompactCalendarView compactCalendarView = (CompactCalendarView) findViewById(R.id.compactcalendar_view);
-        compactCalendarView.drawSmallIndicatorForEvents(true);
-        compactCalendarView.setLocale(Locale.CHINESE);
-        compactCalendarView.setUseThreeLetterAbbreviation(true);
-```
-
-<img src="https://github.com/SundeepK/CompactCalendarView/blob/master/images/chinese-locale-daynames.png" width="400">
 
 # Open/Close animations
 The library supports opening/closing with or without animations. 
@@ -42,6 +32,62 @@ It is possible to change the apreance of the view via a few properties. This inc
         />
 
 ```
+
+Please see Sample app for full example.
+
+```java
+    // ... code omitted for brevity         
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        final CompactCalendarView compactCalendarView = (CompactCalendarView) findViewById(R.id.compactcalendar_view);
+        
+        // Add event 1 on Sun, 07 Jun 2015 18:20:51 GMT
+        Event ev1 new Event(Color.GREEN, 1433701251000L, "Some extra data that I want to store.");
+        compactCalendar.addEvent(ev1);
+
+        // Added event 2 GMT: Sun, 07 Jun 2015 19:10:51 GMT
+        Event ev2 = new Event(Color.GREEN, 1433704251000L);
+        compactCalendar.addEvent(ev2);
+
+        // Query for events on Sun, 07 Jun 2015 GMT. 
+        // Time is not relevant when querying for events, since events are returned by day. 
+        // So you can pass in any arbitary DateTime and you will receive all events for that day.
+        List<Event> events = compactCalendar.getEvents(1433701251000L); // can also take a Date object
+        
+        // events has size 2 with the 2 events inserted previously
+        Log.d(TAG, "Events: " + events);
+
+        // define a listener to receive callbacks when certain events happen.
+        compactCalendarView.setListener(new CompactCalendarView.CompactCalendarViewListener() {
+            @Override
+            public void onDayClick(Date dateClicked) {
+                List<Event> events = compactCalendarView.getEvents(dateClicked);
+                Log.d(TAG, "Day was clicked: " + dateClicked + " with events " + events);
+            }
+
+            @Override
+            public void onMonthScroll(Date firstDayOfNewMonth) {
+                Log.d(TAG, "Month was scrolled to: " + firstDayOfNewMonth);
+            }
+        });
+    }
+
+```
+
+Note that the calendar makes no attempt to de-duplicate events for the same exact DateTime. This is something that you must handle your self if it is important to your use case.
+
+# Locale specific settings
+It's possible to set the locale so that weekday column names are automatically set by the calendar.
+```java
+        CompactCalendarView compactCalendarView = (CompactCalendarView) findViewById(R.id.compactcalendar_view);
+        compactCalendarView.drawSmallIndicatorForEvents(true);
+        compactCalendarView.setLocale(Locale.CHINESE);
+        compactCalendarView.setUseThreeLetterAbbreviation(true);
+```
+
+<img src="https://github.com/SundeepK/CompactCalendarView/blob/master/images/chinese-locale-daynames.png" width="400">
 
 ```gradle
 dependencies {
