@@ -4,7 +4,7 @@ Still under active development.
 <img src="https://github.com/SundeepK/CompactCalendarView/blob/master/images/compact-calendar-view-example.png" width="450">
 
 # Contributing  
-Please raise an issue of the requirement so that a disscussion can take before any code is written, even if you intend to raise a pull request.
+Please raise an issue of the requirement so that a discussion can take before any code is written, even if you intend to raise a pull request.
 
 
 # Open/Close animations
@@ -13,7 +13,7 @@ The library supports opening/closing with or without animations.
 ![ScreenShot](https://github.com/SundeepK/CompactCalendarView/blob/master/images/compact_calendar_animation.gif)
 
 # Example usage
-It is possible to change the apreance of the view via a few properties. This includes the background color, text color, textsize color of the current day and the color of the first day of the month.
+It is possible to change the appearance of the view via a few properties. This includes the background color, text color, textsize color of the current day and the color of the first day of the month.
 
 ```xml
     <com.github.sundeepk.compactcalendarview.CompactCalendarView
