@@ -319,6 +319,10 @@ public class CompactCalendarView extends View {
 
     public boolean onTouchEvent(MotionEvent event) {
         compactCalendarController.onTouch(event);
+
+        getLayoutParams().height = compactCalendarController.getCalendarHeight();
+        requestLayout();
+
         invalidate();
         // always allow gestureDetector to detect onSingleTap and scroll events
         return gestureDetector.onTouchEvent(event);

@@ -100,6 +100,13 @@ class CompactCalendarController {
     private int currentSelectedDayBackgroundColor;
     private int calenderBackgroundColor = Color.WHITE;
 
+    private int calendarHeight;
+    private float distanceY;
+
+    public int getCalendarHeight() {
+        return (int) (height + accumulatedScrollOffset.y);
+    }
+
     private enum Direction {
         NONE, HORIZONTAL, VERTICAL
     }
@@ -417,6 +424,7 @@ class CompactCalendarController {
 
         isScrolling = true;
         this.distanceX = distanceX;
+        this.distanceY = distanceY;
         return true;
     }
 
@@ -439,6 +447,10 @@ class CompactCalendarController {
             velocityTracker.computeCurrentVelocity(500);
 
         } else if (event.getAction() == MotionEvent.ACTION_UP) {
+            velocityTracker.computeCurrentVelocity(VELOCITY_UNIT_PIXELS_PER_SECOND, maximumVelocity);
+            int yOffsetFromFinger = (int) velocityTracker.getYVelocity();
+
+
             handleHorizontalScrolling();
             velocityTracker.recycle();
             velocityTracker.clear();
@@ -680,6 +692,7 @@ class CompactCalendarController {
     boolean computeScroll() {
         if (scroller.computeScrollOffset()) {
             accumulatedScrollOffset.x = scroller.getCurrX();
+            accumulatedScrollOffset.y = scroller.getCurrY();
             return true;
         }
         return false;
@@ -711,6 +724,10 @@ class CompactCalendarController {
     private void calculateXPositionOffset() {
         if (currentDirection == Direction.HORIZONTAL) {
             accumulatedScrollOffset.x -= distanceX;
+        }
+
+        if (currentDirection == Direction.VERTICAL) {
+            accumulatedScrollOffset.y -= distanceY;
         }
     }
 
