@@ -48,7 +48,7 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
     public void testOnMonthScrollListenerIsCalled(){
         //Sun, 08 Feb 2015 00:00:00 GMT
         setDate(new Date(1423353600000L));
-        onView(ViewMatchers.withId(R.id.compactcalendar_view)).perform(scroll(100, 100, -600, 0));
+        onView(ViewMatchers.withId(R.id.compactcalendar_view)).perform(scroll(100, 100, -300, 0));
 
         //Sun, 01 Mar 2015 00:00:00 GMT - expected
         verify(listener).onMonthScroll(new Date(1425168000000L));
