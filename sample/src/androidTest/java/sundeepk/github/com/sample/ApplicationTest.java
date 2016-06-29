@@ -10,6 +10,8 @@ import android.support.test.espresso.action.Swipe;
 import android.support.test.espresso.action.Tap;
 import android.support.test.espresso.matcher.ViewMatchers;
 import android.test.ActivityInstrumentationTestCase2;
+import android.util.DisplayMetrics;
+import android.util.TypedValue;
 import android.view.View;
 
 import com.github.sundeepk.compactcalendarview.CompactCalendarView;
@@ -48,7 +50,7 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
     public void testOnMonthScrollListenerIsCalled(){
         //Sun, 08 Feb 2015 00:00:00 GMT
         setDate(new Date(1423353600000L));
-        onView(ViewMatchers.withId(R.id.compactcalendar_view)).perform(scroll(100, 100, -300, 0));
+        onView(ViewMatchers.withId(R.id.compactcalendar_view)).perform(scroll(100, 100, -100, 0));
 
         //Sun, 01 Mar 2015 00:00:00 GMT - expected
         verify(listener).onMonthScroll(new Date(1425168000000L));
@@ -59,7 +61,7 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
     public void testOnDayClickListenerIsCalled(){
         //Sun, 08 Feb 2015 00:00:00 GMT
         setDate(new Date(1423353600000L));
-        onView(ViewMatchers.withId(R.id.compactcalendar_view)).perform(clickXY(300, 300));
+        onView(ViewMatchers.withId(R.id.compactcalendar_view)).perform(clickXY(60, 100));
 
         //Tue, 03 Feb 2015 00:00:00 GMT - expected
         verify(listener).onDayClick(new Date(1422921600000L));
@@ -75,7 +77,10 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
         });
     }
 
-    public static ViewAction clickXY(final int x, final int y){
+    public ViewAction clickXY(final float x, final float y){
+        final DisplayMetrics dm = activity.getResources().getDisplayMetrics() ;
+        final float spX = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, x, dm);
+        final float spY = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, y, dm);
         return new GeneralClickAction(
                 Tap.SINGLE,
                 new CoordinatesProvider() {
@@ -85,8 +90,8 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
                         final int[] screenPos = new int[2];
                         view.getLocationOnScreen(screenPos);
 
-                        final float screenX = screenPos[0] + x;
-                        final float screenY = screenPos[1] + y;
+                        final float screenX = screenPos[0] + spX;
+                        final float screenY = screenPos[1] + spY;
                         float[] coordinates = {screenX, screenY};
 
                         return coordinates;
@@ -95,7 +100,12 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
                 Press.FINGER);
     }
 
-    public static ViewAction scroll(final int startX, final int startY, final int endX, final int endY){
+    public ViewAction scroll(final int startX, final int startY, final int endX, final int endY){
+        final DisplayMetrics dm = activity.getResources().getDisplayMetrics() ;
+        final float spStartX = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, startX, dm);
+        final float spStartY = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, startY, dm);
+        final float spEndX = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, endX, dm);
+        final float spEndY = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, endY, dm);
         return new GeneralSwipeAction(
                 Swipe.FAST,
                 new CoordinatesProvider() {
@@ -105,8 +115,8 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
                         final int[] screenPos = new int[2];
                         view.getLocationOnScreen(screenPos);
 
-                        final float screenX = screenPos[0] + startX;
-                        final float screenY = screenPos[1] + startY;
+                        final float screenX = screenPos[0] + spStartX;
+                        final float screenY = screenPos[1] + spStartY;
                         float[] coordinates = {screenX, screenY};
 
                         return coordinates;
@@ -119,8 +129,8 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
                         final int[] screenPos = new int[2];
                         view.getLocationOnScreen(screenPos);
 
-                        final float screenX = screenPos[0] + endX;
-                        final float screenY = screenPos[1] + endY;
+                        final float screenX = screenPos[0] + spEndX;
+                        final float screenY = screenPos[1] + spEndY;
                         float[] coordinates = {screenX, screenY};
 
                         return coordinates;
