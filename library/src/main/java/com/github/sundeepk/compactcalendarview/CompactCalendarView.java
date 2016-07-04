@@ -15,6 +15,7 @@ import android.widget.OverScroller;
 
 import com.github.sundeepk.compactcalendarview.domain.Event;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -76,7 +77,7 @@ public class CompactCalendarView extends View {
         compactCalendarController = new CompactCalendarController(new Paint(), new OverScroller(getContext()),
                 new Rect(), attrs, getContext(),  Color.argb(255, 233, 84, 81),
                 Color.argb(255, 64, 64, 64), Color.argb(255, 219, 219, 219), VelocityTracker.obtain(),
-                Color.argb(255, 100, 68, 65));
+                Color.argb(255, 100, 68, 65), new EventsContainer(Locale.getDefault(), Calendar.getInstance(Locale.getDefault())));
         gestureDetector = new GestureDetectorCompat(getContext(), gestureListener);
         animationHandler = new AnimationHandler(compactCalendarController, this);
     }

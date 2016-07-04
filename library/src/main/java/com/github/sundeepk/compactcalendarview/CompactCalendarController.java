@@ -19,12 +19,10 @@ import android.widget.OverScroller;
 import com.github.sundeepk.compactcalendarview.domain.Event;
 
 import java.text.DateFormatSymbols;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -86,6 +84,7 @@ class CompactCalendarController {
     private Calendar todayCalender = Calendar.getInstance(locale);
     private Calendar calendarWithFirstDayOfMonth = Calendar.getInstance(locale);
     private Calendar eventsCalendar = Calendar.getInstance(locale);
+    private EventsContainer eventsContainer;
     private PointF accumulatedScrollOffset = new PointF();
     private OverScroller scroller;
     private Paint dayPaint = new Paint();
@@ -107,7 +106,7 @@ class CompactCalendarController {
     CompactCalendarController(Paint dayPaint, OverScroller scroller, Rect textSizeRect, AttributeSet attrs,
                               Context context, int currentDayBackgroundColor, int calenderTextColor,
                               int currentSelectedDayBackgroundColor, VelocityTracker velocityTracker,
-                              int multiEventIndicatorColor) {
+                              int multiEventIndicatorColor, EventsContainer eventsContainer) {
         this.dayPaint = dayPaint;
         this.scroller = scroller;
         this.textSizeRect = textSizeRect;
@@ -116,6 +115,7 @@ class CompactCalendarController {
         this.currentSelectedDayBackgroundColor = currentSelectedDayBackgroundColor;
         this.velocityTracker = velocityTracker;
         this.multiEventIndicatorColor = multiEventIndicatorColor;
+        this.eventsContainer = eventsContainer;
         loadAttributes(attrs, context);
         init(context);
     }
@@ -269,6 +269,11 @@ class CompactCalendarController {
             throw new IllegalArgumentException("Locale cannot be null");
         }
         this.locale = locale;
+        this.currentCalender = Calendar.getInstance(locale);
+        this.todayCalender = Calendar.getInstance(locale);
+        this.calendarWithFirstDayOfMonth = Calendar.getInstance(locale);
+        this.eventsCalendar = Calendar.getInstance(locale);
+        this.eventsContainer = new EventsContainer(locale, Calendar.getInstance(locale));
     }
 
     void setUseWeekDayAbbreviation(boolean useThreeLetterAbbreviation) {
@@ -554,28 +559,11 @@ class CompactCalendarController {
     }
 
     void addEvent(Event event) {
-        eventsCalendar.setTimeInMillis(event.getTimeInMillis());
-        String key = getKeyForCalendarEvent(eventsCalendar);
-        List<Events> eventsForMonth = eventsByMonthAndYearMap.get(key);
-        if (eventsForMonth == null) {
-            eventsForMonth = new ArrayList<>();
-        }
-        Events eventsForTargetDay = getEventDayEvent(event.getTimeInMillis());
-        if (eventsForTargetDay == null) {
-            List<Event> events = new ArrayList<>();
-            events.add(event);
-            eventsForMonth.add(new Events(event.getTimeInMillis(), events));
-        } else {
-            eventsForTargetDay.getEvents().add(event);
-        }
-        eventsByMonthAndYearMap.put(key, eventsForMonth);
+        eventsContainer.addEvent(event);
     }
 
     void addEvents(List<Event> events) {
-        int count = events.size();
-        for (int i = 0; i < count; i++) {
-            addEvent(events.get(i));
-        }
+       eventsContainer.addEvents(events);
     }
 
     List<Event> getCalendarEventsFor(Date date) {
@@ -583,29 +571,7 @@ class CompactCalendarController {
     }
 
     List<Event> getCalendarEventsFor(long epochMillis) {
-        Events events = getEventDayEvent(epochMillis);
-        if (events == null) {
-            return new ArrayList<>();
-        } else {
-            return events.getEvents();
-        }
-    }
-
-    private Events getEventDayEvent(long eventTimeInMillis){
-        eventsCalendar.setTimeInMillis(eventTimeInMillis);
-        int dayInMonth = eventsCalendar.get(Calendar.DAY_OF_MONTH);
-        String keyForCalendarEvent = getKeyForCalendarEvent(eventsCalendar);
-        List<Events> eventsForMonthsAndYear = eventsByMonthAndYearMap.get(keyForCalendarEvent);
-        if (eventsForMonthsAndYear != null) {
-            for (Events events : eventsForMonthsAndYear) {
-                eventsCalendar.setTimeInMillis(events.getTimeInMillis());
-                int dayInMonthFromCache = eventsCalendar.get(Calendar.DAY_OF_MONTH);
-                if (dayInMonthFromCache == dayInMonth) {
-                    return events;
-                }
-            }
-        }
-        return null;
+        return eventsContainer.getCalendarEventsFor(epochMillis);
     }
 
     void removeEventsByDate(Date dateToRemoveEventFor){
@@ -613,51 +579,16 @@ class CompactCalendarController {
     }
 
     void removeEventByEpochMillis(long epochMillis) {
-        eventsCalendar.setTimeInMillis(epochMillis);
-        int dayInMonth = eventsCalendar.get(Calendar.DAY_OF_MONTH);
-        String key = getKeyForCalendarEvent(eventsCalendar);
-        List<Events> eventsForMonthAndYear = eventsByMonthAndYearMap.get(key);
-        if (eventsForMonthAndYear != null) {
-            Iterator<Events> calendarDayEventIterator = eventsForMonthAndYear.iterator();
-            while (calendarDayEventIterator.hasNext()) {
-                Events next = calendarDayEventIterator.next();
-                eventsCalendar.setTimeInMillis(next.getTimeInMillis());
-                int dayInMonthFromCache = eventsCalendar.get(Calendar.DAY_OF_MONTH);
-                if (dayInMonthFromCache == dayInMonth) {
-                    calendarDayEventIterator.remove();
-                    return;
-                }
-            }
-        }
+        eventsContainer.removeEventByEpochMillis(epochMillis);
     }
 
     void removeEvent(Event event) {
-        eventsCalendar.setTimeInMillis(event.getTimeInMillis());
-        String key = getKeyForCalendarEvent(eventsCalendar);
-        List<Events> eventsForMonthAndYear = eventsByMonthAndYearMap.get(key);
-        if (eventsForMonthAndYear != null) {
-            for(Events events : eventsForMonthAndYear){
-                int indexOfEvent = events.getEvents().indexOf(event);
-                if (indexOfEvent >= 0) {
-                    events.getEvents().remove(indexOfEvent);
-                    return;
-                }
-            }
-        }
+       eventsContainer.removeEvent(event);
     }
 
     void removeEvents(List<Event> events) {
-        int count = events.size();
-        for (int i = 0; i < count; i++) {
-            removeEvent(events.get(i));
-        }
+       eventsContainer.removeEvents(events);
     }
-
-    //E.g. 4 2016 becomes 2016_4
-    private String getKeyForCalendarEvent(Calendar cal) {
-        return cal.get(Calendar.YEAR) + "_" + cal.get(Calendar.MONTH);
-    }
-
 
     void setGrowProgress(float grow) {
         growFactor = grow;
@@ -723,15 +654,14 @@ class CompactCalendarController {
     }
 
     void drawEvents(Canvas canvas, Calendar currentMonthToDrawCalender, int offset) {
-        List<Events> uniqEventses =
-                eventsByMonthAndYearMap.get(getKeyForCalendarEvent(currentMonthToDrawCalender));
+        List<Events> uniqEvents = eventsContainer.getEventsForCalendar(currentMonthToDrawCalender);
 
         boolean shouldDrawCurrentDayCircle = currentMonthToDrawCalender.get(Calendar.MONTH) == todayCalender.get(Calendar.MONTH);
         int todayDayOfMonth = todayCalender.get(Calendar.DAY_OF_MONTH);
 
-        if (uniqEventses != null) {
-            for (int i = 0; i < uniqEventses.size(); i++) {
-                Events events = uniqEventses.get(i);
+        if (uniqEvents != null) {
+            for (int i = 0; i < uniqEvents.size(); i++) {
+                Events events = uniqEvents.get(i);
                 long timeMillis = events.getTimeInMillis();
                 eventsCalendar.setTimeInMillis(timeMillis);
 
