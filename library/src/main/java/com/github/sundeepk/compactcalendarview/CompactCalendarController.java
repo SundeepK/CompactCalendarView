@@ -654,7 +654,7 @@ class CompactCalendarController {
     }
 
     void drawEvents(Canvas canvas, Calendar currentMonthToDrawCalender, int offset) {
-        List<Events> uniqEvents = eventsContainer.getEventsForCalendar(currentMonthToDrawCalender);
+        List<Events> uniqEvents = eventsContainer.getEventsForMonthAndYear(currentMonthToDrawCalender.get(Calendar.YEAR), currentMonthToDrawCalender.get(Calendar.MONTH));
 
         boolean shouldDrawCurrentDayCircle = currentMonthToDrawCalender.get(Calendar.MONTH) == todayCalender.get(Calendar.MONTH);
         int todayDayOfMonth = todayCalender.get(Calendar.DAY_OF_MONTH);
@@ -816,5 +816,4 @@ class CompactCalendarController {
         dayPaint.setStyle(Paint.Style.STROKE);
         dayPaint.setColor(calenderTextColor);
     }
-
 }

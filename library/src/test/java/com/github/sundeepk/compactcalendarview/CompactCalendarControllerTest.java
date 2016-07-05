@@ -306,11 +306,8 @@ public class CompactCalendarControllerTest {
     public void testItDrawsMultipleEventDaysOnCalendar(){
         //Sun, 07 Jun 2015 18:20:51 GMT
         //get 60 events in total
-        List<Event> events = getDayEventWith2EventsPerDay(0, 30, 1433701251000L);
-        for(Event event : events){
-            underTest.addEvent(event);
-        }
-
+        List<Events> events = getDayEventWith2EventsPerDay(0, 30, 1433701251000L);
+        when(eventsContainer.getEventsForMonthAndYear(2015, 5)).thenReturn(events);
         when(calendar.get(Calendar.MONTH)).thenReturn(5);
         when(calendar.get(Calendar.YEAR)).thenReturn(2015);
 

@@ -30,15 +30,18 @@ public class CompactCalendarHelper {
         return events;
     }
 
-    public static List<Event> getDayEventWith2EventsPerDay(int start, int days, long timeStamp) {
+    public static List<Events> getDayEventWith2EventsPerDay(int start, int days, long timeStamp) {
         Calendar currentCalender = Calendar.getInstance(Locale.getDefault());
-        List<Event> eventList = new ArrayList<>();
+        List<Events> events = new ArrayList<>();
         for(int i = start; i < days; i++){
             setDateTime(timeStamp, currentCalender, i);
+            List<Event> eventList = new ArrayList<>();
             eventList.add(new Event(Color.BLUE, currentCalender.getTimeInMillis()));
             eventList.add(new Event(Color.RED, currentCalender.getTimeInMillis() + 3600 * 1000));
+            Events eventsObject = new Events(currentCalender.getTimeInMillis(), eventList);
+            events.add(eventsObject);
         }
-        return eventList;
+        return events;
     }
 
     public static List<Event> getDayEventWithMultipleEventsPerDay(int start, int days, long timeStamp) {

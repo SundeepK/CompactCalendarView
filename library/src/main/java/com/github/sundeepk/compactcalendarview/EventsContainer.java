@@ -63,8 +63,8 @@ public class EventsContainer {
         return getEventsForMonth(date.getTime());
     }
 
-    List<Events> getEventsForCalendar(Calendar calendar){
-        return eventsByMonthAndYearMap.get(getKeyForCalendarEvent(calendar));
+    List<Events> getEventsForMonthAndYear(int month, int year){
+        return eventsByMonthAndYearMap.get(year + "_" + month);
     }
 
     List<Events> getEventsForMonth(long eventTimeInMillis){
