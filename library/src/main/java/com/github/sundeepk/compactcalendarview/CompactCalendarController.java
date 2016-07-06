@@ -574,11 +574,11 @@ class CompactCalendarController {
         return eventsContainer.getCalendarEventsFor(epochMillis);
     }
 
-    void removeEventsByDate(Date dateToRemoveEventFor){
-        removeEventByEpochMillis(dateToRemoveEventFor.getTime());
+    void removeEventsFor(Date dateToRemoveEventFor){
+        removeEventsFor(dateToRemoveEventFor.getTime());
     }
 
-    void removeEventByEpochMillis(long epochMillis) {
+    void removeEventsFor(long epochMillis) {
         eventsContainer.removeEventByEpochMillis(epochMillis);
     }
 

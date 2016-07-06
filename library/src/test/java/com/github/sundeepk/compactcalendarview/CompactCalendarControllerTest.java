@@ -7,6 +7,8 @@ import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.widget.OverScroller;
 
+import com.github.sundeepk.compactcalendarview.domain.Event;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -22,6 +24,8 @@ import java.util.Locale;
 
 import static com.github.sundeepk.compactcalendarview.CompactCalendarHelper.getDayEventWith2EventsPerDay;
 import static com.github.sundeepk.compactcalendarview.CompactCalendarHelper.getDayEventWithMultipleEventsPerDay;
+import static com.github.sundeepk.compactcalendarview.CompactCalendarHelper.getEvents;
+import static com.github.sundeepk.compactcalendarview.CompactCalendarHelper.getSingleEvents;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.anyFloat;
 import static org.mockito.Matchers.anyInt;
@@ -30,6 +34,7 @@ import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -284,7 +289,7 @@ public class CompactCalendarControllerTest {
     public void testItDrawsEventDaysOnCalendar(){
         //Sun, 07 Jun 2015 18:20:51 GMT
         //get 30 events in total
-        List<Events> events = CompactCalendarHelper.getEvents(0, 30, 1433701251000L);
+        List<Events> events = getEvents(0, 30, 1433701251000L);
         when(eventsContainer.getEventsForMonthAndYear(2015, 5)).thenReturn(events);
         when(calendar.get(Calendar.MONTH)).thenReturn(5);
         when(calendar.get(Calendar.YEAR)).thenReturn(2015);
@@ -330,6 +335,54 @@ public class CompactCalendarControllerTest {
         //draw event indicator with lines
         // 2 calls for each plus event indicator since it takes 2 draw calls to make a plus sign
         verify(canvas, times(58)).drawLine(anyFloat(), anyFloat(), anyFloat(), anyFloat(), eq(paint));
+    }
+
+    @Test
+    public void testItAddsEvent(){
+        Event event = getSingleEvents(0, 30, 1433701251000L).get(0);
+        underTest.addEvent(event);
+        verify(eventsContainer).addEvent(event);
+        verifyNoMoreInteractions(eventsContainer);
+    }
+
+    @Test
+    public void testItAddsEvents(){
+        List<Event> events = getSingleEvents(0, 30, 1433701251000L);
+        underTest.addEvents(events);
+        verify(eventsContainer).addEvents(events);
+        verifyNoMoreInteractions(eventsContainer);
+    }
+
+    @Test
+    public void testItRemovesEvent(){
+        Event event = getSingleEvents(0, 30, 1433701251000L).get(0);
+        underTest.removeEvent(event);
+        verify(eventsContainer).removeEvent(event);
+        verifyNoMoreInteractions(eventsContainer);
+    }
+
+    @Test
+    public void testItRemovesEvents(){
+        List<Event> events = getSingleEvents(0, 30, 1433701251000L);
+        underTest.removeEvents(events);
+        verify(eventsContainer).removeEvents(events);
+        verifyNoMoreInteractions(eventsContainer);
+    }
+
+    @Test
+    public void testItGetCalendarEventsForADate(){
+        underTest.getCalendarEventsFor(new Date(1433701251000L));
+        underTest.getCalendarEventsFor(1433701251000L);
+        verify(eventsContainer, times(2)).getCalendarEventsFor(1433701251000L);
+        verifyNoMoreInteractions(eventsContainer);
+    }
+
+    @Test
+    public void testItRemovesCalendarEventsForADate(){
+        underTest.removeEventsFor(new Date(1433701251000L));
+        underTest.removeEventsFor(1433701251000L);
+        verify(eventsContainer, times(2)).removeEventByEpochMillis(1433701251000L);
+        verifyNoMoreInteractions(eventsContainer);
     }
 
     private long setTimeToMidnightAndGet(Calendar cal, long epoch) {

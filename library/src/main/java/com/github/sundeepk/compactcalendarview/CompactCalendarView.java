@@ -207,11 +207,11 @@ public class CompactCalendarView extends View {
      * @param date
      */
     public void removeEvents(Date date){
-        compactCalendarController.removeEventsByDate(date);
+        compactCalendarController.removeEventsFor(date);
     }
 
     public void removeEvents(long epochMillis){
-        compactCalendarController.removeEventByEpochMillis(epochMillis);
+        compactCalendarController.removeEventsFor(epochMillis);
     }
 
     /**
