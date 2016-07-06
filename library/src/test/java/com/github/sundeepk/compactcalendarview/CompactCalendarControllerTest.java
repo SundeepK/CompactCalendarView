@@ -8,6 +8,7 @@ import android.view.VelocityTracker;
 import android.widget.OverScroller;
 
 import com.github.sundeepk.compactcalendarview.domain.Event;
+import com.github.sundeepk.compactcalendarview.domain.Events;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -371,17 +372,15 @@ public class CompactCalendarControllerTest {
 
     @Test
     public void testItGetCalendarEventsForADate(){
-        underTest.getCalendarEventsFor(new Date(1433701251000L));
         underTest.getCalendarEventsFor(1433701251000L);
-        verify(eventsContainer, times(2)).getCalendarEventsFor(1433701251000L);
+        verify(eventsContainer).getEventsFor(1433701251000L);
         verifyNoMoreInteractions(eventsContainer);
     }
 
     @Test
     public void testItRemovesCalendarEventsForADate(){
-        underTest.removeEventsFor(new Date(1433701251000L));
         underTest.removeEventsFor(1433701251000L);
-        verify(eventsContainer, times(2)).removeEventByEpochMillis(1433701251000L);
+        verify(eventsContainer).removeEventByEpochMillis(1433701251000L);
         verifyNoMoreInteractions(eventsContainer);
     }
 

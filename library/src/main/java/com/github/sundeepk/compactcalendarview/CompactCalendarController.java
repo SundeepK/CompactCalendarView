@@ -17,6 +17,7 @@ import android.view.ViewConfiguration;
 import android.widget.OverScroller;
 
 import com.github.sundeepk.compactcalendarview.domain.Event;
+import com.github.sundeepk.compactcalendarview.domain.Events;
 
 import java.text.DateFormatSymbols;
 import java.util.Arrays;
@@ -566,16 +567,12 @@ class CompactCalendarController {
        eventsContainer.addEvents(events);
     }
 
-    List<Event> getCalendarEventsFor(Date date) {
-        return getCalendarEventsFor(date.getTime());
-    }
-
     List<Event> getCalendarEventsFor(long epochMillis) {
-        return eventsContainer.getCalendarEventsFor(epochMillis);
+        return eventsContainer.getEventsFor(epochMillis);
     }
 
-    void removeEventsFor(Date dateToRemoveEventFor){
-        removeEventsFor(dateToRemoveEventFor.getTime());
+    List<Event> getCalendarEventsForMonth(long epochMillis) {
+        return eventsContainer.getEventsForMonth(epochMillis);
     }
 
     void removeEventsFor(long epochMillis) {
