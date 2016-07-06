@@ -7,8 +7,6 @@ import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.widget.OverScroller;
 
-import com.github.sundeepk.compactcalendarview.domain.Event;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,7 +22,6 @@ import java.util.Locale;
 
 import static com.github.sundeepk.compactcalendarview.CompactCalendarHelper.getDayEventWith2EventsPerDay;
 import static com.github.sundeepk.compactcalendarview.CompactCalendarHelper.getDayEventWithMultipleEventsPerDay;
-import static com.github.sundeepk.compactcalendarview.CompactCalendarHelper.getEvents;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.anyFloat;
 import static org.mockito.Matchers.anyInt;
@@ -77,7 +74,7 @@ public class CompactCalendarControllerTest {
         underTest.showNextMonth();
 
         //Sun, 01 Mar 2015 00:00:00 GMT - expected
-        assertEquals(setTimeToMidnightAndGet(cal, 1425168000000L), underTest.getFirstDayOfCurrentMonth());
+        assertEquals(new Date(setTimeToMidnightAndGet(cal, 1425168000000L)), underTest.getFirstDayOfCurrentMonth());
 
         when(motionEvent.getAction()).thenReturn(MotionEvent.ACTION_UP);
 
@@ -87,7 +84,7 @@ public class CompactCalendarControllerTest {
         underTest.onTouch(motionEvent);
 
         //Wed, 01 Apr 2015 00:00:00 GMT
-        assertEquals(setTimeToMidnightAndGet(cal, 1427842800000L), underTest.getFirstDayOfCurrentMonth());
+        assertEquals(new Date(setTimeToMidnightAndGet(cal, 1427842800000L)), underTest.getFirstDayOfCurrentMonth());
     }
 
     @Test
@@ -287,11 +284,8 @@ public class CompactCalendarControllerTest {
     public void testItDrawsEventDaysOnCalendar(){
         //Sun, 07 Jun 2015 18:20:51 GMT
         //get 30 events in total
-        List<Event> events = getEvents(0, 30, 1433701251000L);
-        for(Event event : events){
-            underTest.addEvent(event);
-        }
-
+        List<Events> events = CompactCalendarHelper.getEvents(0, 30, 1433701251000L);
+        when(eventsContainer.getEventsForMonthAndYear(2015, 5)).thenReturn(events);
         when(calendar.get(Calendar.MONTH)).thenReturn(5);
         when(calendar.get(Calendar.YEAR)).thenReturn(2015);
 
@@ -322,11 +316,8 @@ public class CompactCalendarControllerTest {
     public void testItDrawsMultipleEventDaysOnCalendarWithPlusIndicator(){
         //Sun, 07 Jun 2015 18:20:51 GMT
         //get 120 events in total but only draw 3 event indicators per a day
-        List<Event> events = getDayEventWithMultipleEventsPerDay(0, 30, 1433701251000L);
-        for(Event event : events){
-            underTest.addEvent(event);
-        }
-
+        List<Events> events = getDayEventWithMultipleEventsPerDay(0, 30, 1433701251000L);
+        when(eventsContainer.getEventsForMonthAndYear(2015, 5)).thenReturn(events);
         when(calendar.get(Calendar.MONTH)).thenReturn(5);
         when(calendar.get(Calendar.YEAR)).thenReturn(2015);
 

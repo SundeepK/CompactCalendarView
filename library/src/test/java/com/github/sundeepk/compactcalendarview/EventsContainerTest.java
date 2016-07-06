@@ -33,7 +33,7 @@ public class EventsContainerTest {
     @Test
     public void testItRemovesAllEvents(){
         //Sun, 01 Feb 2015 00:00:00 GMT
-        List<Event> events = getEvents(0, 30, 1422748800000L);
+        List<Event> events = getSingleEvents(0, 30, 1422748800000L);
         for(Event event : events){
             underTest.addEvent(event);
         }
@@ -47,12 +47,12 @@ public class EventsContainerTest {
     @Test
     public void testItAddsAndGetsEvents(){
         //Sun, 01 Feb 2015 00:00:00 GMT
-        List<Event> events = getEvents(0, 30, 1422748800000L);
+        List<Event> events = getSingleEvents(0, 30, 1422748800000L);
         for(Event event : events){
             underTest.addEvent(event);
         }
 
-        events = getEvents(0, 28, 1422748800000L);
+        events = getSingleEvents(0, 28, 1422748800000L);
 
         List<Event> actualEvents = underTest.getCalendarEventsFor(1422748800000L);
         Assert.assertEquals(events.get(0), actualEvents.get(0));
@@ -61,11 +61,11 @@ public class EventsContainerTest {
     @Test
     public void testItAddsEventsUsingList(){
         //Sun, 01 Feb 2015 00:00:00 GMT
-        List<Event> events = getEvents(0, 30, 1422748800000L);
+        List<Event> events = getSingleEvents(0, 30, 1422748800000L);
 
         underTest.addEvents(events);
 
-        events = getEvents(0, 28, 1422748800000L);
+        events = getSingleEvents(0, 28, 1422748800000L);
 
         List<Event> actualEvents = underTest.getCalendarEventsFor(1422748800000L);
         Assert.assertEquals(1, actualEvents.size());
@@ -75,7 +75,7 @@ public class EventsContainerTest {
     @Test
     public void testItRemovesEvents(){
         //Sun, 01 Feb 2015 00:00:00 GMT
-        List<Event> events = getEvents(0, 30, 1422748800000L);
+        List<Event> events = getSingleEvents(0, 30, 1422748800000L);
         for(Event event : events){
             underTest.addEvent(event);
         }
@@ -85,7 +85,7 @@ public class EventsContainerTest {
         underTest.removeEvent(events.get(5));
         underTest.removeEvent(events.get(20));
 
-        List<Event> expectedEvents = getEvents(0, 28, 1422748800000L);
+        List<Event> expectedEvents = getSingleEvents(0, 28, 1422748800000L);
         expectedEvents.remove(events.get(0));
         expectedEvents.remove(events.get(1));
         expectedEvents.remove(events.get(5));
@@ -118,14 +118,14 @@ public class EventsContainerTest {
     @Test
     public void testItRemovesEventsUsingList(){
         //Sun, 01 Feb 2015 00:00:00 GMT
-        List<Event> events = getEvents(0, 30, 1422748800000L);
+        List<Event> events = getSingleEvents(0, 30, 1422748800000L);
         for(Event event : events){
             underTest.addEvent(event);
         }
 
         underTest.removeEvents(Arrays.asList(events.get(0), events.get(1), events.get(5), events.get(20)));
 
-        List<Event> expectedEvents = getEvents(0, 28, 1422748800000L);
+        List<Event> expectedEvents = getSingleEvents(0, 28, 1422748800000L);
         expectedEvents.removeAll(Arrays.asList(events.get(0), events.get(1), events.get(5), events.get(20)));
 
         for (Event e : expectedEvents) {
@@ -140,14 +140,14 @@ public class EventsContainerTest {
     public void testItGetsEventsForSpecificDay(){
         //Sun, 07 Jun 2015 18:20:51 GMT
         //get 30 events in total
-        List<Event> events = getEvents(0, 30, 1433701251000L);
+        List<Event> events = getSingleEvents(0, 30, 1433701251000L);
         for(Event event : events){
             underTest.addEvent(event);
         }
 
         //Wed, 24 Aug 2016 09:21:09 GMT
         //get 30 events in total
-        List<Event> events2 = getEvents(0, 30, 1472030469000L);
+        List<Event> events2 = getSingleEvents(0, 30, 1472030469000L);
         for(Event event : events2){
             underTest.addEvent(event);
         }
@@ -164,7 +164,7 @@ public class EventsContainerTest {
     public void testItRemovesEventByDate(){
         //Sun, 07 Jun 2015 18:20:51 GMT
         //get 30 events in total
-        List<Event> events = getEvents(0, 30, 1433701251000L);
+        List<Event> events = getSingleEvents(0, 30, 1433701251000L);
         for(Event event : events){
             underTest.addEvent(event);
         }
@@ -184,7 +184,7 @@ public class EventsContainerTest {
     public void testItUpdatesEvents(){
         //Sun, 07 Jun 2015 18:20:51 GMT
         //get 30 events in total
-        List<Event> events = getEvents(0, 30, 1433701251000L);
+        List<Event> events = getSingleEvents(0, 30, 1433701251000L);
         for(Event event : events){
             underTest.addEvent(event);
         }
@@ -208,7 +208,7 @@ public class EventsContainerTest {
     public void testItAddsEventsToExistingList(){
         //Sun, 07 Jun 2015 18:20:51 GMT
         //get 30 events in total
-        List<Event> events = getEvents(0, 30, 1433701251000L);
+        List<Event> events = getSingleEvents(0, 30, 1433701251000L);
         underTest.addEvents(events);
 
         //Sun, 07 Jun 2015 18:20:51 GMT

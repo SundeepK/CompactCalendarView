@@ -15,12 +15,12 @@ import java.util.Map;
 
 public class CompactCalendarHelper {
 
-    public static List<Event> getEvents(int start, int days, long timeStamp) {
-        return getEvents(start, days, timeStamp, Color.BLUE);
+    public static List<Event> getSingleEvents(int start, int days, long timeStamp) {
+        return getSingleEvents(start, days, timeStamp, Color.BLUE);
     }
 
     //generate one event per a day for a month
-    public static List<Event> getEvents(int start, int days, long timeStamp, int color) {
+    public static List<Event> getSingleEvents(int start, int days, long timeStamp, int color) {
         Calendar currentCalender = Calendar.getInstance(Locale.getDefault());
         List<Event> events = new ArrayList<>();
         for(int i = start; i < days; i++){
@@ -29,6 +29,20 @@ public class CompactCalendarHelper {
         }
         return events;
     }
+
+    public static List<Events> getEvents(int start, int days, long timeStamp) {
+        Calendar currentCalender = Calendar.getInstance(Locale.getDefault());
+        List<Events> events = new ArrayList<>();
+        for(int i = start; i < days; i++){
+            setDateTime(timeStamp, currentCalender, i);
+            List<Event> eventList = new ArrayList<>();
+            eventList.add(new Event(Color.BLUE, currentCalender.getTimeInMillis()));
+            Events eventsObject = new Events(currentCalender.getTimeInMillis(), eventList);
+            events.add(eventsObject);
+        }
+        return events;
+    }
+
 
     public static List<Events> getDayEventWith2EventsPerDay(int start, int days, long timeStamp) {
         Calendar currentCalender = Calendar.getInstance(Locale.getDefault());
@@ -44,18 +58,19 @@ public class CompactCalendarHelper {
         return events;
     }
 
-    public static List<Event> getDayEventWithMultipleEventsPerDay(int start, int days, long timeStamp) {
+    public static List<Events> getDayEventWithMultipleEventsPerDay(int start, int days, long timeStamp) {
         Calendar currentCalender = Calendar.getInstance(Locale.getDefault());
-        List<Event> eventList = new ArrayList<>();
+        List<Events> events = new ArrayList<>();
         for(int i = start; i < days; i++){
             setDateTime(timeStamp, currentCalender, i);
-            List<Event> events = Arrays.asList(new Event(Color.BLUE, currentCalender.getTimeInMillis()),
+            List<Event> eventsList = Arrays.asList(new Event(Color.BLUE, currentCalender.getTimeInMillis()),
                     new Event(Color.RED, currentCalender.getTimeInMillis() + 3600 * 1000),
                     new Event(Color.RED, currentCalender.getTimeInMillis() + (3600 * 2) * 1000),
                     new Event(Color.RED, currentCalender.getTimeInMillis() + (3600 * 3) * 1000));
-            eventList.addAll(events);
+            Events eventsObject = new Events(currentCalender.getTimeInMillis(), eventsList);
+            events.add(eventsObject);
         }
-        return eventList;
+        return events;
     }
 
     public static Map<Long, List<Event>> getMultipleEventsForEachDayAsMap(int start, int days, long timeStamp) {
