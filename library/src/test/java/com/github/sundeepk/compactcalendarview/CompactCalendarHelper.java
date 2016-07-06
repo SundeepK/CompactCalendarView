@@ -3,6 +3,7 @@ package com.github.sundeepk.compactcalendarview;
 import android.graphics.Color;
 
 import com.github.sundeepk.compactcalendarview.domain.Event;
+import com.github.sundeepk.compactcalendarview.domain.Events;
 
 import java.util.ArrayList;
 import java.util.Arrays;
