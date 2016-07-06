@@ -190,7 +190,7 @@ public class CompactCalendarView extends View {
      * @return
      */
     public List<Event> getEvents(Date date){
-        return compactCalendarController.getCalendarEventsFor(date);
+        return compactCalendarController.getCalendarEventsFor(date.getTime());
     }
 
     /**
@@ -203,11 +203,29 @@ public class CompactCalendarView extends View {
     }
 
     /**
+     * Fetches the events for the month of the epochMillis passed in and returns a sorted list of events
+     * @param epochMillis
+     * @return
+     */
+    public List<Event> getEventsForMonth(long epochMillis){
+        return compactCalendarController.getCalendarEventsForMonth(epochMillis);
+    }
+
+    /**
+     * Fetches the events for the month of the date passed in and returns a sorted list of events
+     * @param date
+     * @return
+     */
+    public List<Event> getEventsForMonth(Date date){
+        return compactCalendarController.getCalendarEventsForMonth(date.getTime());
+    }
+
+    /**
      * Remove the event associated with the Date passed in
      * @param date
      */
     public void removeEvents(Date date){
-        compactCalendarController.removeEventsFor(date);
+        compactCalendarController.removeEventsFor(date.getTime());
     }
 
     public void removeEvents(long epochMillis){
@@ -252,7 +270,6 @@ public class CompactCalendarView extends View {
     public void removeAllEvents() {
         compactCalendarController.removeAllEvents();
     }
-
 
     private void checkTargetHeight() {
         if (compactCalendarController.getTargetHeight() <= 0) {

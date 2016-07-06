@@ -1,10 +1,13 @@
 package com.github.sundeepk.compactcalendarview;
 
+import com.github.sundeepk.compactcalendarview.comparators.EventComparator;
 import com.github.sundeepk.compactcalendarview.domain.Event;
+import com.github.sundeepk.compactcalendarview.domain.Events;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -14,6 +17,7 @@ import java.util.Map;
 public class EventsContainer {
 
     private Map<String, List<Events>> eventsByMonthAndYearMap = new HashMap<>();
+    private Comparator<Event> eventsComparator = new EventComparator();
     private Calendar eventsCalendar;
 
     public EventsContainer(Locale locale, Calendar eventsCalendar) {
@@ -50,7 +54,7 @@ public class EventsContainer {
         }
     }
 
-    List<Event> getCalendarEventsFor(long epochMillis) {
+    List<Event> getEventsFor(long epochMillis) {
         Events events = getEventDayEvent(epochMillis);
         if (events == null) {
             return new ArrayList<>();
@@ -59,19 +63,21 @@ public class EventsContainer {
         }
     }
 
-    List<Events> getCalendarEventForMonth(Date date) {
-        return getEventsForMonth(date.getTime());
-    }
-
     List<Events> getEventsForMonthAndYear(int month, int year){
         return eventsByMonthAndYearMap.get(year + "_" + month);
     }
 
-    List<Events> getEventsForMonth(long eventTimeInMillis){
+    List<Event> getEventsForMonth(long eventTimeInMillis){
         eventsCalendar.setTimeInMillis(eventTimeInMillis);
         int dayInMonth = eventsCalendar.get(Calendar.DAY_OF_MONTH);
         String keyForCalendarEvent = getKeyForCalendarEvent(eventsCalendar);
-        return eventsByMonthAndYearMap.get(keyForCalendarEvent);
+        List<Events> events = eventsByMonthAndYearMap.get(keyForCalendarEvent);
+        List<Event> allEventsForMonth = new ArrayList<>();
+        for(Events eve : events){
+            allEventsForMonth.addAll(eve.getEvents());
+        }
+        Collections.sort(allEventsForMonth, eventsComparator);
+        return allEventsForMonth;
     }
 
     private Events getEventDayEvent(long eventTimeInMillis){
