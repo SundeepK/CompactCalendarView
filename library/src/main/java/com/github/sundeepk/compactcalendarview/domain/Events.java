@@ -1,24 +1,22 @@
-package com.github.sundeepk.compactcalendarview;
-
-import com.github.sundeepk.compactcalendarview.domain.Event;
+package com.github.sundeepk.compactcalendarview.domain;
 
 import java.util.List;
 
-class Events {
+public class Events {
 
     private final List<Event> events;
     private final long timeInMillis;
 
-     Events(long timeInMillis, List<Event> events) {
+    public Events(long timeInMillis, List<Event> events) {
         this.timeInMillis = timeInMillis;
         this.events = events;
     }
 
-     long getTimeInMillis() {
+    public long getTimeInMillis() {
         return timeInMillis;
     }
 
-     List<Event> getEvents() {
+    public List<Event> getEvents() {
         return events;
     }
 
