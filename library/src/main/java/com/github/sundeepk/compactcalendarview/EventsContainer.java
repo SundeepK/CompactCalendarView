@@ -69,7 +69,6 @@ public class EventsContainer {
 
     List<Event> getEventsForMonth(long eventTimeInMillis){
         eventsCalendar.setTimeInMillis(eventTimeInMillis);
-        int dayInMonth = eventsCalendar.get(Calendar.DAY_OF_MONTH);
         String keyForCalendarEvent = getKeyForCalendarEvent(eventsCalendar);
         List<Events> events = eventsByMonthAndYearMap.get(keyForCalendarEvent);
         List<Event> allEventsForMonth = new ArrayList<>();
