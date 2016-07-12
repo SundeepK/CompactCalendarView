@@ -73,8 +73,12 @@ public class EventsContainer {
         String keyForCalendarEvent = getKeyForCalendarEvent(eventsCalendar);
         List<Events> events = eventsByMonthAndYearMap.get(keyForCalendarEvent);
         List<Event> allEventsForMonth = new ArrayList<>();
-        for(Events eve : events){
-            allEventsForMonth.addAll(eve.getEvents());
+        if (events != null) {
+            for(Events eve : events){
+                if (eve != null) {
+                    allEventsForMonth.addAll(eve.getEvents());
+                }
+            }
         }
         Collections.sort(allEventsForMonth, eventsComparator);
         return allEventsForMonth;
