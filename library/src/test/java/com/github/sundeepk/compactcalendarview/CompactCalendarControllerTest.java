@@ -291,7 +291,7 @@ public class CompactCalendarControllerTest {
         //Sun, 07 Jun 2015 18:20:51 GMT
         //get 30 events in total
         List<Events> events = getEvents(0, 30, 1433701251000L);
-        when(eventsContainer.getEventsForMonthAndYear(2015, 5)).thenReturn(events);
+        when(eventsContainer.getEventsForMonthAndYear(5, 2015)).thenReturn(events);
         when(calendar.get(Calendar.MONTH)).thenReturn(5);
         when(calendar.get(Calendar.YEAR)).thenReturn(2015);
 
@@ -307,7 +307,7 @@ public class CompactCalendarControllerTest {
         //Sun, 07 Jun 2015 18:20:51 GMT
         //get 60 events in total
         List<Events> events = getDayEventWith2EventsPerDay(0, 30, 1433701251000L);
-        when(eventsContainer.getEventsForMonthAndYear(2015, 5)).thenReturn(events);
+        when(eventsContainer.getEventsForMonthAndYear(5, 2015)).thenReturn(events);
         when(calendar.get(Calendar.MONTH)).thenReturn(5);
         when(calendar.get(Calendar.YEAR)).thenReturn(2015);
 
@@ -323,7 +323,7 @@ public class CompactCalendarControllerTest {
         //Sun, 07 Jun 2015 18:20:51 GMT
         //get 120 events in total but only draw 3 event indicators per a day
         List<Events> events = getDayEventWithMultipleEventsPerDay(0, 30, 1433701251000L);
-        when(eventsContainer.getEventsForMonthAndYear(2015, 5)).thenReturn(events);
+        when(eventsContainer.getEventsForMonthAndYear(5, 2015)).thenReturn(events);
         when(calendar.get(Calendar.MONTH)).thenReturn(5);
         when(calendar.get(Calendar.YEAR)).thenReturn(2015);
 
