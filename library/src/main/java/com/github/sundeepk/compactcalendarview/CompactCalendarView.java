@@ -257,7 +257,7 @@ public class CompactCalendarView extends View {
     }
 
     /**
-     * Adds multiple events to the calendar and invalidates the view once all events are added.
+     * Removes multiple events from the calendar and invalidates the view once all events are added.
      */
     public void removeEvents(List<Event> events){
         compactCalendarController.removeEvents(events);
