@@ -58,6 +58,8 @@ public class CompactCalendarTab extends Fragment {
         addEvents(compactCalendarView, Calendar.AUGUST);
         compactCalendarView.invalidate();
 
+        logEventsByMonth(compactCalendarView);
+
         // below line will display Sunday as the first day of the week
         // compactCalendarView.setShouldShowMondayAsFirstDay(false);
 
@@ -127,6 +129,14 @@ public class CompactCalendarTab extends Fragment {
         });
 
         return v;
+    }
+
+    private void logEventsByMonth(CompactCalendarView compactCalendarView) {
+        Log.d(TAG, "Events for current month: " + compactCalendarView.getEventsForMonth(new Date()));
+        currentCalender.setTime(new Date());
+        currentCalender.set(Calendar.DAY_OF_MONTH, 1);
+        currentCalender.set(Calendar.MONTH, Calendar.JANUARY);
+        Log.d(TAG, "Events for Jan month: " + compactCalendarView.getEventsForMonth(currentCalender.getTime()));
     }
 
     private void addEvents(CompactCalendarView compactCalendarView, int month) {
