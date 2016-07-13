@@ -195,7 +195,12 @@ public class EventsContainerTest {
     @Test
     public void testItReturnsEmptyForMonthWithNotEvents(){
         //Sun, 07 Jun 2015 18:20:51 GMT
-        List<Event> calendarDayEvents = underTest.getEventsForMonth(setTimeToMidnightAndGet(Calendar.getInstance(), 1433701251000L));
+        //get 30 events in total
+        List<Event> events = getSingleEvents(0, 30, 1433701251000L);
+        underTest.addEvents(events);
+
+        //Fri, 07 Aug 2015 12:09:59 GMT
+        List<Event> calendarDayEvents = underTest.getEventsForMonth(setTimeToMidnightAndGet(Calendar.getInstance(), 1438949399000L));
         assertEquals(new ArrayList<Event>(), calendarDayEvents);
     }
 
