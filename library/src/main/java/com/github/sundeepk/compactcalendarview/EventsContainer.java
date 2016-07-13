@@ -2,7 +2,6 @@ package com.github.sundeepk.compactcalendarview;
 
 import com.github.sundeepk.compactcalendarview.comparators.EventComparator;
 import com.github.sundeepk.compactcalendarview.domain.Event;
-import com.github.sundeepk.compactcalendarview.domain.Events;
 
 import java.util.ArrayList;
 import java.util.Calendar;

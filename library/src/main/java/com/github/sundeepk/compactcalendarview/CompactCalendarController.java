@@ -17,7 +17,6 @@ import android.view.ViewConfiguration;
 import android.widget.OverScroller;
 
 import com.github.sundeepk.compactcalendarview.domain.Event;
-import com.github.sundeepk.compactcalendarview.domain.Events;
 
 import java.text.DateFormatSymbols;
 import java.util.Arrays;

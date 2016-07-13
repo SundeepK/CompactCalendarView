@@ -8,7 +8,6 @@ import android.view.VelocityTracker;
 import android.widget.OverScroller;
 
 import com.github.sundeepk.compactcalendarview.domain.Event;
-import com.github.sundeepk.compactcalendarview.domain.Events;
 
 import org.junit.Before;
 import org.junit.Test;
