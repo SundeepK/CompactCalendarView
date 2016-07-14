@@ -84,7 +84,7 @@ public class CompactCalendarView extends View {
     }
 
     /*
-    Use a custom locale for compact calendar.
+    Use a custom locale for compact calendar and reinitialise the view.
      */
     public void setLocale(Locale locale){
         compactCalendarController.setLocale(locale);
