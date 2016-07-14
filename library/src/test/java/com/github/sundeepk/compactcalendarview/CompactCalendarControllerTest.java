@@ -383,6 +383,13 @@ public class CompactCalendarControllerTest {
         verifyNoMoreInteractions(eventsContainer);
     }
 
+    @Test
+    public void testItRemovesAllEvents(){
+        underTest.removeAllEvents();
+        verify(eventsContainer).removeAllEvents();
+        verifyNoMoreInteractions(eventsContainer);
+    }
+
     private long setTimeToMidnightAndGet(Calendar cal, long epoch) {
         cal.setTime(new Date(epoch));
         cal.set(Calendar.HOUR_OF_DAY, 0);

@@ -22,10 +22,8 @@ import java.text.DateFormatSymbols;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 
 class CompactCalendarController {
@@ -75,7 +73,6 @@ class CompactCalendarController {
     private boolean shouldDrawDaysHeader = true;
 
     private CompactCalendarView.CompactCalendarViewListener listener;
-    private Map<String, List<Events>> eventsByMonthAndYearMap = new HashMap<>();
     private VelocityTracker velocityTracker = null;
     private Direction currentDirection = Direction.NONE;
     private Date currentDate = new Date();
@@ -227,7 +224,7 @@ class CompactCalendarController {
     }
 
     void removeAllEvents() {
-        eventsByMonthAndYearMap.clear();
+        eventsContainer.removeAllEvents();
     }
 
     void setShouldShowMondayAsFirstDay(boolean shouldShowMondayAsFirstDay) {
