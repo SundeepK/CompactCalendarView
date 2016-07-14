@@ -43,6 +43,8 @@ public class CompactCalendarTab extends Fragment {
         final Button showNextMonthBut = (Button) v.findViewById(R.id.next_button);
         final Button slideCalendarBut = (Button) v.findViewById(R.id.slide_calendar);
         final Button showCalendarWithAnimationBut = (Button) v.findViewById(R.id.show_with_animation_calendar);
+        final Button setLocaleBut = (Button) v.findViewById(R.id.set_locale);
+        final Button removeAllEventsBut = (Button) v.findViewById(R.id.remove_all_events);
 
         final ArrayAdapter adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, mutableBookings);
         bookingsListView.setAdapter(adapter);
@@ -53,9 +55,7 @@ public class CompactCalendarTab extends Fragment {
         // below allows you to configure colors for the current day the user has selected
         compactCalendarView.setCurrentSelectedDayBackgroundColor(getResources().getColor(R.color.dark_red));
 
-        addEvents(compactCalendarView, -1);
-        addEvents(compactCalendarView, Calendar.DECEMBER);
-        addEvents(compactCalendarView, Calendar.AUGUST);
+        loadEvents(compactCalendarView);
         compactCalendarView.invalidate();
 
         logEventsByMonth(compactCalendarView);
@@ -128,7 +128,29 @@ public class CompactCalendarTab extends Fragment {
             }
         });
 
+        setLocaleBut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                compactCalendarView.setLocale(Locale.CHINESE);
+                compactCalendarView.setUseThreeLetterAbbreviation(true);
+                loadEvents(compactCalendarView);
+            }
+        });
+
+        removeAllEventsBut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                compactCalendarView.removeAllEvents();
+            }
+        });
+
         return v;
+    }
+
+    private void loadEvents(CompactCalendarView compactCalendarView) {
+        addEvents(compactCalendarView, -1);
+        addEvents(compactCalendarView, Calendar.DECEMBER);
+        addEvents(compactCalendarView, Calendar.AUGUST);
     }
 
     private void logEventsByMonth(CompactCalendarView compactCalendarView) {
