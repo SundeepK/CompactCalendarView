@@ -77,7 +77,8 @@ public class CompactCalendarView extends View {
         compactCalendarController = new CompactCalendarController(new Paint(), new OverScroller(getContext()),
                 new Rect(), attrs, getContext(),  Color.argb(255, 233, 84, 81),
                 Color.argb(255, 64, 64, 64), Color.argb(255, 219, 219, 219), VelocityTracker.obtain(),
-                Color.argb(255, 100, 68, 65), new EventsContainer(Locale.getDefault(), Calendar.getInstance(Locale.getDefault())));
+                Color.argb(255, 100, 68, 65), new EventsContainer(Locale.getDefault(), Calendar.getInstance(Locale.getDefault())),
+                Locale.getDefault());
         gestureDetector = new GestureDetectorCompat(getContext(), gestureListener);
         animationHandler = new AnimationHandler(compactCalendarController, this);
     }
@@ -269,6 +270,7 @@ public class CompactCalendarView extends View {
      */
     public void removeAllEvents() {
         compactCalendarController.removeAllEvents();
+        invalidate();
     }
 
     private void checkTargetHeight() {

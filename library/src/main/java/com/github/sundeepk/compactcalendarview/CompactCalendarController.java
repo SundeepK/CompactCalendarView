@@ -76,11 +76,11 @@ class CompactCalendarController {
     private VelocityTracker velocityTracker = null;
     private Direction currentDirection = Direction.NONE;
     private Date currentDate = new Date();
-    private Locale locale = Locale.getDefault();
-    private Calendar currentCalender = Calendar.getInstance(locale);
-    private Calendar todayCalender = Calendar.getInstance(locale);
-    private Calendar calendarWithFirstDayOfMonth = Calendar.getInstance(locale);
-    private Calendar eventsCalendar = Calendar.getInstance(locale);
+    private Locale locale;
+    private Calendar currentCalender;
+    private Calendar todayCalender;
+    private Calendar calendarWithFirstDayOfMonth;
+    private Calendar eventsCalendar;
     private EventsContainer eventsContainer;
     private PointF accumulatedScrollOffset = new PointF();
     private OverScroller scroller;
@@ -103,7 +103,8 @@ class CompactCalendarController {
     CompactCalendarController(Paint dayPaint, OverScroller scroller, Rect textSizeRect, AttributeSet attrs,
                               Context context, int currentDayBackgroundColor, int calenderTextColor,
                               int currentSelectedDayBackgroundColor, VelocityTracker velocityTracker,
-                              int multiEventIndicatorColor, EventsContainer eventsContainer) {
+                              int multiEventIndicatorColor, EventsContainer eventsContainer,
+                              Locale locale) {
         this.dayPaint = dayPaint;
         this.scroller = scroller;
         this.textSizeRect = textSizeRect;
@@ -113,6 +114,7 @@ class CompactCalendarController {
         this.velocityTracker = velocityTracker;
         this.multiEventIndicatorColor = multiEventIndicatorColor;
         this.eventsContainer = eventsContainer;
+        this.locale = locale;
         loadAttributes(attrs, context);
         init(context);
     }
@@ -137,6 +139,11 @@ class CompactCalendarController {
     }
 
     private void init(Context context) {
+        this.currentCalender = Calendar.getInstance(locale);
+        this.todayCalender = Calendar.getInstance(locale);
+        this.calendarWithFirstDayOfMonth = Calendar.getInstance(locale);
+        this.eventsCalendar = Calendar.getInstance(locale);
+
         setUseWeekDayAbbreviation(false);
         dayPaint.setTextAlign(Paint.Align.CENTER);
         dayPaint.setStyle(Paint.Style.STROKE);
@@ -156,6 +163,19 @@ class CompactCalendarController {
 
         eventsCalendar.setFirstDayOfWeek(Calendar.MONDAY);
 
+        initScreenDensityRelatedValues(context);
+
+        yIndicatorOffset = 8 * screenDensity;
+        xIndicatorOffset = 3.5f * screenDensity;
+
+        //scale small indicator by screen density
+        smallIndicatorRadius = 2.5f * screenDensity;
+
+        //just set a default growFactor to draw full calendar when initialised
+        growFactor = Integer.MAX_VALUE;
+    }
+
+    private void initScreenDensityRelatedValues(Context context) {
         if (context != null) {
             screenDensity = context.getResources().getDisplayMetrics().density;
             final ViewConfiguration configuration = ViewConfiguration
@@ -166,15 +186,6 @@ class CompactCalendarController {
             final DisplayMetrics dm = context.getResources().getDisplayMetrics() ;
             multiDayIndicatorStrokeWidth = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1, dm);
         }
-
-        yIndicatorOffset = 8 * screenDensity;
-        xIndicatorOffset = 3.5f * screenDensity;
-
-        //scale small indicator by screen density
-        smallIndicatorRadius = 2.5f * screenDensity;
-
-        //just set a default growFactor to draw full calendar when initialised
-        growFactor = Integer.MAX_VALUE;
     }
 
     private void setCalenderToFirstDayOfMonth(Calendar calendarWithFirstDayOfMonth, Date currentDate, int scrollOffset, int monthOffset) {
@@ -266,11 +277,8 @@ class CompactCalendarController {
             throw new IllegalArgumentException("Locale cannot be null");
         }
         this.locale = locale;
-        this.currentCalender = Calendar.getInstance(locale);
-        this.todayCalender = Calendar.getInstance(locale);
-        this.calendarWithFirstDayOfMonth = Calendar.getInstance(locale);
-        this.eventsCalendar = Calendar.getInstance(locale);
-        this.eventsContainer = new EventsContainer(locale, Calendar.getInstance(locale));
+        // passing null will not re-init density related values - and that's ok
+        init(null);
     }
 
     void setUseWeekDayAbbreviation(boolean useThreeLetterAbbreviation) {
