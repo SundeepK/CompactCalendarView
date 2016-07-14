@@ -44,10 +44,25 @@
 
         <Button
             android:layout_below="@+id/compactcalendar_view"
-            android:text="Test"
+            android:text="Change Locale"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/test_button" />
+            android:id="@+id/set_locale" />
+
+        <Button
+            android:layout_below="@+id/compactcalendar_view"
+            android:text="Remove all events"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/remove_all_events" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:id="@+id/calendar_control_buttons_2"
+        android:layout_below="@+id/calendar_control_buttons"
+        android:layout_height="wrap_content">
 
         <Button
             android:id="@+id/slide_calendar"
@@ -62,12 +77,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             />
-
     </LinearLayout>
 
     <ListView
         android:id="@+id/bookings_listview"
-        android:layout_below="@+id/calendar_control_buttons"
+        android:layout_below="@+id/calendar_control_buttons_2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
     </ListView>
