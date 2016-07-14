@@ -131,7 +131,7 @@ public class CompactCalendarTab extends Fragment {
         setLocaleBut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                compactCalendarView.setLocale(Locale.CHINESE);
+                compactCalendarView.setLocale(Locale.FRANCE);
                 compactCalendarView.setUseThreeLetterAbbreviation(true);
                 loadEvents(compactCalendarView);
             }
