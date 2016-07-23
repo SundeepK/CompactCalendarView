@@ -31,6 +31,7 @@ public class CompactCalendarTab extends Fragment {
     private Calendar currentCalender = Calendar.getInstance(Locale.getDefault());
     private SimpleDateFormat dateFormatForMonth = new SimpleDateFormat("MMM - yyyy", Locale.getDefault());
     private boolean shouldShow = false;
+    private CompactCalendarView compactCalendarView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -48,7 +49,7 @@ public class CompactCalendarTab extends Fragment {
 
         final ArrayAdapter adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, mutableBookings);
         bookingsListView.setAdapter(adapter);
-        final CompactCalendarView compactCalendarView = (CompactCalendarView) v.findViewById(R.id.compactcalendar_view);
+        compactCalendarView = (CompactCalendarView) v.findViewById(R.id.compactcalendar_view);
 
         // below allows you to configure color for the current day in the month
         compactCalendarView.setCurrentDayBackgroundColor(getResources().getColor(R.color.black));
@@ -145,6 +146,12 @@ public class CompactCalendarTab extends Fragment {
         });
 
         return v;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        compactCalendarView.setCurrentDate(new Date());
     }
 
     private void loadEvents(CompactCalendarView compactCalendarView) {

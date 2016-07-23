@@ -553,6 +553,7 @@ class CompactCalendarController {
         scroller.startScroll(0, 0, 0, 0);
         currentDate = new Date(dateTimeMonth.getTime());
         currentCalender.setTime(currentDate);
+        todayCalender = Calendar.getInstance(locale);
         setToMidnight(currentCalender);
     }
 
