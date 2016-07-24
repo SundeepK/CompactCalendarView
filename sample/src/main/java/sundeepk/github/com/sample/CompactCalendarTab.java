@@ -32,6 +32,7 @@ public class CompactCalendarTab extends Fragment {
     private SimpleDateFormat dateFormatForMonth = new SimpleDateFormat("MMM - yyyy", Locale.getDefault());
     private boolean shouldShow = false;
     private CompactCalendarView compactCalendarView;
+    private ActionBar toolbar;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -65,7 +66,7 @@ public class CompactCalendarTab extends Fragment {
         // compactCalendarView.setShouldShowMondayAsFirstDay(false);
 
         //set initial title
-        final ActionBar toolbar = ((ActionBarActivity) getActivity()).getSupportActionBar();
+        toolbar = ((ActionBarActivity) getActivity()).getSupportActionBar();
         toolbar.setTitle(dateFormatForMonth.format(compactCalendarView.getFirstDayOfCurrentMonth()));
 
         //set title on calendar scroll
@@ -151,6 +152,7 @@ public class CompactCalendarTab extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        toolbar.setTitle(dateFormatForMonth.format(new Date()));
         compactCalendarView.setCurrentDate(new Date());
     }
 
