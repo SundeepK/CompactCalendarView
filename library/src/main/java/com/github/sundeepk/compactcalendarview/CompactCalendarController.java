@@ -24,6 +24,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.TimeZone;
 
 
 class CompactCalendarController {
@@ -95,6 +96,7 @@ class CompactCalendarController {
     private int calenderTextColor;
     private int currentSelectedDayBackgroundColor;
     private int calenderBackgroundColor = Color.WHITE;
+    private TimeZone timeZone;
 
     private enum Direction {
         NONE, HORIZONTAL, VERTICAL
@@ -104,7 +106,7 @@ class CompactCalendarController {
                               Context context, int currentDayBackgroundColor, int calenderTextColor,
                               int currentSelectedDayBackgroundColor, VelocityTracker velocityTracker,
                               int multiEventIndicatorColor, EventsContainer eventsContainer,
-                              Locale locale) {
+                              Locale locale, TimeZone timeZone) {
         this.dayPaint = dayPaint;
         this.scroller = scroller;
         this.textSizeRect = textSizeRect;
@@ -115,6 +117,7 @@ class CompactCalendarController {
         this.multiEventIndicatorColor = multiEventIndicatorColor;
         this.eventsContainer = eventsContainer;
         this.locale = locale;
+        this.timeZone = timeZone;
         loadAttributes(attrs, context);
         init(context);
     }
@@ -139,10 +142,10 @@ class CompactCalendarController {
     }
 
     private void init(Context context) {
-        this.currentCalender = Calendar.getInstance(locale);
-        this.todayCalender = Calendar.getInstance(locale);
-        this.calendarWithFirstDayOfMonth = Calendar.getInstance(locale);
-        this.eventsCalendar = Calendar.getInstance(locale);
+        this.currentCalender = Calendar.getInstance(timeZone, locale);
+        this.todayCalender = Calendar.getInstance(timeZone, locale);
+        this.calendarWithFirstDayOfMonth = Calendar.getInstance(timeZone, locale);
+        this.eventsCalendar = Calendar.getInstance(timeZone, locale);
 
         setUseWeekDayAbbreviation(false);
         dayPaint.setTextAlign(Paint.Align.CENTER);
@@ -272,11 +275,15 @@ class CompactCalendarController {
         performMonthScrollCallback();
     }
 
-    void setLocale(Locale locale) {
+    void setLocale(TimeZone timeZone, Locale locale) {
         if (locale == null) {
-            throw new IllegalArgumentException("Locale cannot be null");
+            throw new IllegalArgumentException("Locale cannot be null.");
+        }
+        if (timeZone == null) {
+            throw new IllegalArgumentException("TimeZone cannot be null.");
         }
         this.locale = locale;
+        this.timeZone = timeZone;
         // passing null will not re-init density related values - and that's ok
         init(null);
     }

@@ -21,6 +21,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.TimeZone;
 
 import static com.github.sundeepk.compactcalendarview.CompactCalendarHelper.getDayEventWith2EventsPerDay;
 import static com.github.sundeepk.compactcalendarview.CompactCalendarHelper.getDayEventWithMultipleEventsPerDay;
@@ -57,7 +58,7 @@ public class CompactCalendarControllerTest {
     public void setUp(){
         when(velocityTracker.getXVelocity()).thenReturn(-200f);
         underTest =
-                new CompactCalendarController(paint, overScroller, rect, null, null, 0, 0, 0, velocityTracker, 0, eventsContainer, Locale.getDefault());
+                new CompactCalendarController(paint, overScroller, rect, null, null, 0, 0, 0, velocityTracker, 0, eventsContainer, Locale.getDefault(), TimeZone.getDefault());
     }
 
     @Test(expected=IllegalArgumentException.class)
@@ -166,7 +167,7 @@ public class CompactCalendarControllerTest {
         when(calendar.getActualMaximum(Calendar.DAY_OF_MONTH)).thenReturn(28);
 
         underTest.setGrowProgress(1000); //set grow progress so that it simulates the calendar being open
-        underTest.setLocale(Locale.FRANCE);
+        underTest.setLocale(TimeZone.getTimeZone("Europe/Paris"), Locale.FRANCE);
         reset(canvas); //reset because invalidate is called
         underTest.setUseWeekDayAbbreviation(true);
         reset(canvas); //reset because invalidate is called

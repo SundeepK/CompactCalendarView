@@ -24,6 +24,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.TimeZone;
 
 public class CompactCalendarTab extends Fragment {
 
@@ -133,7 +134,7 @@ public class CompactCalendarTab extends Fragment {
         setLocaleBut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                compactCalendarView.setLocale(Locale.FRANCE);
+                compactCalendarView.setLocale(TimeZone.getTimeZone("Europe/Paris"), Locale.FRANCE);
                 compactCalendarView.setUseThreeLetterAbbreviation(true);
                 loadEvents(compactCalendarView);
             }
