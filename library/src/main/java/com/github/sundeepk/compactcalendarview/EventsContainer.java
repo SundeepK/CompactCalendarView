@@ -10,7 +10,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 public class EventsContainer {
@@ -19,9 +18,8 @@ public class EventsContainer {
     private Comparator<Event> eventsComparator = new EventComparator();
     private Calendar eventsCalendar;
 
-    public EventsContainer(Locale locale, Calendar eventsCalendar) {
+    public EventsContainer(Calendar eventsCalendar) {
         this.eventsCalendar = eventsCalendar;
-        this.eventsCalendar = Calendar.getInstance(locale);
     }
 
     void addEvent(Event event) {

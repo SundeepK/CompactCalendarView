@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
@@ -30,6 +31,7 @@ public class CompactCalendarTab extends Fragment {
 
     private static final String TAG = "MainActivity";
     private Calendar currentCalender = Calendar.getInstance(Locale.getDefault());
+    private SimpleDateFormat dateFormatForDisplaying = new SimpleDateFormat("dd-M-yyyy hh:mm:ss a", Locale.getDefault());
     private SimpleDateFormat dateFormatForMonth = new SimpleDateFormat("MMM - yyyy", Locale.getDefault());
     private boolean shouldShow = false;
     private CompactCalendarView compactCalendarView;
@@ -58,7 +60,8 @@ public class CompactCalendarTab extends Fragment {
         // below allows you to configure colors for the current day the user has selected
         compactCalendarView.setCurrentSelectedDayBackgroundColor(getResources().getColor(R.color.dark_red));
 
-        loadEvents(compactCalendarView);
+        loadEvents();
+        loadEventsForYear(2017);
         compactCalendarView.invalidate();
 
         logEventsByMonth(compactCalendarView);
@@ -75,7 +78,7 @@ public class CompactCalendarTab extends Fragment {
             @Override
             public void onDayClick(Date dateClicked) {
                 List<Event> bookingsFromMap = compactCalendarView.getEvents(dateClicked);
-                Log.d(TAG, "inside onclick " + dateClicked);
+                Log.d(TAG, "inside onclick " + dateFormatForDisplaying.format(dateClicked));
                 if(bookingsFromMap != null){
                     Log.d(TAG, bookingsFromMap.toString());
                     mutableBookings.clear();
@@ -134,9 +137,16 @@ public class CompactCalendarTab extends Fragment {
         setLocaleBut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                compactCalendarView.setLocale(TimeZone.getTimeZone("Europe/Paris"), Locale.FRANCE);
+                Locale locale = new Locale("hi", "IN");
+                dateFormatForDisplaying = new SimpleDateFormat("dd-M-yyyy hh:mm:ss a", locale);
+                TimeZone timeZone = TimeZone.getTimeZone("Asia/Kolkata");
+                dateFormatForDisplaying.setTimeZone(timeZone);
+                compactCalendarView.setLocale(timeZone, locale);
                 compactCalendarView.setUseThreeLetterAbbreviation(true);
-                loadEvents(compactCalendarView);
+                loadEvents();
+                loadEventsForYear(2017);
+                logEventsByMonth(compactCalendarView);
+
             }
         });
 
@@ -157,21 +167,30 @@ public class CompactCalendarTab extends Fragment {
         compactCalendarView.setCurrentDate(new Date());
     }
 
-    private void loadEvents(CompactCalendarView compactCalendarView) {
-        addEvents(compactCalendarView, -1);
-        addEvents(compactCalendarView, Calendar.DECEMBER);
-        addEvents(compactCalendarView, Calendar.AUGUST);
+    private void loadEvents() {
+        addEvents(-1, -1);
+        addEvents(Calendar.DECEMBER, -1);
+        addEvents(Calendar.AUGUST, -1);
+    }
+
+    private void loadEventsForYear(int year) {
+        addEvents(Calendar.DECEMBER, year);
+        addEvents(Calendar.AUGUST, year);
     }
 
     private void logEventsByMonth(CompactCalendarView compactCalendarView) {
-        Log.d(TAG, "Events for current month: " + compactCalendarView.getEventsForMonth(new Date()));
+        List<String> dates = new ArrayList<>();
+        for (Event e : compactCalendarView.getEventsForMonth(new Date())) {
+            dates.add(dateFormatForDisplaying.format(e.getTimeInMillis()));
+        }
+        Log.d(TAG, "Events for current month: " + dates);
         currentCalender.setTime(new Date());
         currentCalender.set(Calendar.DAY_OF_MONTH, 1);
-        currentCalender.set(Calendar.MONTH, Calendar.JANUARY);
-        Log.d(TAG, "Events for Jan month: " + compactCalendarView.getEventsForMonth(currentCalender.getTime()));
+        currentCalender.set(Calendar.MONTH, Calendar.AUGUST);
+        Log.d(TAG, "Events for Aug month: " + compactCalendarView.getEventsForMonth(currentCalender.getTime()));
     }
 
-    private void addEvents(CompactCalendarView compactCalendarView, int month) {
+    private void addEvents(int month, int year) {
         currentCalender.setTime(new Date());
         currentCalender.set(Calendar.DAY_OF_MONTH, 1);
         Date firstDayOfMonth = currentCalender.getTime();
@@ -179,6 +198,10 @@ public class CompactCalendarTab extends Fragment {
             currentCalender.setTime(firstDayOfMonth);
             if (month > -1) {
                 currentCalender.set(Calendar.MONTH, month);
+            }
+            if (year > -1) {
+                currentCalender.set(Calendar.ERA, GregorianCalendar.AD);
+                currentCalender.set(Calendar.YEAR, year);
             }
             currentCalender.add(Calendar.DATE, i);
             setToMidnight(currentCalender);

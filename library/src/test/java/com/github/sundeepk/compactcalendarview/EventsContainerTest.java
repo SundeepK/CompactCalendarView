@@ -14,7 +14,6 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
 
@@ -31,7 +30,7 @@ public class EventsContainerTest {
 
     @Before
     public void setUp(){
-        underTest = new EventsContainer(Locale.getDefault(), Calendar.getInstance(Locale.getDefault()));
+        underTest = new EventsContainer(Calendar.getInstance());
     }
 
     @Test
