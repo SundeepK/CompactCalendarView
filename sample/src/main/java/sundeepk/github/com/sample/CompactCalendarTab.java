@@ -187,6 +187,7 @@ public class CompactCalendarTab extends Fragment {
         currentCalender.setTime(new Date());
         currentCalender.set(Calendar.DAY_OF_MONTH, 1);
         currentCalender.set(Calendar.MONTH, Calendar.AUGUST);
+        // print using system time
         Log.d(TAG, "Events for Aug month: " + compactCalendarView.getEventsForMonth(currentCalender.getTime()));
     }
 
