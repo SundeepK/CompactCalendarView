@@ -179,16 +179,15 @@ public class CompactCalendarTab extends Fragment {
     }
 
     private void logEventsByMonth(CompactCalendarView compactCalendarView) {
+        currentCalender.setTime(new Date());
+        currentCalender.set(Calendar.DAY_OF_MONTH, 1);
+        currentCalender.set(Calendar.MONTH, Calendar.AUGUST);
         List<String> dates = new ArrayList<>();
         for (Event e : compactCalendarView.getEventsForMonth(new Date())) {
             dates.add(dateFormatForDisplaying.format(e.getTimeInMillis()));
         }
-        Log.d(TAG, "Events for current month: " + dates);
-        currentCalender.setTime(new Date());
-        currentCalender.set(Calendar.DAY_OF_MONTH, 1);
-        currentCalender.set(Calendar.MONTH, Calendar.AUGUST);
-        // print using system time
-        Log.d(TAG, "Events for Aug month: " + compactCalendarView.getEventsForMonth(currentCalender.getTime()));
+        Log.d(TAG, "Events for Aug with simple date formatter: " + dates);
+        Log.d(TAG, "Events for Aug month using default local and timezone: " + compactCalendarView.getEventsForMonth(currentCalender.getTime()));
     }
 
     private void addEvents(int month, int year) {
