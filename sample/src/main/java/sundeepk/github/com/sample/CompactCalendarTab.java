@@ -73,6 +73,8 @@ public class CompactCalendarTab extends Fragment {
         toolbar = ((ActionBarActivity) getActivity()).getSupportActionBar();
         toolbar.setTitle(dateFormatForMonth.format(compactCalendarView.getFirstDayOfCurrentMonth()));
 
+        compactCalendarView.shouldScrollMonth(true);
+
         //set title on calendar scroll
         compactCalendarView.setListener(new CompactCalendarView.CompactCalendarViewListener() {
             @Override

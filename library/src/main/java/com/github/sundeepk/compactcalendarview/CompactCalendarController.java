@@ -72,6 +72,7 @@ class CompactCalendarController {
     private boolean isSmoothScrolling;
     private boolean isScrolling;
     private boolean shouldDrawDaysHeader = true;
+    private boolean shouldHighlightFirstDayOnScroll = true;
 
     private CompactCalendarView.CompactCalendarViewListener listener;
     private VelocityTracker velocityTracker = null;
@@ -135,6 +136,7 @@ class CompactCalendarController {
                         (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, textSize, context.getResources().getDisplayMetrics()));
                 targetHeight = typedArray.getDimensionPixelSize(R.styleable.CompactCalendarView_compactCalendarTargetHeight,
                         (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, targetHeight, context.getResources().getDisplayMetrics()));
+                shouldHighlightFirstDayOnScroll = typedArray.getBoolean(R.styleable.CompactCalendarView_compactCalendarShouldHighlightFirstDayOnScroll, shouldHighlightFirstDayOnScroll);
             } finally {
                 typedArray.recycle();
             }
@@ -793,8 +795,7 @@ class CompactCalendarController {
                     drawCircle(canvas, xPosition, yPosition, currentDayBackgroundColor);
                 } else if (currentCalender.get(Calendar.DAY_OF_MONTH) == day && isSameMonthAsCurrentCalendar && !isAnimatingWithExpose) {
                     drawCircle(canvas, xPosition, yPosition, currentSelectedDayBackgroundColor);
-                } else if (day == 1 && !isSameMonthAsCurrentCalendar && !isAnimatingWithExpose
-                        ) {
+                } else if (day == 1 && !isSameMonthAsCurrentCalendar && !isAnimatingWithExpose && shouldHighlightFirstDayOnScroll) {
                     drawCircle(canvas, xPosition, yPosition, currentSelectedDayBackgroundColor);
                 }
                 if (day <= monthToDrawCalender.getActualMaximum(Calendar.DAY_OF_MONTH) && day > 0) {

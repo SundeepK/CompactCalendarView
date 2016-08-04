@@ -8,5 +8,6 @@
         <attr name="compactCalendarTextColor" format="color"/>
         <attr name="compactCalendarMultiEventIndicatorColor" format="color"/>
         <attr name="compactCalendarTargetHeight" format="dimension"/>
+        <attr name="compactCalendarShouldHighlightFirstDayOnScroll" format="boolean"/>
     </declare-styleable>
 </resources>
