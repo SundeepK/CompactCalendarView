@@ -540,13 +540,13 @@ class CompactCalendarController {
     }
 
     int getWeekNumberForCurrentMonth() {
-        Calendar calendar = Calendar.getInstance(locale);
+        Calendar calendar = Calendar.getInstance(timeZone, locale);
         calendar.setTime(currentDate);
         return calendar.get(Calendar.WEEK_OF_MONTH);
     }
 
     Date getFirstDayOfCurrentMonth() {
-        Calendar calendar = Calendar.getInstance(locale);
+        Calendar calendar = Calendar.getInstance(timeZone, locale);
         calendar.setTime(currentDate);
         calendar.add(Calendar.MONTH, -monthsScrolledSoFar);
         calendar.set(Calendar.DAY_OF_MONTH, 1);
@@ -561,7 +561,7 @@ class CompactCalendarController {
         scroller.startScroll(0, 0, 0, 0);
         currentDate = new Date(dateTimeMonth.getTime());
         currentCalender.setTime(currentDate);
-        todayCalender = Calendar.getInstance(locale);
+        todayCalender = Calendar.getInstance(timeZone, locale);
         setToMidnight(currentCalender);
     }
 
