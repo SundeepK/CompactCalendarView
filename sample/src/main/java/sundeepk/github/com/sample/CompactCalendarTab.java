@@ -65,6 +65,8 @@ public class CompactCalendarTab extends Fragment {
         // below line will display Sunday as the first day of the week
         // compactCalendarView.setShouldShowMondayAsFirstDay(false);
 
+        compactCalendarView.shouldScrollMonth(true);
+
         //set initial title
         toolbar = ((ActionBarActivity) getActivity()).getSupportActionBar();
         toolbar.setTitle(dateFormatForMonth.format(compactCalendarView.getFirstDayOfCurrentMonth()));

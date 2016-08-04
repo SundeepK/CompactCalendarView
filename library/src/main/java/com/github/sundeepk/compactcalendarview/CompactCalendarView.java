@@ -341,8 +341,8 @@ public class CompactCalendarView extends View {
         compactCalendarController.onTouch(event);
         invalidate();
 
-        // prevent parent container from processing ACTION_MOVE events (scroll inside ViewPager issue #82)
-        if(event.getAction() == MotionEvent.ACTION_MOVE && shouldScroll) {
+        // prevent parent container from processing ACTION_DOWN events (scroll inside ViewPager issue #82)
+        if(event.getAction() == MotionEvent.ACTION_DOWN && shouldScroll) {
             getParent().requestDisallowInterceptTouchEvent(true);
         } else if(event.getAction() == MotionEvent.ACTION_CANCEL) {
             getParent().requestDisallowInterceptTouchEvent(false);
