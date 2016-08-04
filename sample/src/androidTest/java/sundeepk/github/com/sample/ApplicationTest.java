@@ -48,6 +48,19 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
 
     @Test
     public void testOnMonthScrollListenerIsCalled(){
+        compactCalendarView.shouldScrollMonth(false);
+
+        //Sun, 08 Feb 2015 00:00:00 GMT
+        setDate(new Date(1423353600000L));
+        onView(ViewMatchers.withId(R.id.compactcalendar_view)).perform(scroll(100, 100, -100, 0));
+
+        verifyNoMoreInteractions(listener);
+
+        compactCalendarView.shouldScrollMonth(true);
+    }
+
+    @Test
+    public void testItDoesNotScrollWhenScrollingIsDisabled(){
         //Sun, 08 Feb 2015 00:00:00 GMT
         setDate(new Date(1423353600000L));
         onView(ViewMatchers.withId(R.id.compactcalendar_view)).perform(scroll(100, 100, -100, 0));
