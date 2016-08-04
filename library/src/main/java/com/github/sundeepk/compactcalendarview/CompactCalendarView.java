@@ -59,8 +59,10 @@ public class CompactCalendarView extends View {
             if(shouldScroll) {
                 compactCalendarController.onScroll(e1, e2, distanceX, distanceY);
                 invalidate();
+                return true;
+            } else {
+                return false;
             }
-            return true;
         }
     };
 
@@ -338,7 +340,10 @@ public class CompactCalendarView extends View {
     }
 
     public boolean onTouchEvent(MotionEvent event) {
-        compactCalendarController.onTouch(event);
+        if (shouldScroll) {
+            compactCalendarController.onTouch(event);
+        }
+
         invalidate();
 
         // prevent parent container from processing ACTION_DOWN events (scroll inside ViewPager issue #82)
@@ -347,6 +352,7 @@ public class CompactCalendarView extends View {
         } else if(event.getAction() == MotionEvent.ACTION_CANCEL) {
             getParent().requestDisallowInterceptTouchEvent(false);
         }
+
         // always allow gestureDetector to detect onSingleTap and scroll events
         return gestureDetector.onTouchEvent(event);
     }
