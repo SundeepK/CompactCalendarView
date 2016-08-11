@@ -144,6 +144,7 @@ public class CompactCalendarTab extends Fragment {
                 dateFormatForDisplaying = new SimpleDateFormat("dd-M-yyyy hh:mm:ss a", locale);
                 TimeZone timeZone = TimeZone.getTimeZone("Asia/Kolkata");
                 dateFormatForDisplaying.setTimeZone(timeZone);
+                dateFormatForMonth.setTimeZone(timeZone);
                 compactCalendarView.setLocale(timeZone, locale);
                 compactCalendarView.setUseThreeLetterAbbreviation(true);
                 loadEvents();
