@@ -38,7 +38,12 @@ class CompactCalendarController {
     private static final int DAYS_IN_WEEK = 7;
     private static final float SNAP_VELOCITY_DIP_PER_SECOND = 400;
     private static final float ANIMATION_SCREEN_SET_DURATION_MILLIS = 700;
+    private static final int FILL_LARGE_INDICATOR = 1;
+    private static final int NO_FILL_LARGE_INDICATOR = 2;
+    private static final int SMALL_INDICATOR = 3;
 
+    private int indicatorStyle;
+    private int currentDayIndicatorStyle;
     private int paddingWidth = 40;
     private int paddingHeight = 40;
     private int textHeight;
