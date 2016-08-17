@@ -140,6 +140,8 @@ class CompactCalendarController {
                         (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, textSize, context.getResources().getDisplayMetrics()));
                 targetHeight = typedArray.getDimensionPixelSize(R.styleable.CompactCalendarView_compactCalendarTargetHeight,
                         (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, targetHeight, context.getResources().getDisplayMetrics()));
+                indicatorStyle = typedArray.getInt(R.styleable.CompactCalendarView_compactCalendarIndicatorStyle, SMALL_INDICATOR);
+                currentDayIndicatorStyle = typedArray.getInt(R.styleable.CompactCalendarView_compactCalendarCurrentDayIndicatorStyle, FILL_LARGE_INDICATOR);
             } finally {
                 typedArray.recycle();
             }
@@ -712,14 +714,14 @@ class CompactCalendarController {
 
     private void drawSingleEvent(Canvas canvas, float xPosition, float yPosition, List<Event> eventsList) {
         Event event = eventsList.get(0);
-        drawSmallIndicatorCircle(canvas, xPosition, yPosition + yIndicatorOffset, event.getColor());
+        drawEventIndicatorCircle(canvas, xPosition, yPosition + yIndicatorOffset, event.getColor());
     }
 
     private void drawTwoEvents(Canvas canvas, float xPosition, float yPosition, List<Event> eventsList) {
         //draw fist event just left of center
-        drawSmallIndicatorCircle(canvas, xPosition + (xIndicatorOffset * -1), yPosition + yIndicatorOffset, eventsList.get(0).getColor());
+        drawEventIndicatorCircle(canvas, xPosition + (xIndicatorOffset * -1), yPosition + yIndicatorOffset, eventsList.get(0).getColor());
         //draw second event just right of center
-        drawSmallIndicatorCircle(canvas, xPosition + (xIndicatorOffset * 1), yPosition + yIndicatorOffset, eventsList.get(1).getColor());
+        drawEventIndicatorCircle(canvas, xPosition + (xIndicatorOffset * 1), yPosition + yIndicatorOffset, eventsList.get(1).getColor());
     }
 
     //draw 2 eventsByMonthAndYearMap followed by plus indicator to show there are more than 2 eventsByMonthAndYearMap
@@ -738,7 +740,7 @@ class CompactCalendarController {
                 canvas.drawLine(xStartPosition, yStartPosition - smallIndicatorRadius, xStartPosition, yStartPosition + smallIndicatorRadius, dayPaint);
                 dayPaint.setStrokeWidth(0);
             } else {
-                drawSmallIndicatorCircle(canvas, xStartPosition, yStartPosition, event.getColor());
+                drawEventIndicatorCircle(canvas, xStartPosition, yStartPosition, event.getColor());
             }
         }
     }
@@ -795,18 +797,27 @@ class CompactCalendarController {
                 int day = ((dayRow - 1) * 7 + dayColumn + 1) - firstDayOfMonth;
                 if (isSameYearAsToday && isSameMonthAsToday && todayDayOfMonth == day && !isAnimatingWithExpose) {
                     // TODO calculate position of circle in a more reliable way
-                    drawCircle(canvas, xPosition, yPosition, currentDayBackgroundColor);
+                    drawDayCircleIndicator(currentDayIndicatorStyle, canvas, xPosition, yPosition, currentDayBackgroundColor);
                 } else if (currentCalender.get(Calendar.DAY_OF_MONTH) == day && isSameMonthAsCurrentCalendar && !isAnimatingWithExpose) {
-                    drawCircle(canvas, xPosition, yPosition, currentSelectedDayBackgroundColor);
-                } else if (day == 1 && !isSameMonthAsCurrentCalendar && !isAnimatingWithExpose
-                        ) {
-                    drawCircle(canvas, xPosition, yPosition, currentSelectedDayBackgroundColor);
+                    drawDayCircleIndicator(indicatorStyle, canvas, xPosition, yPosition, currentSelectedDayBackgroundColor);
+                } else if (day == 1 && !isSameMonthAsCurrentCalendar && !isAnimatingWithExpose ) {
+                    drawDayCircleIndicator(indicatorStyle, canvas, xPosition, yPosition, currentSelectedDayBackgroundColor);
                 }
                 if (day <= monthToDrawCalender.getActualMaximum(Calendar.DAY_OF_MONTH) && day > 0) {
                     canvas.drawText(String.valueOf(day), xPosition, yPosition, dayPaint);
                 }
             }
         }
+    }
+
+    private void drawDayCircleIndicator(int indicatorStyle, Canvas canvas, float x, float y, int color) {
+        dayPaint.setColor(color);
+        if (indicatorStyle == NO_FILL_LARGE_INDICATOR) {
+            dayPaint.setStyle(Paint.Style.STROKE);
+        } else {
+            dayPaint.setStyle(Paint.Style.FILL);
+        }
+        drawCircle(canvas, x, y, color);
     }
 
     // Draw Circle on certain days to highlight them
@@ -820,13 +831,21 @@ class CompactCalendarController {
         }
     }
 
-    private void drawSmallIndicatorCircle(Canvas canvas, float x, float y, int color) {
+    private void drawEventIndicatorCircle(Canvas canvas, float x, float y, int color) {
         dayPaint.setColor(color);
-        drawCircle(canvas, smallIndicatorRadius, x, y);
+        if (indicatorStyle == SMALL_INDICATOR) {
+            dayPaint.setStyle(Paint.Style.FILL);
+            drawCircle(canvas, smallIndicatorRadius, x, y);
+        } else if (indicatorStyle == NO_FILL_LARGE_INDICATOR){
+            dayPaint.setStyle(Paint.Style.STROKE);
+            drawCircle(canvas, bigCircleIndicatorRadius, x, y);
+        } else if (indicatorStyle == FILL_LARGE_INDICATOR) {
+            dayPaint.setStyle(Paint.Style.FILL);
+            drawCircle(canvas, bigCircleIndicatorRadius, x, y);
+        }
     }
 
     private void drawCircle(Canvas canvas, float radius, float x, float y) {
-        dayPaint.setStyle(Paint.Style.FILL);
         canvas.drawCircle(x, y, radius, dayPaint);
         dayPaint.setStyle(Paint.Style.STROKE);
         dayPaint.setColor(calenderTextColor);
