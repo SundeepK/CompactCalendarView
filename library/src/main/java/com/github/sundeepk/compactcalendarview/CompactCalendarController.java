@@ -812,12 +812,17 @@ class CompactCalendarController {
 
     private void drawDayCircleIndicator(int indicatorStyle, Canvas canvas, float x, float y, int color) {
         dayPaint.setColor(color);
+        float strokeWidth = dayPaint.getStrokeWidth();
         if (indicatorStyle == NO_FILL_LARGE_INDICATOR) {
+            dayPaint.setStrokeWidth(2 * screenDensity);
             dayPaint.setStyle(Paint.Style.STROKE);
+            dayPaint.setColor(color);
         } else {
             dayPaint.setStyle(Paint.Style.FILL);
         }
         drawCircle(canvas, x, y, color);
+        dayPaint.setStrokeWidth(strokeWidth);
+        dayPaint.setStyle(Paint.Style.FILL);
     }
 
     // Draw Circle on certain days to highlight them
@@ -837,8 +842,11 @@ class CompactCalendarController {
             dayPaint.setStyle(Paint.Style.FILL);
             drawCircle(canvas, smallIndicatorRadius, x, y);
         } else if (indicatorStyle == NO_FILL_LARGE_INDICATOR){
+            float strokeWidth = dayPaint.getStrokeWidth();
             dayPaint.setStyle(Paint.Style.STROKE);
+            dayPaint.setStrokeWidth(2 * screenDensity);
             drawCircle(canvas, bigCircleIndicatorRadius, x, y);
+            dayPaint.setStrokeWidth(strokeWidth);
         } else if (indicatorStyle == FILL_LARGE_INDICATOR) {
             dayPaint.setStyle(Paint.Style.FILL);
             drawCircle(canvas, bigCircleIndicatorRadius, x, y);
