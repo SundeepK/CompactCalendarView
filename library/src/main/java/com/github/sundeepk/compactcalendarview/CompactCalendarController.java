@@ -811,12 +811,10 @@ class CompactCalendarController {
     }
 
     private void drawDayCircleIndicator(int indicatorStyle, Canvas canvas, float x, float y, int color) {
-        dayPaint.setColor(color);
         float strokeWidth = dayPaint.getStrokeWidth();
         if (indicatorStyle == NO_FILL_LARGE_INDICATOR) {
             dayPaint.setStrokeWidth(2 * screenDensity);
             dayPaint.setStyle(Paint.Style.STROKE);
-            dayPaint.setColor(color);
         } else {
             dayPaint.setStyle(Paint.Style.FILL);
         }
