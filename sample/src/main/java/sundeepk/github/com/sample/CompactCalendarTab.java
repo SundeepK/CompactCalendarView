@@ -56,7 +56,7 @@ public class CompactCalendarTab extends Fragment {
         compactCalendarView = (CompactCalendarView) v.findViewById(R.id.compactcalendar_view);
 
         // below allows you to configure color for the current day in the month
-        compactCalendarView.setCurrentDayBackgroundColor(getResources().getColor(R.color.black));
+        // compactCalendarView.setCurrentDayBackgroundColor(getResources().getColor(R.color.black));
         // below allows you to configure colors for the current day the user has selected
         compactCalendarView.setCurrentSelectedDayBackgroundColor(getResources().getColor(R.color.dark_red));
 
