@@ -62,12 +62,16 @@ public class CompactCalendarView extends View {
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
             if(shouldScroll) {
-                compactCalendarController.onScroll(e1, e2, distanceX, distanceY);
-                invalidate();
-                return true;
-            } else {
-                return false;
+                if (Math.abs(distanceX) > 0) {
+                    getParent().requestDisallowInterceptTouchEvent(true);
+
+                    compactCalendarController.onScroll(e1, e2, distanceX, distanceY);
+                    invalidate();
+                    return true;
+                }
             }
+
+            return false;
         }
     };
 
@@ -367,6 +371,11 @@ public class CompactCalendarView extends View {
         if (shouldScroll) {
             compactCalendarController.onTouch(event);
             invalidate();
+        }
+
+        // on touch action finished (CANCEL or UP), we re-allow the parent container to intercept touch events (scroll inside ViewPager + RecyclerView issue #82)
+        if((event.getAction() == MotionEvent.ACTION_CANCEL || event.getAction() == MotionEvent.ACTION_UP) && shouldScroll) {
+            getParent().requestDisallowInterceptTouchEvent(false);
         }
 
         // always allow gestureDetector to detect onSingleTap and scroll events
