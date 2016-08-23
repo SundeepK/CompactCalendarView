@@ -140,7 +140,7 @@ class CompactCalendarController {
                         (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, textSize, context.getResources().getDisplayMetrics()));
                 targetHeight = typedArray.getDimensionPixelSize(R.styleable.CompactCalendarView_compactCalendarTargetHeight,
                         (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, targetHeight, context.getResources().getDisplayMetrics()));
-                indicatorStyle = typedArray.getInt(R.styleable.CompactCalendarView_compactCalendarIndicatorStyle, SMALL_INDICATOR);
+                indicatorStyle = typedArray.getInt(R.styleable.CompactCalendarView_compactCalendarEventIndicatorStyle, SMALL_INDICATOR);
                 currentDayIndicatorStyle = typedArray.getInt(R.styleable.CompactCalendarView_compactCalendarCurrentDayIndicatorStyle, FILL_LARGE_INDICATOR);
             } finally {
                 typedArray.recycle();
@@ -700,7 +700,7 @@ class CompactCalendarController {
                 boolean isCurrentSelectedDay = currentCalender.get(Calendar.DAY_OF_MONTH) == dayOfMonth;
 
                 if (!isSameDayAsCurrentDay && !isCurrentSelectedDay || animationStatus == EXPOSE_CALENDAR_ANIMATION) {
-                    if (indicatorStyle == FILL_LARGE_INDICATOR) {
+                    if (indicatorStyle == FILL_LARGE_INDICATOR || indicatorStyle == NO_FILL_LARGE_INDICATOR) {
                         Event event = eventsList.get(0);
                         drawEventIndicatorCircle(canvas, xPosition, yPosition, event.getColor());
                     } else {
@@ -845,11 +845,8 @@ class CompactCalendarController {
             dayPaint.setStyle(Paint.Style.FILL);
             drawCircle(canvas, smallIndicatorRadius, x, y);
         } else if (indicatorStyle == NO_FILL_LARGE_INDICATOR){
-            float strokeWidth = dayPaint.getStrokeWidth();
             dayPaint.setStyle(Paint.Style.STROKE);
-            dayPaint.setStrokeWidth(2 * screenDensity);
-            drawCircle(canvas, bigCircleIndicatorRadius, x, y);
-            dayPaint.setStrokeWidth(strokeWidth);
+            drawDayCircleIndicator(NO_FILL_LARGE_INDICATOR, canvas, x, y, color);
         } else if (indicatorStyle == FILL_LARGE_INDICATOR) {
             drawDayCircleIndicator(FILL_LARGE_INDICATOR, canvas, x, y, color);
         }

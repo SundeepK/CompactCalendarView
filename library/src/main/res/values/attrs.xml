@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <attr name="compactCalendarIndicatorStyle" format="enum">
+    <attr name="compactCalendarEventIndicatorStyle" format="enum">
         <enum name="fill_large_indicator" value="1" />
         <enum name="no_fill_large_indicator" value="2" />
         <enum name="small_indicator" value="3" />
@@ -17,7 +17,7 @@
         <attr name="compactCalendarTextColor" format="color"/>
         <attr name="compactCalendarMultiEventIndicatorColor" format="color"/>
         <attr name="compactCalendarTargetHeight" format="dimension"/>
-        <attr name="compactCalendarIndicatorStyle"/>
+        <attr name="compactCalendarEventIndicatorStyle"/>
         <attr name="compactCalendarCurrentDayIndicatorStyle"/>
     </declare-styleable>
 </resources>
