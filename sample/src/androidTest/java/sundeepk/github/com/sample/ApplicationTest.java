@@ -14,6 +14,8 @@ import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.View;
 
+import com.facebook.testing.screenshot.Screenshot;
+import com.facebook.testing.screenshot.ViewHelpers;
 import com.github.sundeepk.compactcalendarview.CompactCalendarView;
 
 import org.junit.Before;
@@ -31,6 +33,7 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
     private CompactCalendarView.CompactCalendarViewListener listener;
     private CompactCalendarView compactCalendarView;
     private MainActivity activity;
+    private View mainContent;
 
     public ApplicationTest() {
         super(MainActivity.class);
@@ -44,10 +47,11 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
         listener = mock(CompactCalendarView.CompactCalendarViewListener.class);
         compactCalendarView = (CompactCalendarView) activity.findViewById(R.id.compactcalendar_view);
         compactCalendarView.setListener(listener);
+        mainContent = (View) activity.findViewById(R.id.main_content);
     }
 
     @Test
-    public void testOnMonthScrollListenerIsCalled(){
+    public void testItDoesNotScrollWhenScrollingIsDisabled(){
         compactCalendarView.shouldScrollMonth(false);
 
         //Sun, 08 Feb 2015 00:00:00 GMT
@@ -60,7 +64,7 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
     }
 
     @Test
-    public void testItDoesNotScrollWhenScrollingIsDisabled(){
+    public void testOnMonthScrollListenerIsCalled(){
         //Sun, 08 Feb 2015 00:00:00 GMT
         setDate(new Date(1423353600000L));
         onView(ViewMatchers.withId(R.id.compactcalendar_view)).perform(scroll(100, 100, -100, 0));
@@ -79,6 +83,19 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
         //Tue, 03 Feb 2015 00:00:00 GMT - expected
         verify(listener).onDayClick(new Date(1422921600000L));
         verifyNoMoreInteractions(listener);
+    }
+
+    private void capture() {
+        InstrumentationRegistry.getInstrumentation().runOnMainSync(new Runnable() {
+            @Override
+            public void run() {
+                ViewHelpers.setupView(mainContent)
+                        .layout();
+
+                Screenshot.snap(mainContent)
+                        .record();
+            }
+        });
     }
 
     private void setDate(final Date date) {
