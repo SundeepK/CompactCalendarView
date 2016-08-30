@@ -47,7 +47,7 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
         listener = mock(CompactCalendarView.CompactCalendarViewListener.class);
         compactCalendarView = (CompactCalendarView) activity.findViewById(R.id.compactcalendar_view);
         compactCalendarView.setListener(listener);
-        mainContent = (View) activity.findViewById(R.id.main_content);
+        mainContent = (View) activity.findViewById(R.id.parent);
     }
 
     @Test
@@ -72,6 +72,7 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
         //Sun, 01 Mar 2015 00:00:00 GMT - expected
         verify(listener).onMonthScroll(new Date(1425168000000L));
         verifyNoMoreInteractions(listener);
+        capture("testOnMonthScrollListenerIsCalled");
     }
 
     @Test
@@ -83,16 +84,22 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
         //Tue, 03 Feb 2015 00:00:00 GMT - expected
         verify(listener).onDayClick(new Date(1422921600000L));
         verifyNoMoreInteractions(listener);
+        capture("testOnDayClickListenerIsCalled");
     }
 
-    private void capture() {
+    private void capture(final String name) {
+
         InstrumentationRegistry.getInstrumentation().runOnMainSync(new Runnable() {
             @Override
             public void run() {
+                compactCalendarView.requestLayout();
                 ViewHelpers.setupView(mainContent)
+                        .setExactHeightPx(mainContent.getHeight())
+                        .setExactWidthPx(mainContent.getWidth())
                         .layout();
 
                 Screenshot.snap(mainContent)
+                        .setName(name)
                         .record();
             }
         });
