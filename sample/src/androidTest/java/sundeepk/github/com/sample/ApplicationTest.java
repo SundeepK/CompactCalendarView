@@ -24,13 +24,14 @@ import org.junit.Test;
 import java.util.Date;
 
 import static android.support.test.espresso.Espresso.onView;
+import static com.github.sundeepk.compactcalendarview.CompactCalendarView.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivity> {
 
-    private CompactCalendarView.CompactCalendarViewListener listener;
+    private CompactCalendarViewListener listener;
     private CompactCalendarView compactCalendarView;
     private MainActivity activity;
     private View mainContent;
@@ -44,7 +45,7 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
         super.setUp();
         injectInstrumentation(InstrumentationRegistry.getInstrumentation());
         activity = getActivity();
-        listener = mock(CompactCalendarView.CompactCalendarViewListener.class);
+        listener = mock(CompactCalendarViewListener.class);
         compactCalendarView = (CompactCalendarView) activity.findViewById(R.id.compactcalendar_view);
         compactCalendarView.setListener(listener);
         mainContent = (View) activity.findViewById(R.id.parent);
@@ -76,6 +77,33 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
     }
 
     @Test
+    public void testItDrawNoFillLargeIndicatorOnCurrentDayWithSmallIndicatorForEvents(){
+        //Sun, 08 Feb 2015 00:00:00 GMT
+        setDate(new Date(1423353600000L));
+        setIndicatorType(NO_FILL_LARGE_INDICATOR, SMALL_INDICATOR);
+        capture("testItDrawNoFillLargeIndicatorOnCurrentDayWithSmallIndicatorForEvents");
+        setIndicatorType(FILL_LARGE_INDICATOR, SMALL_INDICATOR);
+    }
+
+    @Test
+    public void testItDrawNoFillLargeIndicatorOnCurrentDayWithNoFillLargeIndicatorForEvents(){
+        //Sun, 08 Feb 2015 00:00:00 GMT
+        setDate(new Date(1423353600000L));
+        setIndicatorType(NO_FILL_LARGE_INDICATOR, NO_FILL_LARGE_INDICATOR);
+        capture("testItDrawNoFillLargeIndicatorOnCurrentDayWithNoFillLargeIndicatorForEvents");
+        setIndicatorType(FILL_LARGE_INDICATOR, SMALL_INDICATOR);
+    }
+
+    @Test
+    public void testItDrawFillLargeIndicatorOnCurrentDayWithFillLargeIndicatorForEvents(){
+        //Sun, 08 Feb 2015 00:00:00 GMT
+        setDate(new Date(1423353600000L));
+        setIndicatorType(FILL_LARGE_INDICATOR, FILL_LARGE_INDICATOR);
+        capture("testItDrawFillLargeIndicatorOnCurrentDayWithFillLargeIndicatorForEvents");
+        setIndicatorType(FILL_LARGE_INDICATOR, SMALL_INDICATOR);
+    }
+
+    @Test
     public void testOnDayClickListenerIsCalled(){
         //Sun, 08 Feb 2015 00:00:00 GMT
         setDate(new Date(1423353600000L));
@@ -85,6 +113,16 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
         verify(listener).onDayClick(new Date(1422921600000L));
         verifyNoMoreInteractions(listener);
         capture("testOnDayClickListenerIsCalled");
+    }
+
+    private void setIndicatorType(final int currentDayStyle, final int eventStyle) {
+        InstrumentationRegistry.getInstrumentation().runOnMainSync(new Runnable() {
+            @Override
+            public void run() {
+                compactCalendarView.setCurrentDayIndicatorStyle(currentDayStyle);
+                compactCalendarView.setEventIndicatorStyle(eventStyle);
+            }
+        });
     }
 
     private void capture(final String name) {

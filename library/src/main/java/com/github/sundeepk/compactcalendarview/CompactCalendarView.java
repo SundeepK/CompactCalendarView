@@ -23,6 +23,10 @@ import java.util.TimeZone;
 
 public class CompactCalendarView extends View {
 
+    public static final int FILL_LARGE_INDICATOR = 1;
+    public static final int NO_FILL_LARGE_INDICATOR = 2;
+    public static final int SMALL_INDICATOR = 3;
+
     private final AnimationHandler animationHandler;
     private CompactCalendarController compactCalendarController;
     private GestureDetectorCompat gestureDetector;
@@ -273,6 +277,18 @@ public class CompactCalendarView extends View {
      */
     public void removeAllEvents() {
         compactCalendarController.removeAllEvents();
+        invalidate();
+    }
+
+
+
+    public void setCurrentDayIndicatorStyle(final int currentDayIndicatorStyle){
+        compactCalendarController.setCurrentDayIndicatorStyle(currentDayIndicatorStyle);
+        invalidate();
+    }
+
+    public void setEventIndicatorStyle(final int eventIndicatorStyle){
+        compactCalendarController.setEventIndicatorStyle(eventIndicatorStyle);
         invalidate();
     }
 

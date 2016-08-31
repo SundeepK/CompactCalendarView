@@ -26,6 +26,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 
+import static com.github.sundeepk.compactcalendarview.CompactCalendarView.*;
+
 
 class CompactCalendarController {
 
@@ -38,11 +40,8 @@ class CompactCalendarController {
     private static final int DAYS_IN_WEEK = 7;
     private static final float SNAP_VELOCITY_DIP_PER_SECOND = 400;
     private static final float ANIMATION_SCREEN_SET_DURATION_MILLIS = 700;
-    private static final int FILL_LARGE_INDICATOR = 1;
-    private static final int NO_FILL_LARGE_INDICATOR = 2;
-    private static final int SMALL_INDICATOR = 3;
 
-    private int indicatorStyle;
+    private int eventIndicatorStyle;
     private int currentDayIndicatorStyle;
     private int paddingWidth = 40;
     private int paddingHeight = 40;
@@ -78,7 +77,7 @@ class CompactCalendarController {
     private boolean isScrolling;
     private boolean shouldDrawDaysHeader = true;
 
-    private CompactCalendarView.CompactCalendarViewListener listener;
+    private CompactCalendarViewListener listener;
     private VelocityTracker velocityTracker = null;
     private Direction currentDirection = Direction.NONE;
     private Date currentDate = new Date();
@@ -140,7 +139,7 @@ class CompactCalendarController {
                         (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, textSize, context.getResources().getDisplayMetrics()));
                 targetHeight = typedArray.getDimensionPixelSize(R.styleable.CompactCalendarView_compactCalendarTargetHeight,
                         (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, targetHeight, context.getResources().getDisplayMetrics()));
-                indicatorStyle = typedArray.getInt(R.styleable.CompactCalendarView_compactCalendarEventIndicatorStyle, SMALL_INDICATOR);
+                eventIndicatorStyle = typedArray.getInt(R.styleable.CompactCalendarView_compactCalendarEventIndicatorStyle, SMALL_INDICATOR);
                 currentDayIndicatorStyle = typedArray.getInt(R.styleable.CompactCalendarView_compactCalendarCurrentDayIndicatorStyle, FILL_LARGE_INDICATOR);
             } finally {
                 typedArray.recycle();
@@ -212,6 +211,14 @@ class CompactCalendarController {
         calendarWithFirstDayOfMonth.set(Calendar.MILLISECOND, 0);
     }
 
+    void setCurrentDayIndicatorStyle(int currentDayIndicatorStyle) {
+        this.currentDayIndicatorStyle = currentDayIndicatorStyle;
+    }
+
+    void setEventIndicatorStyle(int eventIndicatorStyle) {
+        this.eventIndicatorStyle = eventIndicatorStyle;
+    }
+
     float getScreenDensity(){
         return screenDensity;
     }
@@ -240,7 +247,7 @@ class CompactCalendarController {
         return width;
     }
 
-    void setListener(CompactCalendarView.CompactCalendarViewListener listener) {
+    void setListener(CompactCalendarViewListener listener) {
         this.listener = listener;
     }
 
@@ -700,7 +707,7 @@ class CompactCalendarController {
                 boolean isCurrentSelectedDay = currentCalender.get(Calendar.DAY_OF_MONTH) == dayOfMonth;
 
                 if (!isSameDayAsCurrentDay && !isCurrentSelectedDay || animationStatus == EXPOSE_CALENDAR_ANIMATION) {
-                    if (indicatorStyle == FILL_LARGE_INDICATOR || indicatorStyle == NO_FILL_LARGE_INDICATOR) {
+                    if (eventIndicatorStyle == FILL_LARGE_INDICATOR || eventIndicatorStyle == NO_FILL_LARGE_INDICATOR) {
                         Event event = eventsList.get(0);
                         drawEventIndicatorCircle(canvas, xPosition, yPosition, event.getColor());
                     } else {
@@ -804,9 +811,9 @@ class CompactCalendarController {
                     // TODO calculate position of circle in a more reliable way
                     drawDayCircleIndicator(currentDayIndicatorStyle, canvas, xPosition, yPosition, currentDayBackgroundColor);
                 } else if (currentCalender.get(Calendar.DAY_OF_MONTH) == day && isSameMonthAsCurrentCalendar && !isAnimatingWithExpose) {
-                    drawDayCircleIndicator(indicatorStyle, canvas, xPosition, yPosition, currentSelectedDayBackgroundColor);
+                    drawDayCircleIndicator(eventIndicatorStyle, canvas, xPosition, yPosition, currentSelectedDayBackgroundColor);
                 } else if (day == 1 && !isSameMonthAsCurrentCalendar && !isAnimatingWithExpose ) {
-                    drawDayCircleIndicator(indicatorStyle, canvas, xPosition, yPosition, currentSelectedDayBackgroundColor);
+                    drawDayCircleIndicator(eventIndicatorStyle, canvas, xPosition, yPosition, currentSelectedDayBackgroundColor);
                 }
                 if (day <= monthToDrawCalender.getActualMaximum(Calendar.DAY_OF_MONTH) && day > 0) {
                     canvas.drawText(String.valueOf(day), xPosition, yPosition, dayPaint);
@@ -841,13 +848,13 @@ class CompactCalendarController {
 
     private void drawEventIndicatorCircle(Canvas canvas, float x, float y, int color) {
         dayPaint.setColor(color);
-        if (indicatorStyle == SMALL_INDICATOR) {
+        if (eventIndicatorStyle == SMALL_INDICATOR) {
             dayPaint.setStyle(Paint.Style.FILL);
             drawCircle(canvas, smallIndicatorRadius, x, y);
-        } else if (indicatorStyle == NO_FILL_LARGE_INDICATOR){
+        } else if (eventIndicatorStyle == NO_FILL_LARGE_INDICATOR){
             dayPaint.setStyle(Paint.Style.STROKE);
             drawDayCircleIndicator(NO_FILL_LARGE_INDICATOR, canvas, x, y, color);
-        } else if (indicatorStyle == FILL_LARGE_INDICATOR) {
+        } else if (eventIndicatorStyle == FILL_LARGE_INDICATOR) {
             drawDayCircleIndicator(FILL_LARGE_INDICATOR, canvas, x, y, color);
         }
     }
