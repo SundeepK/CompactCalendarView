@@ -1,5 +1,8 @@
 package sundeepk.github.com.sample;
 
+import android.app.Activity;
+import android.content.Context;
+import android.graphics.Color;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.ViewAction;
 import android.support.test.espresso.action.CoordinatesProvider;
@@ -17,14 +20,21 @@ import android.view.View;
 import com.facebook.testing.screenshot.Screenshot;
 import com.facebook.testing.screenshot.ViewHelpers;
 import com.github.sundeepk.compactcalendarview.CompactCalendarView;
+import com.github.sundeepk.compactcalendarview.domain.Event;
 
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.List;
 
 import static android.support.test.espresso.Espresso.onView;
-import static com.github.sundeepk.compactcalendarview.CompactCalendarView.*;
+import static com.github.sundeepk.compactcalendarview.CompactCalendarView.CompactCalendarViewListener;
+import static com.github.sundeepk.compactcalendarview.CompactCalendarView.NO_FILL_LARGE_INDICATOR;
+import static com.github.sundeepk.compactcalendarview.CompactCalendarView.SMALL_INDICATOR;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -80,27 +90,27 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
     public void testItDrawNoFillLargeIndicatorOnCurrentDayWithSmallIndicatorForEvents(){
         //Sun, 08 Feb 2015 00:00:00 GMT
         setDate(new Date(1423353600000L));
+        addEvents(Calendar.FEBRUARY, 2015);
         setIndicatorType(NO_FILL_LARGE_INDICATOR, SMALL_INDICATOR);
         capture("testItDrawNoFillLargeIndicatorOnCurrentDayWithSmallIndicatorForEvents");
-        setIndicatorType(FILL_LARGE_INDICATOR, SMALL_INDICATOR);
     }
 
     @Test
     public void testItDrawNoFillLargeIndicatorOnCurrentDayWithNoFillLargeIndicatorForEvents(){
         //Sun, 08 Feb 2015 00:00:00 GMT
         setDate(new Date(1423353600000L));
+        addEvents(Calendar.FEBRUARY, 2015);
         setIndicatorType(NO_FILL_LARGE_INDICATOR, NO_FILL_LARGE_INDICATOR);
         capture("testItDrawNoFillLargeIndicatorOnCurrentDayWithNoFillLargeIndicatorForEvents");
-        setIndicatorType(FILL_LARGE_INDICATOR, SMALL_INDICATOR);
     }
 
     @Test
-    public void testItDrawFillLargeIndicatorOnCurrentDayWithFillLargeIndicatorForEvents(){
+    public void testItDrawFillLargeIndicatorOnCurrentDayWithFillLargeIndicatorForEvents() throws InterruptedException {
         //Sun, 08 Feb 2015 00:00:00 GMT
         setDate(new Date(1423353600000L));
-        setIndicatorType(FILL_LARGE_INDICATOR, FILL_LARGE_INDICATOR);
+        addEvents(Calendar.FEBRUARY, 2015);
+//        setIndicatorType(FILL_LARGE_INDICATOR, SMALL_INDICATOR);
         capture("testItDrawFillLargeIndicatorOnCurrentDayWithFillLargeIndicatorForEvents");
-        setIndicatorType(FILL_LARGE_INDICATOR, SMALL_INDICATOR);
     }
 
     @Test
@@ -212,6 +222,58 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
                     }
                 },
                 Press.FINGER);
+    }
+
+    private void addEvents(final int month, final int year) {
+        Context context = compactCalendarView.getContext();
+        ((Activity) context).runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Calendar currentCalender = Calendar.getInstance();
+                currentCalender.setTime(new Date());
+                currentCalender.set(Calendar.DAY_OF_MONTH, 1);
+                Date firstDayOfMonth = currentCalender.getTime();
+                for (int i = 0; i < 6; i++) {
+                    currentCalender.setTime(firstDayOfMonth);
+                    if (month > -1) {
+                        currentCalender.set(Calendar.MONTH, month);
+                    }
+                    if (year > -1) {
+                        currentCalender.set(Calendar.ERA, GregorianCalendar.AD);
+                        currentCalender.set(Calendar.YEAR, year);
+                    }
+                    currentCalender.add(Calendar.DATE, i);
+                    setToMidnight(currentCalender);
+                    long timeInMillis = currentCalender.getTimeInMillis();
+
+                    List<Event> events = getEvents(timeInMillis, i);
+
+                    compactCalendarView.addEvents(events);
+                }
+            }
+        });
+    }
+
+    private List<Event> getEvents(long timeInMillis, int day) {
+        if (day < 2) {
+            return Arrays.asList(new Event(Color.argb(255, 169, 68, 65), timeInMillis, "Event at " + new Date(timeInMillis)));
+        } else if ( day > 2 && day <= 4) {
+            return Arrays.asList(
+                    new Event(Color.argb(255, 169, 68, 65), timeInMillis, "Event at " + new Date(timeInMillis)),
+                    new Event(Color.argb(255, 100, 68, 65), timeInMillis, "Event 2 at " + new Date(timeInMillis)));
+        } else {
+            return Arrays.asList(
+                    new Event(Color.argb(255, 169, 68, 65), timeInMillis, "Event at " + new Date(timeInMillis) ),
+                    new Event(Color.argb(255, 100, 68, 65), timeInMillis, "Event 2 at " + new Date(timeInMillis)),
+                    new Event(Color.argb(255, 70, 68, 65), timeInMillis, "Event 3 at " + new Date(timeInMillis)));
+        }
+    }
+
+    private void setToMidnight(Calendar calendar) {
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
     }
 
 }
