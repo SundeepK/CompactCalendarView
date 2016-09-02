@@ -26,7 +26,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 
-import static com.github.sundeepk.compactcalendarview.CompactCalendarView.*;
+import static com.github.sundeepk.compactcalendarview.CompactCalendarView.CompactCalendarViewListener;
+import static com.github.sundeepk.compactcalendarview.CompactCalendarView.FILL_LARGE_INDICATOR;
+import static com.github.sundeepk.compactcalendarview.CompactCalendarView.NO_FILL_LARGE_INDICATOR;
+import static com.github.sundeepk.compactcalendarview.CompactCalendarView.SMALL_INDICATOR;
 
 
 class CompactCalendarController {
@@ -170,6 +173,7 @@ class CompactCalendarController {
         currentCalender.setTime(currentDate);
         setCalenderToFirstDayOfMonth(calendarWithFirstDayOfMonth, currentDate, -monthsScrolledSoFar, 0);
 
+        eventsCalendar.setMinimalDaysInFirstWeek(1);
         eventsCalendar.setFirstDayOfWeek(Calendar.MONDAY);
 
         initScreenDensityRelatedValues(context);
