@@ -39,7 +39,7 @@ public class CompactCalendarTab extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View v =inflater.inflate(R.layout.main_tab,container,false);
+        View v = inflater.inflate(R.layout.main_tab,container,false);
 
         final List<String> mutableBookings = new ArrayList<>();
 
@@ -58,7 +58,7 @@ public class CompactCalendarTab extends Fragment {
         // below allows you to configure color for the current day in the month
         // compactCalendarView.setCurrentDayBackgroundColor(getResources().getColor(R.color.black));
         // below allows you to configure colors for the current day the user has selected
-        compactCalendarView.setCurrentSelectedDayBackgroundColor(getResources().getColor(R.color.dark_red));
+        // compactCalendarView.setCurrentSelectedDayBackgroundColor(getResources().getColor(R.color.dark_red));
 
         loadEvents();
         loadEventsForYear(2017);
@@ -80,6 +80,7 @@ public class CompactCalendarTab extends Fragment {
         compactCalendarView.setListener(new CompactCalendarView.CompactCalendarViewListener() {
             @Override
             public void onDayClick(Date dateClicked) {
+                toolbar.setTitle(dateFormatForMonth.format(dateClicked));
                 List<Event> bookingsFromMap = compactCalendarView.getEvents(dateClicked);
                 Log.d(TAG, "inside onclick " + dateFormatForDisplaying.format(dateClicked));
                 if(bookingsFromMap != null){
@@ -167,8 +168,9 @@ public class CompactCalendarTab extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        toolbar.setTitle(dateFormatForMonth.format(new Date()));
-        compactCalendarView.setCurrentDate(new Date());
+        toolbar.setTitle(dateFormatForMonth.format(compactCalendarView.getFirstDayOfCurrentMonth()));
+        // Set to current day on resume to set calendar to latest day
+        // toolbar.setTitle(dateFormatForMonth.format(new Date()));
     }
 
     private void loadEvents() {
