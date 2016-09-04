@@ -129,7 +129,17 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
     }
 
     @Test
-    public void testItDrawFillLargeIndicatorOnCurrentSelectedDayWithFillLargeIndicatorForEvents() throws InterruptedException {
+    public void testItDrawFillLargeIndicatorOnCurrentSelectedDayWithSmallIndicatorForEvents(){
+        //Sun, 08 Feb 2015 00:00:00 GMT
+        setDate(new Date(1423353600000L));
+        addEvents(Calendar.FEBRUARY, 2015);
+        onView(withId(R.id.compactcalendar_view)).perform(clickXY(60, 150));
+        setIndicatorType(FILL_LARGE_INDICATOR, SMALL_INDICATOR, FILL_LARGE_INDICATOR);
+        capture("testItDrawFillLargeIndicatorOnCurrentSelectedDayWithSmallIndicatorForEvents");
+    }
+
+    @Test
+    public void testItDrawFillLargeIndicatorOnCurrentSelectedDayWithFillLargeIndicatorForEvents() {
         //Sun, 08 Feb 2015 00:00:00 GMT
         setDate(new Date(1423353600000L));
         addEvents(Calendar.FEBRUARY, 2015);
