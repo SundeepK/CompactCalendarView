@@ -11,11 +11,12 @@ import android.support.test.espresso.action.GeneralSwipeAction;
 import android.support.test.espresso.action.Press;
 import android.support.test.espresso.action.Swipe;
 import android.support.test.espresso.action.Tap;
-import android.support.test.espresso.matcher.ViewMatchers;
+import android.support.v7.app.ActionBar;
 import android.test.ActivityInstrumentationTestCase2;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.View;
+import android.widget.TextView;
 
 import com.facebook.testing.screenshot.Screenshot;
 import com.facebook.testing.screenshot.ViewHelpers;
@@ -25,23 +26,32 @@ import com.github.sundeepk.compactcalendarview.domain.Event;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Locale;
 
 import static android.support.test.espresso.Espresso.onView;
+import static android.support.test.espresso.assertion.ViewAssertions.matches;
+import static android.support.test.espresso.matcher.ViewMatchers.withId;
+import static android.support.test.espresso.matcher.ViewMatchers.withParent;
+import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static com.github.sundeepk.compactcalendarview.CompactCalendarView.CompactCalendarViewListener;
+import static com.github.sundeepk.compactcalendarview.CompactCalendarView.FILL_LARGE_INDICATOR;
 import static com.github.sundeepk.compactcalendarview.CompactCalendarView.NO_FILL_LARGE_INDICATOR;
 import static com.github.sundeepk.compactcalendarview.CompactCalendarView.SMALL_INDICATOR;
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.instanceOf;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivity> {
 
-    private CompactCalendarViewListener listener;
+    private SimpleDateFormat dateFormatForMonth = new SimpleDateFormat("MMM - yyyy", Locale.getDefault());
     private CompactCalendarView compactCalendarView;
     private MainActivity activity;
     private View mainContent;
@@ -55,69 +65,87 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
         super.setUp();
         injectInstrumentation(InstrumentationRegistry.getInstrumentation());
         activity = getActivity();
-        listener = mock(CompactCalendarViewListener.class);
         compactCalendarView = (CompactCalendarView) activity.findViewById(R.id.compactcalendar_view);
-        compactCalendarView.setListener(listener);
         mainContent = (View) activity.findViewById(R.id.parent);
     }
 
     @Test
     public void testItDoesNotScrollWhenScrollingIsDisabled(){
+        CompactCalendarViewListener listener = mock(CompactCalendarViewListener.class);
+        compactCalendarView.setListener(listener);
         compactCalendarView.shouldScrollMonth(false);
 
         //Sun, 08 Feb 2015 00:00:00 GMT
         setDate(new Date(1423353600000L));
-        onView(ViewMatchers.withId(R.id.compactcalendar_view)).perform(scroll(100, 100, -100, 0));
+        onView(withId(R.id.compactcalendar_view)).perform(scroll(100, 100, -100, 0));
 
         verifyNoMoreInteractions(listener);
-
-        compactCalendarView.shouldScrollMonth(true);
+        capture("testItDoesNotScrollWhenScrollingIsDisabled");
     }
 
     @Test
-    public void testOnMonthScrollListenerIsCalled(){
+    public void testOnMonthScrollListenerIsCalled()  {
+        CompactCalendarViewListener listener = mock(CompactCalendarViewListener.class);
+        compactCalendarView.setListener(listener);
+
         //Sun, 08 Feb 2015 00:00:00 GMT
         setDate(new Date(1423353600000L));
-        onView(ViewMatchers.withId(R.id.compactcalendar_view)).perform(scroll(100, 100, -100, 0));
+        onView(withId(R.id.compactcalendar_view)).perform(scroll(100, 100, -100, 0));
 
         //Sun, 01 Mar 2015 00:00:00 GMT - expected
         verify(listener).onMonthScroll(new Date(1425168000000L));
         verifyNoMoreInteractions(listener);
-        capture("testOnMonthScrollListenerIsCalled");
     }
 
     @Test
-    public void testItDrawNoFillLargeIndicatorOnCurrentDayWithSmallIndicatorForEvents(){
+    public void testToolbarIsUpdatedOnScroll()  {
         //Sun, 08 Feb 2015 00:00:00 GMT
         setDate(new Date(1423353600000L));
-        addEvents(Calendar.FEBRUARY, 2015);
-        setIndicatorType(NO_FILL_LARGE_INDICATOR, SMALL_INDICATOR);
-        capture("testItDrawNoFillLargeIndicatorOnCurrentDayWithSmallIndicatorForEvents");
+        onView(withId(R.id.compactcalendar_view)).perform(scroll(100, 100, -100, 0));
+
+        onView(allOf(instanceOf(TextView.class), withParent(withId(R.id.tool_bar))))
+                .check(matches(withText("Mar - 2015")));
+        capture("testToolbarIsUpdatedOnScroll");
     }
 
     @Test
-    public void testItDrawNoFillLargeIndicatorOnCurrentDayWithNoFillLargeIndicatorForEvents(){
+    public void testItDrawNoFillLargeIndicatorOnCurrentSelectedDayWithSmallIndicatorForEvents(){
         //Sun, 08 Feb 2015 00:00:00 GMT
         setDate(new Date(1423353600000L));
         addEvents(Calendar.FEBRUARY, 2015);
-        setIndicatorType(NO_FILL_LARGE_INDICATOR, NO_FILL_LARGE_INDICATOR);
-        capture("testItDrawNoFillLargeIndicatorOnCurrentDayWithNoFillLargeIndicatorForEvents");
+        onView(withId(R.id.compactcalendar_view)).perform(clickXY(60, 150));
+        setIndicatorType(NO_FILL_LARGE_INDICATOR, SMALL_INDICATOR, FILL_LARGE_INDICATOR);
+        capture("testItDrawNoFillLargeIndicatorOnCurrentSelectedDayWithSmallIndicatorForEvents");
     }
 
     @Test
-    public void testItDrawFillLargeIndicatorOnCurrentDayWithFillLargeIndicatorForEvents() throws InterruptedException {
+    public void testItDrawNoFillLargeIndicatorOnCurrentSelectedDayWithNoFillLargeIndicatorForEvents(){
         //Sun, 08 Feb 2015 00:00:00 GMT
         setDate(new Date(1423353600000L));
         addEvents(Calendar.FEBRUARY, 2015);
-//        setIndicatorType(FILL_LARGE_INDICATOR, SMALL_INDICATOR);
-        capture("testItDrawFillLargeIndicatorOnCurrentDayWithFillLargeIndicatorForEvents");
+        onView(withId(R.id.compactcalendar_view)).perform(clickXY(60, 150));
+        setIndicatorType(NO_FILL_LARGE_INDICATOR, NO_FILL_LARGE_INDICATOR, FILL_LARGE_INDICATOR);
+        capture("testItDrawNoFillLargeIndicatorOnCurrentSelectedDayWithNoFillLargeIndicatorForEvents");
+    }
+
+    @Test
+    public void testItDrawFillLargeIndicatorOnCurrentSelectedDayWithFillLargeIndicatorForEvents() throws InterruptedException {
+        //Sun, 08 Feb 2015 00:00:00 GMT
+        setDate(new Date(1423353600000L));
+        addEvents(Calendar.FEBRUARY, 2015);
+        onView(withId(R.id.compactcalendar_view)).perform(clickXY(60, 150));
+        setIndicatorType(FILL_LARGE_INDICATOR, FILL_LARGE_INDICATOR, FILL_LARGE_INDICATOR);
+        capture("testItDrawFillLargeIndicatorOnCurrentSelectedDayWithFillLargeIndicatorForEvents");
     }
 
     @Test
     public void testOnDayClickListenerIsCalled(){
+        CompactCalendarViewListener listener = mock(CompactCalendarViewListener.class);
+        compactCalendarView.setListener(listener);
+
         //Sun, 08 Feb 2015 00:00:00 GMT
         setDate(new Date(1423353600000L));
-        onView(ViewMatchers.withId(R.id.compactcalendar_view)).perform(clickXY(60, 100));
+        onView(withId(R.id.compactcalendar_view)).perform(clickXY(60, 100));
 
         //Tue, 03 Feb 2015 00:00:00 GMT - expected
         verify(listener).onDayClick(new Date(1422921600000L));
@@ -125,18 +153,30 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
         capture("testOnDayClickListenerIsCalled");
     }
 
-    private void setIndicatorType(final int currentDayStyle, final int eventStyle) {
+    // Nasty hack to get the toolbar to update the current month
+    // TODO sample code should be refactored to do this
+    private void syncToolbarDate(){
         InstrumentationRegistry.getInstrumentation().runOnMainSync(new Runnable() {
             @Override
             public void run() {
-                compactCalendarView.setCurrentDayIndicatorStyle(currentDayStyle);
+                ActionBar toolbar = activity.getSupportActionBar();
+                toolbar.setTitle(dateFormatForMonth.format(compactCalendarView.getFirstDayOfCurrentMonth()));
+            }
+        });
+    }
+
+    private void setIndicatorType(final int currentSelectedDayStyle, final int eventStyle, final int currentDayStyle) {
+        InstrumentationRegistry.getInstrumentation().runOnMainSync(new Runnable() {
+            @Override
+            public void run() {
+                compactCalendarView.setCurrentSelectedDayIndicatorStyle(currentSelectedDayStyle);
                 compactCalendarView.setEventIndicatorStyle(eventStyle);
+                compactCalendarView.setCurrentDayIndicatorStyle(currentDayStyle);
             }
         });
     }
 
     private void capture(final String name) {
-
         InstrumentationRegistry.getInstrumentation().runOnMainSync(new Runnable() {
             @Override
             public void run() {
@@ -160,6 +200,7 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
                 compactCalendarView.setCurrentDate(date);
             }
         });
+        syncToolbarDate();
     }
 
     public ViewAction clickXY(final float x, final float y){

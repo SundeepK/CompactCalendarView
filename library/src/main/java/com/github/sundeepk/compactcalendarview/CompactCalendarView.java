@@ -280,7 +280,10 @@ public class CompactCalendarView extends View {
         invalidate();
     }
 
-
+    public void setCurrentSelectedDayIndicatorStyle(final int currentSelectedDayIndicatorStyle){
+        compactCalendarController.setCurrentSelectedDayIndicatorStyle(currentSelectedDayIndicatorStyle);
+        invalidate();
+    }
 
     public void setCurrentDayIndicatorStyle(final int currentDayIndicatorStyle){
         compactCalendarController.setCurrentDayIndicatorStyle(currentDayIndicatorStyle);

@@ -46,6 +46,7 @@ class CompactCalendarController {
 
     private int eventIndicatorStyle;
     private int currentDayIndicatorStyle;
+    private int currentSelectedDayIndicatorStyle;
     private int paddingWidth = 40;
     private int paddingHeight = 40;
     private int textHeight;
@@ -144,6 +145,7 @@ class CompactCalendarController {
                         (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, targetHeight, context.getResources().getDisplayMetrics()));
                 eventIndicatorStyle = typedArray.getInt(R.styleable.CompactCalendarView_compactCalendarEventIndicatorStyle, SMALL_INDICATOR);
                 currentDayIndicatorStyle = typedArray.getInt(R.styleable.CompactCalendarView_compactCalendarCurrentDayIndicatorStyle, FILL_LARGE_INDICATOR);
+                currentSelectedDayIndicatorStyle = typedArray.getInt(R.styleable.CompactCalendarView_compactCalendarCurrentSelectedDayIndicatorStyle, FILL_LARGE_INDICATOR);
             } finally {
                 typedArray.recycle();
             }
@@ -151,10 +153,21 @@ class CompactCalendarController {
     }
 
     private void init(Context context) {
-        this.currentCalender = Calendar.getInstance(timeZone, locale);
-        this.todayCalender = Calendar.getInstance(timeZone, locale);
-        this.calendarWithFirstDayOfMonth = Calendar.getInstance(timeZone, locale);
-        this.eventsCalendar = Calendar.getInstance(timeZone, locale);
+        currentCalender = Calendar.getInstance(timeZone, locale);
+        todayCalender = Calendar.getInstance(timeZone, locale);
+        calendarWithFirstDayOfMonth = Calendar.getInstance(timeZone, locale);
+        eventsCalendar = Calendar.getInstance(timeZone, locale);
+
+        // make setMinimalDaysInFirstWeek same across android versions
+        eventsCalendar.setMinimalDaysInFirstWeek(1);
+        calendarWithFirstDayOfMonth.setMinimalDaysInFirstWeek(1);
+        todayCalender.setMinimalDaysInFirstWeek(1);
+        currentCalender.setMinimalDaysInFirstWeek(1);
+
+        eventsCalendar.setFirstDayOfWeek(Calendar.MONDAY);
+        calendarWithFirstDayOfMonth.setFirstDayOfWeek(Calendar.MONDAY);
+        todayCalender.setFirstDayOfWeek(Calendar.MONDAY);
+        currentCalender.setFirstDayOfWeek(Calendar.MONDAY);
 
         setUseWeekDayAbbreviation(false);
         dayPaint.setTextAlign(Paint.Align.CENTER);
@@ -172,9 +185,6 @@ class CompactCalendarController {
 
         currentCalender.setTime(currentDate);
         setCalenderToFirstDayOfMonth(calendarWithFirstDayOfMonth, currentDate, -monthsScrolledSoFar, 0);
-
-        eventsCalendar.setMinimalDaysInFirstWeek(1);
-        eventsCalendar.setFirstDayOfWeek(Calendar.MONDAY);
 
         initScreenDensityRelatedValues(context);
 
@@ -223,6 +233,10 @@ class CompactCalendarController {
         this.eventIndicatorStyle = eventIndicatorStyle;
     }
 
+    void setCurrentSelectedDayIndicatorStyle(int currentSelectedDayIndicatorStyle){
+        this.currentSelectedDayIndicatorStyle = currentSelectedDayIndicatorStyle;
+    }
+
     float getScreenDensity(){
         return screenDensity;
     }
@@ -264,8 +278,14 @@ class CompactCalendarController {
         setUseWeekDayAbbreviation(useThreeLetterAbbreviation);
         if (shouldShowMondayAsFirstDay) {
             eventsCalendar.setFirstDayOfWeek(Calendar.MONDAY);
+            calendarWithFirstDayOfMonth.setFirstDayOfWeek(Calendar.MONDAY);
+            todayCalender.setFirstDayOfWeek(Calendar.MONDAY);
+            currentCalender.setFirstDayOfWeek(Calendar.MONDAY);
         } else {
             eventsCalendar.setFirstDayOfWeek(Calendar.SUNDAY);
+            calendarWithFirstDayOfMonth.setFirstDayOfWeek(Calendar.SUNDAY);
+            todayCalender.setFirstDayOfWeek(Calendar.SUNDAY);
+            currentCalender.setFirstDayOfWeek(Calendar.SUNDAY);
         }
     }
 
@@ -806,6 +826,8 @@ class CompactCalendarController {
                 if (shouldDrawDaysHeader) {
                     dayPaint.setColor(calenderTextColor);
                     dayPaint.setTypeface(Typeface.DEFAULT_BOLD);
+                    dayPaint.setStyle(Paint.Style.FILL);
+                    dayPaint.setColor(calenderTextColor);
                     canvas.drawText(dayColumnNames[dayColumn], xPosition, paddingHeight, dayPaint);
                     dayPaint.setTypeface(Typeface.DEFAULT);
                 }
@@ -815,11 +837,13 @@ class CompactCalendarController {
                     // TODO calculate position of circle in a more reliable way
                     drawDayCircleIndicator(currentDayIndicatorStyle, canvas, xPosition, yPosition, currentDayBackgroundColor);
                 } else if (currentCalender.get(Calendar.DAY_OF_MONTH) == day && isSameMonthAsCurrentCalendar && !isAnimatingWithExpose) {
-                    drawDayCircleIndicator(eventIndicatorStyle, canvas, xPosition, yPosition, currentSelectedDayBackgroundColor);
+                    drawDayCircleIndicator(currentSelectedDayIndicatorStyle, canvas, xPosition, yPosition, currentSelectedDayBackgroundColor);
                 } else if (day == 1 && !isSameMonthAsCurrentCalendar && !isAnimatingWithExpose ) {
-                    drawDayCircleIndicator(eventIndicatorStyle, canvas, xPosition, yPosition, currentSelectedDayBackgroundColor);
+                    drawDayCircleIndicator(currentSelectedDayIndicatorStyle, canvas, xPosition, yPosition, currentSelectedDayBackgroundColor);
                 }
                 if (day <= monthToDrawCalender.getActualMaximum(Calendar.DAY_OF_MONTH) && day > 0) {
+                    dayPaint.setStyle(Paint.Style.FILL);
+                    dayPaint.setColor(calenderTextColor);
                     canvas.drawText(String.valueOf(day), xPosition, yPosition, dayPaint);
                 }
             }
@@ -865,7 +889,5 @@ class CompactCalendarController {
 
     private void drawCircle(Canvas canvas, float radius, float x, float y) {
         canvas.drawCircle(x, y, radius, dayPaint);
-        dayPaint.setStyle(Paint.Style.STROKE);
-        dayPaint.setColor(calenderTextColor);
     }
 }
