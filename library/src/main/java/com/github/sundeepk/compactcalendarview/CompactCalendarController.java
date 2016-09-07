@@ -182,6 +182,7 @@ class CompactCalendarController {
 
         todayCalender.setTime(currentDate);
         setToMidnight(todayCalender);
+        todayCalender.setTimeInMillis(1473768832000L);
 
         currentCalender.setTime(currentDate);
         setCalenderToFirstDayOfMonth(calendarWithFirstDayOfMonth, currentDate, -monthsScrolledSoFar, 0);
@@ -377,7 +378,7 @@ class CompactCalendarController {
         this.paddingLeft = paddingLeft;
 
         //makes easier to find radius
-        bigCircleIndicatorRadius = getInterpolatedBigCircleIndicator();
+        bigCircleIndicatorRadius = getInterpolatedBigCircleIndicator() * 0.9f;
     }
 
     //assume square around each day of width and height = heightPerDay and get diagonal line length
@@ -855,6 +856,10 @@ class CompactCalendarController {
     }
 
     private void drawDayCircleIndicator(int indicatorStyle, Canvas canvas, float x, float y, int color) {
+        drawDayCircleIndicator(indicatorStyle, canvas, x, y, color, 1);
+    }
+
+    private void drawDayCircleIndicator(int indicatorStyle, Canvas canvas, float x, float y, int color, float circleScale) {
         float strokeWidth = dayPaint.getStrokeWidth();
         if (indicatorStyle == NO_FILL_LARGE_INDICATOR) {
             dayPaint.setStrokeWidth(2 * screenDensity);
@@ -862,19 +867,19 @@ class CompactCalendarController {
         } else {
             dayPaint.setStyle(Paint.Style.FILL);
         }
-        drawCircle(canvas, x, y, color);
+        drawCircle(canvas, x, y, color, circleScale);
         dayPaint.setStrokeWidth(strokeWidth);
         dayPaint.setStyle(Paint.Style.FILL);
     }
 
     // Draw Circle on certain days to highlight them
-    private void drawCircle(Canvas canvas, float x, float y, int color) {
+    private void drawCircle(Canvas canvas, float x, float y, int color, float circleScale) {
         dayPaint.setColor(color);
         if (animationStatus == ANIMATE_INDICATORS) {
-            float maxRadius = bigCircleIndicatorRadius * 1.4f;
+            float maxRadius = circleScale * bigCircleIndicatorRadius * 1.4f;
             drawCircle(canvas, growfactorIndicator > maxRadius ? maxRadius: growfactorIndicator, x, y - (textHeight / 6));
         } else {
-            drawCircle(canvas, bigCircleIndicatorRadius, x, y - (textHeight / 6));
+            drawCircle(canvas, circleScale * bigCircleIndicatorRadius, x, y - (textHeight / 6));
         }
     }
 
