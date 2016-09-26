@@ -183,7 +183,6 @@ class CompactCalendarController {
 
         todayCalender.setTime(currentDate);
         setToMidnight(todayCalender);
-        todayCalender.setTimeInMillis(1473768832000L);
 
         currentCalender.setTime(currentDate);
         setCalenderToFirstDayOfMonth(calendarWithFirstDayOfMonth, currentDate, -monthsScrolledSoFar, 0);
@@ -386,7 +385,7 @@ class CompactCalendarController {
         bigCircleIndicatorRadius = getInterpolatedBigCircleIndicator();
 
         // scale the selected day indicators slightly so that event indicators can be drawn below
-        bigCircleIndicatorRadius  = shouldDrawIndicatorsBelowSelectedDays ? bigCircleIndicatorRadius * 0.9f : bigCircleIndicatorRadius;
+        bigCircleIndicatorRadius = shouldDrawIndicatorsBelowSelectedDays && eventIndicatorStyle == CompactCalendarView.SMALL_INDICATOR ? bigCircleIndicatorRadius * 0.9f : bigCircleIndicatorRadius;
     }
 
     //assume square around each day of width and height = heightPerDay and get diagonal line length
@@ -739,17 +738,17 @@ class CompactCalendarController {
                 boolean isSameDayAsCurrentDay = (todayDayOfMonth == dayOfMonth && shouldDrawCurrentDayCircle);
                 boolean isCurrentSelectedDay = currentCalender.get(Calendar.DAY_OF_MONTH) == dayOfMonth;
 
-                // offset event indicators to draw below selected day indicators
-                // this makes sure that they do no overlap
-                if (shouldDrawIndicatorsBelowSelectedDays && (isSameDayAsCurrentDay || isCurrentSelectedDay)) {
-                    yPosition += (5 * screenDensity);
-                }
-
                 if (shouldDrawIndicatorsBelowSelectedDays || (!shouldDrawIndicatorsBelowSelectedDays && !isSameDayAsCurrentDay && !isCurrentSelectedDay) || animationStatus == EXPOSE_CALENDAR_ANIMATION) {
                     if (eventIndicatorStyle == FILL_LARGE_INDICATOR || eventIndicatorStyle == NO_FILL_LARGE_INDICATOR) {
                         Event event = eventsList.get(0);
                         drawEventIndicatorCircle(canvas, xPosition, yPosition, event.getColor());
                     } else {
+                        // offset event indicators to draw below selected day indicators
+                        // this makes sure that they do no overlap
+                        if (shouldDrawIndicatorsBelowSelectedDays && (isSameDayAsCurrentDay || isCurrentSelectedDay)) {
+                            yPosition += (5 * screenDensity);
+                        }
+
                         if (eventsList.size() >= 3) {
                             drawEventsWithPlus(canvas, xPosition, yPosition, eventsList);
                         } else if (eventsList.size() == 2) {
