@@ -163,6 +163,15 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
         capture("testOnDayClickListenerIsCalled");
     }
 
+    @Test
+    public void testItDrawsEventIndicatorsBelowDayIndicators(){
+        setDrawEventsBelowDayIndicators(true);
+        setDate(new Date(1423094400000L));
+        addEvents(Calendar.FEBRUARY, 2015);
+        capture("testItDrawsEventIndicatorsBelowDayIndicators");
+    }
+
+
     // Nasty hack to get the toolbar to update the current month
     // TODO sample code should be refactored to do this
     private void syncToolbarDate(){
@@ -171,6 +180,15 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
             public void run() {
                 ActionBar toolbar = activity.getSupportActionBar();
                 toolbar.setTitle(dateFormatForMonth.format(compactCalendarView.getFirstDayOfCurrentMonth()));
+            }
+        });
+    }
+
+    private void setDrawEventsBelowDayIndicators(final boolean shouldDrawEventsBelowDayIndicators) {
+        InstrumentationRegistry.getInstrumentation().runOnMainSync(new Runnable() {
+            @Override
+            public void run() {
+                compactCalendarView.shouldDrawIndicatorsBelowSelectedDays(shouldDrawEventsBelowDayIndicators);
             }
         });
     }
