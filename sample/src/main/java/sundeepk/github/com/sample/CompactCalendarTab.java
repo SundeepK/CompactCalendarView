@@ -83,11 +83,11 @@ public class CompactCalendarTab extends Fragment {
                 toolbar.setTitle(dateFormatForMonth.format(dateClicked));
                 List<Event> bookingsFromMap = compactCalendarView.getEvents(dateClicked);
                 Log.d(TAG, "inside onclick " + dateFormatForDisplaying.format(dateClicked));
-                if(bookingsFromMap != null){
+                if (bookingsFromMap != null) {
                     Log.d(TAG, bookingsFromMap.toString());
                     mutableBookings.clear();
-                    for(Event booking : bookingsFromMap){
-                        mutableBookings.add((String)booking.getData());
+                    for (Event booking : bookingsFromMap) {
+                        mutableBookings.add((String) booking.getData());
                     }
                     adapter.notifyDataSetChanged();
                 }
