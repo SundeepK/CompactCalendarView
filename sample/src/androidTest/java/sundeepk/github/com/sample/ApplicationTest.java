@@ -164,13 +164,12 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
     }
 
     @Test
-    public void testItDrawsEventIndicatorsBelowDayIndicators(){
+    public void testItDrawsEventIndicatorsBelowHighlightedDayIndicators(){
         setDrawEventsBelowDayIndicators(true);
         setDate(new Date(1423094400000L));
         addEvents(Calendar.FEBRUARY, 2015);
-        capture("testItDrawsEventIndicatorsBelowDayIndicators");
+        capture("testItDrawsEventIndicatorsBelowHighlightedDayIndicators");
     }
-
 
     // Nasty hack to get the toolbar to update the current month
     // TODO sample code should be refactored to do this
