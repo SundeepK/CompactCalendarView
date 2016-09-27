@@ -76,6 +76,9 @@ Please see Sample app for full example.
 
 ```
 
+You can modify indicators using a preset of styles, below is an example, but few other combinations are also possible:
+![ScreenShot](https://github.com/SundeepK/CompactCalendarView/blob/master/images/compact-calendar-customised-indicators.png)
+
 Note that the calendar makes no attempt to de-duplicate events for the same exact DateTime. This is something that you must handle your self if it is important to your use case.
 
 # Locale specific settings
