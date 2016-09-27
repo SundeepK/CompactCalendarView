@@ -171,6 +171,19 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
         capture("testItDrawsEventIndicatorsBelowHighlightedDayIndicators");
     }
 
+    @Test
+    public void testItDrawsFillLargeIndicatorForEventsWhenDrawEventsBelowDayIndicatorsIsTrue() {
+        // test to make sure calendar does not draw event indicators below highlighted days
+        // when the style is FILL_LARGE_INDICATOR
+        //Sun, 08 Feb 2015 00:00:00 GMT
+        setDrawEventsBelowDayIndicators(true);
+        setDate(new Date(1423353600000L));
+        addEvents(Calendar.FEBRUARY, 2015);
+        onView(withId(R.id.compactcalendar_view)).perform(clickXY(60, 150));
+        setIndicatorType(FILL_LARGE_INDICATOR, FILL_LARGE_INDICATOR, FILL_LARGE_INDICATOR);
+        capture("testItDrawsFillLargeIndicatorForEventsWhenDrawEventsBelowDayIndicatorsIsTrue");
+    }
+
     // Nasty hack to get the toolbar to update the current month
     // TODO sample code should be refactored to do this
     private void syncToolbarDate(){
