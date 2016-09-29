@@ -731,6 +731,8 @@ class CompactCalendarController {
                     continue;
                 } else if (animationStatus == EXPAND_COLLAPSE_CALENDAR && yPosition >= growFactor){
                     continue;
+                } else if (animationStatus == EXPOSE_CALENDAR_ANIMATION && (eventIndicatorStyle == FILL_LARGE_INDICATOR || eventIndicatorStyle == NO_FILL_LARGE_INDICATOR)) {
+                    continue;
                 }
 
                 List<Event> eventsList = events.getEvents();
