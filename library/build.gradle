@@ -16,7 +16,7 @@ repositories {
 
 android {
     compileSdkVersion 21
-    buildToolsVersion "21.1.2"
+    buildToolsVersion '24.0.3'
 
     defaultConfig {
         minSdkVersion 15
@@ -33,9 +33,8 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.android.support:appcompat-v7:21.0.3'
-
     //mockito dependencies
     testCompile 'junit:junit:4.12'
     testCompile 'org.mockito:mockito-core:1.9.0'

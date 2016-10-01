@@ -161,7 +161,7 @@ public class CompactCalendarTab extends Fragment {
                 compactCalendarView.removeAllEvents();
             }
         });
-
+        compactCalendarView.showCalendarWithAnimation();
         return v;
     }
 
