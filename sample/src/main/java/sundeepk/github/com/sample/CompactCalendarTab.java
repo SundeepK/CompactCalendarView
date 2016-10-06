@@ -1,6 +1,7 @@
 package sundeepk.github.com.sample;
 
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -10,9 +11,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 
 import com.github.sundeepk.compactcalendarview.CompactCalendarView;
 import com.github.sundeepk.compactcalendarview.domain.Event;
@@ -161,8 +164,26 @@ public class CompactCalendarTab extends Fragment {
                 compactCalendarView.removeAllEvents();
             }
         });
-        compactCalendarView.showCalendarWithAnimation();
+
+        openCalendarOnCreate(v);
+
         return v;
+    }
+
+    private void openCalendarOnCreate(View v) {
+        final RelativeLayout layout = (RelativeLayout)v.findViewById(R.id.main_content);
+        ViewTreeObserver vto = layout.getViewTreeObserver();
+        vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                if (Build.VERSION.SDK_INT < 16) {
+                    layout.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                } else {
+                    layout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                }
+                compactCalendarView.showCalendarWithAnimation();
+            }
+        });
     }
 
     @Override
