@@ -165,7 +165,8 @@ public class CompactCalendarTab extends Fragment {
             }
         });
 
-        openCalendarOnCreate(v);
+        // uncomment below to open onCreate
+        //openCalendarOnCreate(v);
 
         return v;
     }

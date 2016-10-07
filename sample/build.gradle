@@ -15,13 +15,13 @@ apply plugin: 'com.android.application'
 apply plugin: 'com.facebook.testing.screenshot'
 
 android {
-    compileSdkVersion 21
-    buildToolsVersion '24.0.3'
+    compileSdkVersion 24
+    buildToolsVersion '23.0.2'
 
     defaultConfig {
         applicationId "sundeepk.github.com.sample"
         minSdkVersion 15
-        targetSdkVersion 21
+        targetSdkVersion 22
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "sundeepk.github.com.sample.TestRunner"
@@ -35,7 +35,7 @@ android {
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.android.support:appcompat-v7:21.0.3'
     compile 'com.android.support:support-v4:23.0.1'
     compile project(':library')
