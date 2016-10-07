@@ -7,7 +7,7 @@ buildscript {
 
     dependencies {
         classpath 'com.android.tools.build:gradle:2.2.0'
-        classpath 'com.facebook.testing.screenshot:plugin:0.4.1'
+        classpath 'com.facebook.testing.screenshot:plugin:0.4.2'
     }
 }
 
@@ -16,7 +16,7 @@ apply plugin: 'com.facebook.testing.screenshot'
 
 android {
     compileSdkVersion 24
-    buildToolsVersion '23.0.2'
+    buildToolsVersion '24.0.3'
 
     defaultConfig {
         applicationId "sundeepk.github.com.sample"
@@ -35,7 +35,7 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.android.support:appcompat-v7:24.2.1'
     compile 'com.android.support:support-v4:24.2.0'
     compile project(':library')
