@@ -56,6 +56,9 @@ public class CompactCalendarControllerTest {
 
     @Before
     public void setUp(){
+        Locale.setDefault(Locale.ENGLISH);
+        TimeZone.setDefault(TimeZone.getTimeZone("GMT"));
+
         when(velocityTracker.getXVelocity()).thenReturn(-200f);
         underTest =
                 new CompactCalendarController(paint, overScroller, rect, null, null, 0, 0, 0, velocityTracker, 0, eventsContainer, Locale.getDefault(), TimeZone.getDefault());
@@ -90,7 +93,7 @@ public class CompactCalendarControllerTest {
         underTest.onTouch(motionEvent);
 
         //Wed, 01 Apr 2015 00:00:00 GMT
-        assertEquals(new Date(setTimeToMidnightAndGet(cal, 1427842800000L)), underTest.getFirstDayOfCurrentMonth());
+        assertEquals(new Date(setTimeToMidnightAndGet(cal, 1427846400000L)), underTest.getFirstDayOfCurrentMonth());
     }
 
     @Test
