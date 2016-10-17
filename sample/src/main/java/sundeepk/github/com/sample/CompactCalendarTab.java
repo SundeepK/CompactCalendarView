@@ -144,13 +144,13 @@ public class CompactCalendarTab extends Fragment {
         setLocaleBut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Locale locale = new Locale("hi", "IN");
+                Locale locale = Locale.FRANCE;
                 dateFormatForDisplaying = new SimpleDateFormat("dd-M-yyyy hh:mm:ss a", locale);
-                TimeZone timeZone = TimeZone.getTimeZone("Asia/Kolkata");
+                TimeZone timeZone = TimeZone.getTimeZone("Europe/Paris");
                 dateFormatForDisplaying.setTimeZone(timeZone);
                 dateFormatForMonth.setTimeZone(timeZone);
                 compactCalendarView.setLocale(timeZone, locale);
-                compactCalendarView.setUseThreeLetterAbbreviation(true);
+                compactCalendarView.setUseThreeLetterAbbreviation(false);
                 loadEvents();
                 loadEventsForYear(2017);
                 logEventsByMonth(compactCalendarView);
@@ -164,6 +164,9 @@ public class CompactCalendarTab extends Fragment {
                 compactCalendarView.removeAllEvents();
             }
         });
+
+        // uncomment below to show indicators above small indicator events
+        // compactCalendarView.shouldDrawIndicatorsBelowSelectedDays(true);
 
         // uncomment below to open onCreate
         //openCalendarOnCreate(v);
