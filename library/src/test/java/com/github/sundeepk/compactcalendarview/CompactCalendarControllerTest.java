@@ -345,6 +345,74 @@ public class CompactCalendarControllerTest {
     }
 
     @Test
+    public void testItDrawsEventDaysOnCalendarForCurrentMonth(){
+        Calendar todayCalendar = Calendar.getInstance();
+        int numberOfDaysInMonth = todayCalendar.getActualMaximum(Calendar.DAY_OF_MONTH);
+        int todayMonth = todayCalendar.get(Calendar.MONTH);
+        int todayYear = todayCalendar.get(Calendar.YEAR);
+
+        //get events for every day in the month
+        List<Events> events = getEvents(0, numberOfDaysInMonth, todayCalendar.getTimeInMillis());
+        when(eventsContainer.getEventsForMonthAndYear(todayMonth, todayYear)).thenReturn(events);
+        when(calendar.get(Calendar.MONTH)).thenReturn(todayMonth);
+        when(calendar.get(Calendar.YEAR)).thenReturn(todayYear);
+
+        underTest.setGrowProgress(1000); //set grow progress so that it simulates the calendar being open
+        underTest.drawEvents(canvas, calendar, 0);
+
+        //draw events for every day except the current day -- selected day is also the current day
+        verify(canvas, times(numberOfDaysInMonth - 1)).drawCircle(anyFloat(), anyFloat(), anyFloat(), eq(paint));
+    }
+
+    @Test
+    public void testItDrawsEventDaysOnCalendarWithSelectedDay(){
+        //Sun, 07 Jun 2015 18:20:51 GMT
+        long selectedDayTimestamp = 1433701251000L;
+        //get 30 events in total
+        int numberOfDaysWithEvents = 30;
+        List<Events> events = getEvents(0, numberOfDaysWithEvents, selectedDayTimestamp);
+        when(eventsContainer.getEventsForMonthAndYear(5, 2015)).thenReturn(events);
+        when(calendar.get(Calendar.MONTH)).thenReturn(5);
+        when(calendar.get(Calendar.YEAR)).thenReturn(2015);
+
+        underTest.setGrowProgress(1000); //set grow progress so that it simulates the calendar being open
+        // Selects first day of the month
+        underTest.setCurrentDate(new Date(selectedDayTimestamp));
+        underTest.drawEvents(canvas, calendar, 0);
+
+        //draw events for every day except the selected day
+        verify(canvas, times(numberOfDaysWithEvents - 1)).drawCircle(anyFloat(), anyFloat(), anyFloat(), eq(paint));
+    }
+
+    @Test
+    public void testItDrawsEventDaysOnCalendarForCurrentMonthWithSelectedDay(){
+        Calendar todayCalendar = Calendar.getInstance();
+        int numberOfDaysInMonth = todayCalendar.getActualMaximum(Calendar.DAY_OF_MONTH);
+        int todayMonth = todayCalendar.get(Calendar.MONTH);
+        int todayYear = todayCalendar.get(Calendar.YEAR);
+
+        //get events for every day in the month
+        List<Events> events = getEvents(0, numberOfDaysInMonth, todayCalendar.getTimeInMillis());
+        when(eventsContainer.getEventsForMonthAndYear(todayMonth, todayYear)).thenReturn(events);
+        when(calendar.get(Calendar.MONTH)).thenReturn(todayMonth);
+        when(calendar.get(Calendar.YEAR)).thenReturn(todayYear);
+
+        // Selects first day of the month
+        todayCalendar.set(Calendar.DAY_OF_MONTH, 1);
+        todayCalendar.set(Calendar.HOUR_OF_DAY, 0);
+        todayCalendar.set(Calendar.MINUTE, 0);
+        todayCalendar.set(Calendar.SECOND, 0);
+        todayCalendar.set(Calendar.MILLISECOND, 0);
+        underTest.setCurrentDate(todayCalendar.getTime());
+
+        underTest.setGrowProgress(1000); //set grow progress so that it simulates the calendar being open
+        underTest.drawEvents(canvas, calendar, 0);
+
+        //draw events for every day except the current day and the selected day
+        verify(canvas, times(numberOfDaysInMonth - 2)).drawCircle(anyFloat(), anyFloat(), anyFloat(), eq(paint));
+    }
+
+    @Test
     public void testItAddsEvent(){
         Event event = getSingleEvents(0, 30, 1433701251000L).get(0);
         underTest.addEvent(event);
