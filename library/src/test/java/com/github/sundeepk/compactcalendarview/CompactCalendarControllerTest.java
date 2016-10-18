@@ -293,7 +293,8 @@ public class CompactCalendarControllerTest {
     public void testItDrawsEventDaysOnCalendar(){
         //Sun, 07 Jun 2015 18:20:51 GMT
         //get 30 events in total
-        List<Events> events = getEvents(0, 30, 1433701251000L);
+        int numberOfDaysWithEvents = 30;
+        List<Events> events = getEvents(0, numberOfDaysWithEvents, 1433701251000L);
         when(eventsContainer.getEventsForMonthAndYear(5, 2015)).thenReturn(events);
         when(calendar.get(Calendar.MONTH)).thenReturn(5);
         when(calendar.get(Calendar.YEAR)).thenReturn(2015);
@@ -301,15 +302,16 @@ public class CompactCalendarControllerTest {
         underTest.setGrowProgress(1000); //set grow progress so that it simulates the calendar being open
         underTest.drawEvents(canvas, calendar, 0);
 
-        //draw events 29 times because we don't draw events for the current selected day since it wil be highlighted with another indicator
-        verify(canvas, times(29)).drawCircle(anyFloat(), anyFloat(), anyFloat(), eq(paint));
+        //draw events for every day with an event
+        verify(canvas, times(numberOfDaysWithEvents)).drawCircle(anyFloat(), anyFloat(), anyFloat(), eq(paint));
     }
 
     @Test
     public void testItDrawsMultipleEventDaysOnCalendar(){
         //Sun, 07 Jun 2015 18:20:51 GMT
         //get 60 events in total
-        List<Events> events = getDayEventWith2EventsPerDay(0, 30, 1433701251000L);
+        int numberOfDaysWithEvents = 30;
+        List<Events> events = getDayEventWith2EventsPerDay(0, numberOfDaysWithEvents, 1433701251000L);
         when(eventsContainer.getEventsForMonthAndYear(5, 2015)).thenReturn(events);
         when(calendar.get(Calendar.MONTH)).thenReturn(5);
         when(calendar.get(Calendar.YEAR)).thenReturn(2015);
@@ -317,15 +319,16 @@ public class CompactCalendarControllerTest {
         underTest.setGrowProgress(1000); //set grow progress so that it simulates the calendar being open
         underTest.drawEvents(canvas, calendar, 0);
 
-        //draw events 58 times because we don't draw events for the current selected day since it wil be highlighted with another indicator
-        verify(canvas, times(58)).drawCircle(anyFloat(), anyFloat(), anyFloat(), eq(paint));
+        //draw 2 events per day
+        verify(canvas, times(numberOfDaysWithEvents * 2)).drawCircle(anyFloat(), anyFloat(), anyFloat(), eq(paint));
     }
 
     @Test
     public void testItDrawsMultipleEventDaysOnCalendarWithPlusIndicator(){
         //Sun, 07 Jun 2015 18:20:51 GMT
         //get 120 events in total but only draw 3 event indicators per a day
-        List<Events> events = getDayEventWithMultipleEventsPerDay(0, 30, 1433701251000L);
+        int numberOfDaysWithEvents = 30;
+        List<Events> events = getDayEventWithMultipleEventsPerDay(0, numberOfDaysWithEvents, 1433701251000L);
         when(eventsContainer.getEventsForMonthAndYear(5, 2015)).thenReturn(events);
         when(calendar.get(Calendar.MONTH)).thenReturn(5);
         when(calendar.get(Calendar.YEAR)).thenReturn(2015);
@@ -333,12 +336,12 @@ public class CompactCalendarControllerTest {
         underTest.setGrowProgress(1000); //set grow progress so that it simulates the calendar being open
         underTest.drawEvents(canvas, calendar, 0);
 
-        //draw events 58 times because we don't draw more than 3 indicators
-        verify(canvas, times(58)).drawCircle(anyFloat(), anyFloat(), anyFloat(), eq(paint));
+        //draw 2 events per day because we don't draw more than 3 indicators
+        verify(canvas, times(numberOfDaysWithEvents * 2)).drawCircle(anyFloat(), anyFloat(), anyFloat(), eq(paint));
 
         //draw event indicator with lines
         // 2 calls for each plus event indicator since it takes 2 draw calls to make a plus sign
-        verify(canvas, times(58)).drawLine(anyFloat(), anyFloat(), anyFloat(), anyFloat(), eq(paint));
+        verify(canvas, times(numberOfDaysWithEvents * 2)).drawLine(anyFloat(), anyFloat(), anyFloat(), anyFloat(), eq(paint));
     }
 
     @Test
