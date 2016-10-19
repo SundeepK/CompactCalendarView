@@ -710,10 +710,14 @@ class CompactCalendarController {
     }
 
     void drawEvents(Canvas canvas, Calendar currentMonthToDrawCalender, int offset) {
-        List<Events> uniqEvents = eventsContainer.getEventsForMonthAndYear(currentMonthToDrawCalender.get(Calendar.MONTH), currentMonthToDrawCalender.get(Calendar.YEAR));
+        int currentMonth = currentMonthToDrawCalender.get(Calendar.MONTH);
+        List<Events> uniqEvents = eventsContainer.getEventsForMonthAndYear(currentMonth, currentMonthToDrawCalender.get(Calendar.YEAR));
 
-        boolean shouldDrawCurrentDayCircle = currentMonthToDrawCalender.get(Calendar.MONTH) == todayCalender.get(Calendar.MONTH);
+        boolean shouldDrawCurrentDayCircle = currentMonth == todayCalender.get(Calendar.MONTH);
+        boolean shouldDrawSelectedDayCircle = currentMonth == currentCalender.get(Calendar.MONTH);
+
         int todayDayOfMonth = todayCalender.get(Calendar.DAY_OF_MONTH);
+        int selectedDayOfMonth = currentCalender.get(Calendar.DAY_OF_MONTH);
 
         if (uniqEvents != null) {
             for (int i = 0; i < uniqEvents.size(); i++) {
@@ -740,8 +744,8 @@ class CompactCalendarController {
 
                 List<Event> eventsList = events.getEvents();
                 int dayOfMonth = eventsCalendar.get(Calendar.DAY_OF_MONTH);
-                boolean isSameDayAsCurrentDay = (todayDayOfMonth == dayOfMonth && shouldDrawCurrentDayCircle);
-                boolean isCurrentSelectedDay = currentCalender.get(Calendar.DAY_OF_MONTH) == dayOfMonth;
+                boolean isSameDayAsCurrentDay = shouldDrawCurrentDayCircle && (todayDayOfMonth == dayOfMonth);
+                boolean isCurrentSelectedDay = shouldDrawSelectedDayCircle && (selectedDayOfMonth == dayOfMonth);
 
                 if (shouldDrawIndicatorsBelowSelectedDays || (!shouldDrawIndicatorsBelowSelectedDays && !isSameDayAsCurrentDay && !isCurrentSelectedDay) || animationStatus == EXPOSE_CALENDAR_ANIMATION) {
                     if (eventIndicatorStyle == FILL_LARGE_INDICATOR || eventIndicatorStyle == NO_FILL_LARGE_INDICATOR) {
