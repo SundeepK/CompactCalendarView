@@ -64,7 +64,6 @@ class CompactCalendarController {
     private int distanceThresholdForAutoScroll;
     private int targetHeight;
     private int animationStatus = 0;
-    private float yIndicatorOffset;
     private float xIndicatorOffset;
     private float multiDayIndicatorStrokeWidth;
     private float bigCircleIndicatorRadius;
@@ -189,7 +188,6 @@ class CompactCalendarController {
 
         initScreenDensityRelatedValues(context);
 
-        yIndicatorOffset = 8 * screenDensity;
         xIndicatorOffset = 3.5f * screenDensity;
 
         //scale small indicator by screen density
@@ -240,6 +238,10 @@ class CompactCalendarController {
 
     void setCurrentSelectedDayIndicatorStyle(int currentSelectedDayIndicatorStyle){
         this.currentSelectedDayIndicatorStyle = currentSelectedDayIndicatorStyle;
+    }
+
+    void setTargetHeight(int targetHeight) {
+        this.targetHeight = targetHeight;
     }
 
     float getScreenDensity(){
@@ -385,7 +387,7 @@ class CompactCalendarController {
         bigCircleIndicatorRadius = getInterpolatedBigCircleIndicator();
 
         // scale the selected day indicators slightly so that event indicators can be drawn below
-        bigCircleIndicatorRadius = shouldDrawIndicatorsBelowSelectedDays && eventIndicatorStyle == CompactCalendarView.SMALL_INDICATOR ? bigCircleIndicatorRadius * 0.9f : bigCircleIndicatorRadius;
+        bigCircleIndicatorRadius = shouldDrawIndicatorsBelowSelectedDays && eventIndicatorStyle == CompactCalendarView.SMALL_INDICATOR ? bigCircleIndicatorRadius * 0.85f : bigCircleIndicatorRadius;
     }
 
     //assume square around each day of width and height = heightPerDay and get diagonal line length
@@ -393,8 +395,8 @@ class CompactCalendarController {
     //https://en.wikipedia.org/wiki/Linear_interpolation
     private float getInterpolatedBigCircleIndicator() {
         float x0 = textSizeRect.height();
-        float x1 = (heightPerDay - yIndicatorOffset); // take into account indicator offset
-        float x =  (x1 + textSizeRect.height()) / 1.7f; // pick a point which is almost half way through heightPerDay and textSizeRect
+        float x1 = heightPerDay; // take into account indicator offset
+        float x =  (x1 + textSizeRect.height()) / 2f; // pick a point which is almost half way through heightPerDay and textSizeRect
         double y1 = 0.5 * Math.sqrt((x1 * x1) + (x1 * x1));
         double y0 = 0.5 * Math.sqrt((x0 * x0) + (x0 * x0));
 
@@ -710,11 +712,15 @@ class CompactCalendarController {
     }
 
     void drawEvents(Canvas canvas, Calendar currentMonthToDrawCalender, int offset) {
-        List<Events> uniqEvents = eventsContainer.getEventsForMonthAndYear(currentMonthToDrawCalender.get(Calendar.MONTH), currentMonthToDrawCalender.get(Calendar.YEAR));
+        int currentMonth = currentMonthToDrawCalender.get(Calendar.MONTH);
+        List<Events> uniqEvents = eventsContainer.getEventsForMonthAndYear(currentMonth, currentMonthToDrawCalender.get(Calendar.YEAR));
 
-        boolean shouldDrawCurrentDayCircle = currentMonthToDrawCalender.get(Calendar.MONTH) == todayCalender.get(Calendar.MONTH);
+        boolean shouldDrawCurrentDayCircle = currentMonth == todayCalender.get(Calendar.MONTH);
+        boolean shouldDrawSelectedDayCircle = currentMonth == currentCalender.get(Calendar.MONTH);
+
         int todayDayOfMonth = todayCalender.get(Calendar.DAY_OF_MONTH);
-
+        int selectedDayOfMonth = currentCalender.get(Calendar.DAY_OF_MONTH);
+        float indicatorOffset = bigCircleIndicatorRadius / 2;
         if (uniqEvents != null) {
             for (int i = 0; i < uniqEvents.size(); i++) {
                 Events events = uniqEvents.get(i);
@@ -740,18 +746,19 @@ class CompactCalendarController {
 
                 List<Event> eventsList = events.getEvents();
                 int dayOfMonth = eventsCalendar.get(Calendar.DAY_OF_MONTH);
-                boolean isSameDayAsCurrentDay = (todayDayOfMonth == dayOfMonth && shouldDrawCurrentDayCircle);
-                boolean isCurrentSelectedDay = currentCalender.get(Calendar.DAY_OF_MONTH) == dayOfMonth;
+                boolean isSameDayAsCurrentDay = shouldDrawCurrentDayCircle && (todayDayOfMonth == dayOfMonth);
+                boolean isCurrentSelectedDay = shouldDrawSelectedDayCircle && (selectedDayOfMonth == dayOfMonth);
 
                 if (shouldDrawIndicatorsBelowSelectedDays || (!shouldDrawIndicatorsBelowSelectedDays && !isSameDayAsCurrentDay && !isCurrentSelectedDay) || animationStatus == EXPOSE_CALENDAR_ANIMATION) {
                     if (eventIndicatorStyle == FILL_LARGE_INDICATOR || eventIndicatorStyle == NO_FILL_LARGE_INDICATOR) {
                         Event event = eventsList.get(0);
                         drawEventIndicatorCircle(canvas, xPosition, yPosition, event.getColor());
                     } else {
+                        yPosition += indicatorOffset;
                         // offset event indicators to draw below selected day indicators
                         // this makes sure that they do no overlap
                         if (shouldDrawIndicatorsBelowSelectedDays && (isSameDayAsCurrentDay || isCurrentSelectedDay)) {
-                            yPosition += (5 * screenDensity);
+                            yPosition += indicatorOffset;
                         }
 
                         if (eventsList.size() >= 3) {
@@ -769,14 +776,14 @@ class CompactCalendarController {
 
     private void drawSingleEvent(Canvas canvas, float xPosition, float yPosition, List<Event> eventsList) {
         Event event = eventsList.get(0);
-        drawEventIndicatorCircle(canvas, xPosition, yPosition + yIndicatorOffset, event.getColor());
+        drawEventIndicatorCircle(canvas, xPosition, yPosition, event.getColor());
     }
 
     private void drawTwoEvents(Canvas canvas, float xPosition, float yPosition, List<Event> eventsList) {
         //draw fist event just left of center
-        drawEventIndicatorCircle(canvas, xPosition + (xIndicatorOffset * -1), yPosition + yIndicatorOffset, eventsList.get(0).getColor());
+        drawEventIndicatorCircle(canvas, xPosition + (xIndicatorOffset * -1), yPosition, eventsList.get(0).getColor());
         //draw second event just right of center
-        drawEventIndicatorCircle(canvas, xPosition + (xIndicatorOffset * 1), yPosition + yIndicatorOffset, eventsList.get(1).getColor());
+        drawEventIndicatorCircle(canvas, xPosition + (xIndicatorOffset * 1), yPosition, eventsList.get(1).getColor());
     }
 
     //draw 2 eventsByMonthAndYearMap followed by plus indicator to show there are more than 2 eventsByMonthAndYearMap
@@ -787,15 +794,14 @@ class CompactCalendarController {
         for (int j = 0, k = -2; j < 3; j++, k += 2) {
             Event event = eventsList.get(j);
             float xStartPosition = xPosition + (xIndicatorOffset * k);
-            float yStartPosition = yPosition + yIndicatorOffset;
             if (j == 2) {
                 dayPaint.setColor(multiEventIndicatorColor);
                 dayPaint.setStrokeWidth(multiDayIndicatorStrokeWidth);
-                canvas.drawLine(xStartPosition - smallIndicatorRadius, yStartPosition, xStartPosition + smallIndicatorRadius, yStartPosition, dayPaint);
-                canvas.drawLine(xStartPosition, yStartPosition - smallIndicatorRadius, xStartPosition, yStartPosition + smallIndicatorRadius, dayPaint);
+                canvas.drawLine(xStartPosition - smallIndicatorRadius, yPosition, xStartPosition + smallIndicatorRadius, yPosition, dayPaint);
+                canvas.drawLine(xStartPosition, yPosition - smallIndicatorRadius, xStartPosition, yPosition + smallIndicatorRadius, dayPaint);
                 dayPaint.setStrokeWidth(0);
             } else {
-                drawEventIndicatorCircle(canvas, xStartPosition, yStartPosition, event.getColor());
+                drawEventIndicatorCircle(canvas, xStartPosition, yPosition, event.getColor());
             }
         }
     }

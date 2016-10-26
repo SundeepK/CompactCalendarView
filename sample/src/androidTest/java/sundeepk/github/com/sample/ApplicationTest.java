@@ -184,6 +184,18 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
         capture("testItDrawsFillLargeIndicatorForEventsWhenDrawEventsBelowDayIndicatorsIsTrue");
     }
 
+    @Test
+    public void testItDrawsIndicatorsBelowCurrentSelectedDayWithLargeHeight() {
+        // test to make sure calendar does not draw event indicators below highlighted days
+        //Sun, 08 Feb 2015 00:00:00 GMT
+        setHeight(400);
+        setDrawEventsBelowDayIndicators(true);
+        setDate(new Date(1423353600000L));
+        addEvents(Calendar.FEBRUARY, 2015);
+        onView(withId(R.id.compactcalendar_view)).perform(clickXY(60, 120));
+        capture("testItDrawsIndicatorsBelowCurrentSelectedDayWithLargeHeight");
+    }
+
     // Nasty hack to get the toolbar to update the current month
     // TODO sample code should be refactored to do this
     private void syncToolbarDate(){
@@ -357,4 +369,17 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
         calendar.set(Calendar.MILLISECOND, 0);
     }
 
+    public void setHeight(final float height) {
+        final Context context = compactCalendarView.getContext();
+        ((Activity) context).runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                int newHeight = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, height, context.getResources().getDisplayMetrics());
+                compactCalendarView.getLayoutParams().height = newHeight;
+                compactCalendarView.setTargetHeight(newHeight);
+                compactCalendarView.requestLayout();
+                compactCalendarView.invalidate();
+            }
+        });
+    }
 }

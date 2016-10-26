@@ -309,6 +309,11 @@ public class CompactCalendarView extends View {
         }
     }
 
+    public void setTargetHeight(int targetHeight){
+        compactCalendarController.setTargetHeight(targetHeight);
+        checkTargetHeight();
+    }
+
     public void showCalendar(){
         checkTargetHeight();
         animationHandler.openCalendar();
