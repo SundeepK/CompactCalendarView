@@ -24,5 +24,7 @@
         <attr name="compactCalendarEventIndicatorStyle"/>
         <attr name="compactCalendarCurrentDayIndicatorStyle"/>
         <attr name="compactCalendarCurrentSelectedDayIndicatorStyle"/>
+        <attr name="compactCalendarDisplayOtherMonthDays" format="boolean"/>
+        <attr name="compactCalendarOtherMonthDaysTextColor" format="color"/>
     </declare-styleable>
 </resources>
