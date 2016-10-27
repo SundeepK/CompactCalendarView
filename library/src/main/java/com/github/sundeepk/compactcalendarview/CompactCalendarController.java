@@ -844,9 +844,7 @@ class CompactCalendarController {
             float xPosition = widthPerDay * dayColumn + paddingWidth + paddingLeft + accumulatedScrollOffset.x + offset - paddingRight;
             float yPosition = dayRow * heightPerDay + paddingHeight;
             if (xPosition >= growFactor && isAnimatingWithExpose || yPosition >= growFactor) {
-                continue;
-            } else if (xPosition >= growFactor && animationStatus == ANIMATE_INDICATORS || yPosition >= growFactor) {
-                // animating indicators could mean calendar is expose closing so don't draw text days if not visible
+                // animating indicators/expose closing so don't draw text days if not visible
                 continue;
             }
             if (dayRow == 0) {
