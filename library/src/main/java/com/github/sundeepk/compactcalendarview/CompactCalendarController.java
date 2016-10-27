@@ -843,7 +843,8 @@ class CompactCalendarController {
             }
             float xPosition = widthPerDay * dayColumn + paddingWidth + paddingLeft + accumulatedScrollOffset.x + offset - paddingRight;
             float yPosition = dayRow * heightPerDay + paddingHeight;
-            if (xPosition >= growFactor && isAnimatingWithExpose || yPosition >= growFactor) {
+            if (xPosition >= growFactor && (isAnimatingWithExpose || animationStatus == ANIMATE_INDICATORS) || yPosition >= growFactor) {
+                // don't draw days if animating expose or indicators
                 continue;
             }
             if (dayRow == 0) {
