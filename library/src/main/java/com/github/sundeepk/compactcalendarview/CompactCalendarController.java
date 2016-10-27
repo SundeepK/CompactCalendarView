@@ -733,10 +733,13 @@ class CompactCalendarController {
                 float xPosition = widthPerDay * dayOfWeek + paddingWidth + paddingLeft + accumulatedScrollOffset.x + offset - paddingRight;
                 float yPosition = weekNumberForMonth * heightPerDay + paddingHeight;
 
-                if ((animationStatus != IDLE && xPosition >= growFactor ) || yPosition >= growFactor) {
+                if (((animationStatus == EXPOSE_CALENDAR_ANIMATION || animationStatus == ANIMATE_INDICATORS) && xPosition >= growFactor ) || yPosition >= growFactor) {
                     // only draw small event indicators if enough of the calendar is exposed
                     continue;
-                } else if (animationStatus != IDLE && (eventIndicatorStyle == FILL_LARGE_INDICATOR || eventIndicatorStyle == NO_FILL_LARGE_INDICATOR)) {
+                } else if (animationStatus == EXPAND_COLLAPSE_CALENDAR && yPosition >= growFactor){
+                    // expanding animation, just draw event indicators if enough of the calendar is visible
+                    continue;
+                } else if (animationStatus == EXPOSE_CALENDAR_ANIMATION && (eventIndicatorStyle == FILL_LARGE_INDICATOR || eventIndicatorStyle == NO_FILL_LARGE_INDICATOR)) {
                     // Don't draw large indicators during expose animation, until animation is done
                     continue;
                 }
@@ -840,8 +843,10 @@ class CompactCalendarController {
             }
             float xPosition = widthPerDay * dayColumn + paddingWidth + paddingLeft + accumulatedScrollOffset.x + offset - paddingRight;
             float yPosition = dayRow * heightPerDay + paddingHeight;
-            if (xPosition >= growFactor && animationStatus != IDLE || yPosition >= growFactor) {
-                // if doing any sort of animation, check to see if enough of the calendar is shown before drawing day texts
+            if (xPosition >= growFactor && isAnimatingWithExpose || yPosition >= growFactor) {
+                continue;
+            } else if (xPosition >= growFactor && animationStatus == ANIMATE_INDICATORS || yPosition >= growFactor) {
+                // animating indicators could mean calendar is closing so don't draw text days if not visible
                 continue;
             }
             if (dayRow == 0) {
