@@ -238,6 +238,10 @@ class CompactCalendarController {
         calendarWithFirstDayOfMonth.set(Calendar.MILLISECOND, 0);
     }
 
+    void setDisplayOtherMonthDays(boolean displayOtherMonthDays) {
+        this.displayOtherMonthDays = displayOtherMonthDays;
+    }
+
     void shouldDrawIndicatorsBelowSelectedDays(boolean shouldDrawIndicatorsBelowSelectedDays){
         this.shouldDrawIndicatorsBelowSelectedDays = shouldDrawIndicatorsBelowSelectedDays;
     }
