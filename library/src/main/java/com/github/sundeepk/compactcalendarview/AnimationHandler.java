@@ -10,8 +10,8 @@ import android.view.animation.OvershootInterpolator;
 
 class AnimationHandler {
 
-    public static final int HEIGHT_ANIM_DURATION_MILLIS = 650;
-    public static final int INDICATOR_ANIM_DURATION_MILLIS = 600;
+    private static final int HEIGHT_ANIM_DURATION_MILLIS = 650;
+    private static final int INDICATOR_ANIM_DURATION_MILLIS = 600;
     private CompactCalendarController compactCalendarController;
     private CompactCalendarView compactCalendarView;
 
