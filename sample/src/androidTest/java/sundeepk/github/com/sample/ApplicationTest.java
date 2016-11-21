@@ -222,6 +222,14 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
         capture("testItDisplaysDaysFromOtherMonthsForAfterScrollingFromFebToJan");
     }
 
+    @Test
+    public void testItDrawsSundayAsFirstDayOfMonth(){
+        //Sun, 08 Feb 2015 00:00:00 GMT
+        setDate(new Date(1423353600000L));
+        setSundayAsFirstDayOfMonth(false);
+        capture("testItDrawsSundayAsFirstDayOfMonth");
+    }
+
     // Nasty hack to get the toolbar to update the current month
     // TODO sample code should be refactored to do this
     private void syncToolbarDate(){
@@ -230,6 +238,15 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
             public void run() {
                 ActionBar toolbar = activity.getSupportActionBar();
                 toolbar.setTitle(dateFormatForMonth.format(compactCalendarView.getFirstDayOfCurrentMonth()));
+            }
+        });
+    }
+
+    private void setSundayAsFirstDayOfMonth(final boolean shouldSetMondayAsFirstDayOfMonth) {
+        InstrumentationRegistry.getInstrumentation().runOnMainSync(new Runnable() {
+            @Override
+            public void run() {
+                compactCalendarView.setShouldShowMondayAsFirstDay(shouldSetMondayAsFirstDayOfMonth);
             }
         });
     }
