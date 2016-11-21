@@ -75,6 +75,12 @@ public class CompactCalendarTab extends Fragment {
         // disable scrolling calendar
         // compactCalendarView.shouldScrollMonth(false);
 
+        // show days from other months as greyed out days
+        // compactCalendarView.displayOtherMonthDays(true);
+
+        // show Sunday as first day of month
+        // compactCalendarView.setShouldShowMondayAsFirstDay(false);
+
         //set initial title
         toolbar = ((ActionBarActivity) getActivity()).getSupportActionBar();
         toolbar.setTitle(dateFormatForMonth.format(compactCalendarView.getFirstDayOfCurrentMonth()));
