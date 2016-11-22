@@ -309,6 +309,11 @@ public class CompactCalendarView extends View {
         }
     }
 
+    public void displayOtherMonthDays(boolean displayOtherMonthDays){
+        compactCalendarController.setDisplayOtherMonthDays(displayOtherMonthDays);
+        invalidate();
+    }
+
     public void setTargetHeight(int targetHeight){
         compactCalendarController.setTargetHeight(targetHeight);
         checkTargetHeight();

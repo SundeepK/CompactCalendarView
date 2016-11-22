@@ -196,6 +196,40 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
         capture("testItDrawsIndicatorsBelowCurrentSelectedDayWithLargeHeight");
     }
 
+    @Test
+    public void testItDisplaysDaysFromOtherMonthsForFeb(){
+        //Sun, 08 Feb 2015 00:00:00 GMT
+        setDate(new Date(1423353600000L));
+        setShouldDrawDaysFromOtherMonths(true);
+        capture("testItDisplaysDaysFromOtherMonthsForFeb");
+    }
+
+    @Test
+    public void testItDisplaysDaysFromOtherMonthsForAfterScrollingFromFebToMarch(){
+        //Sun, 08 Feb 2015 00:00:00 GMT
+        setDate(new Date(1423353600000L));
+        setShouldDrawDaysFromOtherMonths(true);
+        onView(withId(R.id.compactcalendar_view)).perform(scroll(100, 100, -100, 0));
+        capture("testItDisplaysDaysFromOtherMonthsForAfterScrollingFromFebToMarch");
+    }
+
+    @Test
+    public void testItDisplaysDaysFromOtherMonthsForAfterScrollingFromFebToJan(){
+        //Sun, 08 Feb 2015 00:00:00 GMT
+        setDate(new Date(1423353600000L));
+        setShouldDrawDaysFromOtherMonths(true);
+        onView(withId(R.id.compactcalendar_view)).perform(scroll(100, 100, 200, 0));
+        capture("testItDisplaysDaysFromOtherMonthsForAfterScrollingFromFebToJan");
+    }
+
+    @Test
+    public void testItDrawsSundayAsFirstDayOfMonth(){
+        //Sun, 08 Feb 2015 00:00:00 GMT
+        setDate(new Date(1423353600000L));
+        setSundayAsFirstDayOfMonth(false);
+        capture("testItDrawsSundayAsFirstDayOfMonth");
+    }
+
     // Nasty hack to get the toolbar to update the current month
     // TODO sample code should be refactored to do this
     private void syncToolbarDate(){
@@ -204,6 +238,24 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
             public void run() {
                 ActionBar toolbar = activity.getSupportActionBar();
                 toolbar.setTitle(dateFormatForMonth.format(compactCalendarView.getFirstDayOfCurrentMonth()));
+            }
+        });
+    }
+
+    private void setSundayAsFirstDayOfMonth(final boolean shouldSetMondayAsFirstDayOfMonth) {
+        InstrumentationRegistry.getInstrumentation().runOnMainSync(new Runnable() {
+            @Override
+            public void run() {
+                compactCalendarView.setShouldShowMondayAsFirstDay(shouldSetMondayAsFirstDayOfMonth);
+            }
+        });
+    }
+
+    private void setShouldDrawDaysFromOtherMonths(final boolean shouldDrawEventsBelowDayIndicators) {
+        InstrumentationRegistry.getInstrumentation().runOnMainSync(new Runnable() {
+            @Override
+            public void run() {
+                compactCalendarView.displayOtherMonthDays(shouldDrawEventsBelowDayIndicators);
             }
         });
     }
