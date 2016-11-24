@@ -43,10 +43,10 @@ public class CompactCalendarView extends View {
         }
 
         @Override
-        public boolean onSingleTapConfirmed(MotionEvent e) {
-            compactCalendarController.onSingleTapConfirmed(e);
+        public boolean onSingleTapUp(MotionEvent e) {
+            compactCalendarController.onSingleTapUp(e);
             invalidate();
-            return super.onSingleTapConfirmed(e);
+            return super.onSingleTapUp(e);
         }
 
         @Override

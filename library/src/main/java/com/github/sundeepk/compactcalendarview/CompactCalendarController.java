@@ -456,7 +456,7 @@ class CompactCalendarController {
         drawScrollableCalender(canvas);
     }
 
-    void onSingleTapConfirmed(MotionEvent e) {
+    void onSingleTapUp(MotionEvent e) {
         //Don't handle single tap the calendar is scrolling and is not stationary
         if (Math.abs(accumulatedScrollOffset.x) != Math.abs(width * monthsScrolledSoFar)) {
             return;
