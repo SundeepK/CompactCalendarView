@@ -3,6 +3,7 @@ package sundeepk.github.com.sample;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
@@ -123,27 +124,23 @@ public class CompactCalendarTab extends Fragment {
             }
         });
 
-        slideCalendarBut.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (shouldShow) {
-                    compactCalendarView.showCalendar();
-                } else {
-                    compactCalendarView.hideCalendar();
-                }
-                shouldShow = !shouldShow;
-            }
-        });
+        final View.OnClickListener showCalendarOnClickLis = getCalendarShowLis(slideCalendarBut);
+        slideCalendarBut.setOnClickListener(showCalendarOnClickLis);
 
-        showCalendarWithAnimationBut.setOnClickListener(new View.OnClickListener() {
+        final View.OnClickListener exposeCalendarListener = getCalendarExposeLis(showCalendarWithAnimationBut);
+        showCalendarWithAnimationBut.setOnClickListener(exposeCalendarListener);
+
+        compactCalendarView.setAnimationListener(new CompactCalendarView.CompactCalendarAnimationListener() {
             @Override
-            public void onClick(View v) {
-                if (shouldShow) {
-                    compactCalendarView.showCalendarWithAnimation();
-                } else {
-                    compactCalendarView.hideCalendarWithAnimation();
-                }
-                shouldShow = !shouldShow;
+            public void onOpened() {
+                showCalendarWithAnimationBut.setOnClickListener(exposeCalendarListener);
+                slideCalendarBut.setOnClickListener(showCalendarOnClickLis);
+            }
+
+            @Override
+            public void onClosed() {
+                showCalendarWithAnimationBut.setOnClickListener(exposeCalendarListener);
+                slideCalendarBut.setOnClickListener(showCalendarOnClickLis);
             }
         });
 
@@ -178,6 +175,38 @@ public class CompactCalendarTab extends Fragment {
         //openCalendarOnCreate(v);
 
         return v;
+    }
+
+    @NonNull
+    private View.OnClickListener getCalendarShowLis(final Button slideCalendarBut) {
+        return new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                slideCalendarBut.setOnClickListener(null);
+                if (shouldShow) {
+                    compactCalendarView.showCalendar();
+                } else {
+                    compactCalendarView.hideCalendar();
+                }
+                shouldShow = !shouldShow;
+            }
+        };
+    }
+
+    @NonNull
+    private View.OnClickListener getCalendarExposeLis(final Button showCalendarWithAnimationBut) {
+        return new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showCalendarWithAnimationBut.setOnClickListener(null);
+                if (shouldShow) {
+                    compactCalendarView.showCalendarWithAnimation();
+                } else {
+                    compactCalendarView.hideCalendarWithAnimation();
+                }
+                shouldShow = !shouldShow;
+            }
+        };
     }
 
     private void openCalendarOnCreate(View v) {

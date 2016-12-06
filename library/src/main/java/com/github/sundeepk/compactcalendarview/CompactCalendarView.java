@@ -31,10 +31,16 @@ public class CompactCalendarView extends View {
     private CompactCalendarController compactCalendarController;
     private GestureDetectorCompat gestureDetector;
     private boolean shouldScroll = true;
+    private CompactCalendarAnimationListener compactCalendarAnimationListener;
 
     public interface CompactCalendarViewListener {
         public void onDayClick(Date dateClicked);
         public void onMonthScroll(Date firstDayOfNewMonth);
+    }
+
+    public interface CompactCalendarAnimationListener {
+        public void onOpened();
+        public void onClosed();
     }
 
     private final GestureDetector.SimpleOnGestureListener gestureListener = new GestureDetector.SimpleOnGestureListener() {
@@ -92,6 +98,11 @@ public class CompactCalendarView extends View {
                 Locale.getDefault(), TimeZone.getDefault());
         gestureDetector = new GestureDetectorCompat(getContext(), gestureListener);
         animationHandler = new AnimationHandler(compactCalendarController, this);
+    }
+
+    public void setAnimationListener(CompactCalendarAnimationListener compactCalendarAnimationListener){
+        this.compactCalendarAnimationListener = compactCalendarAnimationListener;
+        animationHandler.setCompactCalendarAnimationListener(compactCalendarAnimationListener);
     }
 
     /*
