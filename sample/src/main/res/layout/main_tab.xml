@@ -77,7 +77,7 @@
 
         <Button
             android:id="@+id/show_with_animation_calendar"
-            android:text="Show animation"
+            android:text="Expose animation"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             />
