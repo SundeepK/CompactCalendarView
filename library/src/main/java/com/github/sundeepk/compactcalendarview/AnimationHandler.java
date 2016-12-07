@@ -86,7 +86,7 @@ class AnimationHandler {
             @Override
             public void onAnimationEnd(Animator animation) {
                 compactCalendarController.setAnimationStatus(CompactCalendarController.IDLE);
-                compactCalendarAnimationListener.onOpened();
+                onOpen();
             }
         });
     }
@@ -102,7 +102,7 @@ class AnimationHandler {
             @Override
             public void onAnimationEnd(Animation animation) {
                 compactCalendarController.setAnimationStatus(CompactCalendarController.IDLE);
-                compactCalendarAnimationListener.onClosed();
+                onClose();
             }
         });
         indicatorAnim.addListener(new AnimatorListener() {
@@ -156,9 +156,21 @@ class AnimationHandler {
             @Override
             public void onAnimationEnd(Animation animation) {
                 super.onAnimationEnd(animation);
-                compactCalendarAnimationListener.onOpened();
+                onOpen();
             }
         });
+    }
+
+    private void onOpen() {
+        if (compactCalendarAnimationListener != null) {
+            compactCalendarAnimationListener.onOpened();
+        }
+    }
+
+    private void onClose() {
+        if (compactCalendarAnimationListener != null) {
+            compactCalendarAnimationListener.onClosed();
+        }
     }
 
     private void setUpAnimationLisForClose(Animation openAnimation) {
@@ -166,7 +178,7 @@ class AnimationHandler {
             @Override
             public void onAnimationEnd(Animation animation) {
                 super.onAnimationEnd(animation);
-                compactCalendarAnimationListener.onClosed();
+                onClose();
             }
         });
     }
