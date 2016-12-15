@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.support.test.InstrumentationRegistry;
+import android.support.test.espresso.IdlingPolicies;
 import android.support.test.espresso.ViewAction;
 import android.support.test.espresso.action.CoordinatesProvider;
 import android.support.test.espresso.action.GeneralClickAction;
@@ -11,6 +12,7 @@ import android.support.test.espresso.action.GeneralSwipeAction;
 import android.support.test.espresso.action.Press;
 import android.support.test.espresso.action.Swipe;
 import android.support.test.espresso.action.Tap;
+import android.support.test.rule.UiThreadTestRule;
 import android.support.v7.app.ActionBar;
 import android.test.ActivityInstrumentationTestCase2;
 import android.util.DisplayMetrics;
@@ -21,9 +23,11 @@ import android.widget.TextView;
 import com.facebook.testing.screenshot.Screenshot;
 import com.facebook.testing.screenshot.ViewHelpers;
 import com.github.sundeepk.compactcalendarview.CompactCalendarView;
+import com.github.sundeepk.compactcalendarview.CompactCalendarView.CompactCalendarAnimationListener;
 import com.github.sundeepk.compactcalendarview.domain.Event;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 
 import java.text.SimpleDateFormat;
@@ -33,8 +37,10 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 import static android.support.test.espresso.Espresso.onView;
+import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withParent;
@@ -51,10 +57,15 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivity> {
 
+    @Rule
+    public UiThreadTestRule uiThreadTestRule = new UiThreadTestRule();
+
     private SimpleDateFormat dateFormatForMonth = new SimpleDateFormat("MMM - yyyy", Locale.getDefault());
     private CompactCalendarView compactCalendarView;
     private MainActivity activity;
     private View mainContent;
+    private int onClosedCallCount = 0;
+    private int onOpenedCallCount = 0;
 
     public ApplicationTest() {
         super(MainActivity.class);
@@ -67,6 +78,10 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
         activity = getActivity();
         compactCalendarView = (CompactCalendarView) activity.findViewById(R.id.compactcalendar_view);
         mainContent = (View) activity.findViewById(R.id.parent);
+        onClosedCallCount = 0;
+        onOpenedCallCount = 0;
+        IdlingPolicies.setMasterPolicyTimeout(3, TimeUnit.SECONDS);
+        IdlingPolicies.setIdlingResourceTimeout(3, TimeUnit.SECONDS);
     }
 
     @Test
@@ -228,6 +243,33 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
         setDate(new Date(1423353600000L));
         setSundayAsFirstDayOfMonth(false);
         capture("testItDrawsSundayAsFirstDayOfMonth");
+    }
+
+
+    // I using mocks for listener causes espresso to throw an error because the callback is called from within animation handler.
+    // Maybe a problem with espresso, for now manually check count.
+    @Test
+    public void testOpenedAndClosedListerCalledForExposeAnimation() throws Throwable {
+        // calendar is opened by default.
+        CompactCalendarAnimationListener listener = new CompactCalendarAnimationListener() {
+            @Override
+            public void onOpened() {
+                onOpenedCallCount++;
+            }
+
+            @Override
+            public void onClosed() {
+                onClosedCallCount++;
+            }
+        };
+        compactCalendarView.setAnimationListener(listener);
+
+        //Sun, 08 Feb 2015 00:00:00 GMT
+        setDate(new Date(1423353600000L));
+        onView(withId(R.id.show_with_animation_calendar)).perform(click());
+        onView(withId(R.id.slide_calendar)).perform(click());
+        assertEquals(onClosedCallCount, 1);
+        assertEquals(onOpenedCallCount, 1);
     }
 
     // Nasty hack to get the toolbar to update the current month
