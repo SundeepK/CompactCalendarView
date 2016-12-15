@@ -245,7 +245,6 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
         capture("testItDrawsSundayAsFirstDayOfMonth");
     }
 
-
     // I using mocks for listener causes espresso to throw an error because the callback is called from within animation handler.
     // Maybe a problem with espresso, for now manually check count.
     @Test
