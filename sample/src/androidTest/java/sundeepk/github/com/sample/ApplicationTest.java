@@ -245,10 +245,10 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
         capture("testItDrawsSundayAsFirstDayOfMonth");
     }
 
-    // I using mocks for listener causes espresso to throw an error because the callback is called from within animation handler.
+    // Using mocks for listener causes espresso to throw an error because the callback is called from within animation handler.
     // Maybe a problem with espresso, for now manually check count.
     @Test
-    public void testOpenedAndClosedListerCalledForExposeAnimation() throws Throwable {
+    public void testOpenedAndClosedListerCalledForOpeningCalendar() throws Throwable {
         // calendar is opened by default.
         CompactCalendarAnimationListener listener = new CompactCalendarAnimationListener() {
             @Override
