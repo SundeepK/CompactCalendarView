@@ -358,6 +358,10 @@ public class CompactCalendarView extends View {
         invalidate();
     }
 
+    public boolean isAnimating(){
+        return animationHandler.isAnimating();
+    }
+
     @Override
     protected void onMeasure(int parentWidth, int parentHeight) {
         super.onMeasure(parentWidth, parentHeight);
