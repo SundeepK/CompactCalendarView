@@ -23,6 +23,7 @@ It is possible to change the appearance of the view via a few properties. This i
         android:paddingRight="10dp"
         android:paddingLeft="10dp"
         android:layout_height="250dp"
+        app:compactCalendarTargetHeight="250dp"
         app:compactCalendarTextSize="12sp"
         app:compactCalendarBackgroundColor="#ffe95451"
         app:compactCalendarTextColor="#fff"
