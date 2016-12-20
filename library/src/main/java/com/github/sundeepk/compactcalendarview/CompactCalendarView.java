@@ -31,7 +31,6 @@ public class CompactCalendarView extends View {
     private CompactCalendarController compactCalendarController;
     private GestureDetectorCompat gestureDetector;
     private boolean shouldScroll = true;
-    private CompactCalendarAnimationListener compactCalendarAnimationListener;
 
     public interface CompactCalendarViewListener {
         public void onDayClick(Date dateClicked);
@@ -101,7 +100,6 @@ public class CompactCalendarView extends View {
     }
 
     public void setAnimationListener(CompactCalendarAnimationListener compactCalendarAnimationListener){
-        this.compactCalendarAnimationListener = compactCalendarAnimationListener;
         animationHandler.setCompactCalendarAnimationListener(compactCalendarAnimationListener);
     }
 
