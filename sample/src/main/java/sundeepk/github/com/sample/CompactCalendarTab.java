@@ -133,14 +133,10 @@ public class CompactCalendarTab extends Fragment {
         compactCalendarView.setAnimationListener(new CompactCalendarView.CompactCalendarAnimationListener() {
             @Override
             public void onOpened() {
-                showCalendarWithAnimationBut.setOnClickListener(exposeCalendarListener);
-                slideCalendarBut.setOnClickListener(showCalendarOnClickLis);
             }
 
             @Override
             public void onClosed() {
-                showCalendarWithAnimationBut.setOnClickListener(exposeCalendarListener);
-                slideCalendarBut.setOnClickListener(showCalendarOnClickLis);
             }
         });
 
@@ -182,13 +178,14 @@ public class CompactCalendarTab extends Fragment {
         return new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                slideCalendarBut.setOnClickListener(null);
-                if (shouldShow) {
-                    compactCalendarView.showCalendar();
-                } else {
-                    compactCalendarView.hideCalendar();
+                if (!compactCalendarView.isAnimating()) {
+                    if (shouldShow) {
+                        compactCalendarView.showCalendar();
+                    } else {
+                        compactCalendarView.hideCalendar();
+                    }
+                    shouldShow = !shouldShow;
                 }
-                shouldShow = !shouldShow;
             }
         };
     }
@@ -198,13 +195,14 @@ public class CompactCalendarTab extends Fragment {
         return new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showCalendarWithAnimationBut.setOnClickListener(null);
-                if (shouldShow) {
-                    compactCalendarView.showCalendarWithAnimation();
-                } else {
-                    compactCalendarView.hideCalendarWithAnimation();
+                if (!compactCalendarView.isAnimating()) {
+                    if (shouldShow) {
+                        compactCalendarView.showCalendarWithAnimation();
+                    } else {
+                        compactCalendarView.hideCalendarWithAnimation();
+                    }
+                    shouldShow =! shouldShow;
                 }
-                shouldShow = !shouldShow;
             }
         };
     }

@@ -77,6 +77,8 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
         injectInstrumentation(InstrumentationRegistry.getInstrumentation());
         activity = getActivity();
         compactCalendarView = (CompactCalendarView) activity.findViewById(R.id.compactcalendar_view);
+        compactCalendarView.setAnimationListener(null);
+        compactCalendarView.setListener(null);
         mainContent = (View) activity.findViewById(R.id.parent);
         onClosedCallCount = 0;
         onOpenedCallCount = 0;
@@ -267,8 +269,15 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
         setDate(new Date(1423353600000L));
         onView(withId(R.id.show_with_animation_calendar)).perform(click());
         onView(withId(R.id.slide_calendar)).perform(click());
-        assertEquals(onClosedCallCount, 1);
         assertEquals(onOpenedCallCount, 1);
+        assertEquals(onClosedCallCount, 1);
+    }
+
+    @Test
+    public void testItDoesNotThrowNullPointerWhenNoAnimationListenerIsSet() throws Throwable {
+        //Sun, 08 Feb 2015 00:00:00 GMT
+        setDate(new Date(1423353600000L));
+        onView(withId(R.id.show_with_animation_calendar)).perform(click());
     }
 
     // Nasty hack to get the toolbar to update the current month
