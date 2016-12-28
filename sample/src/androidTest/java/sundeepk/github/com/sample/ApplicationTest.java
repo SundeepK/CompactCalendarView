@@ -324,8 +324,10 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
     @Test
     public void testItDoesNotThrowNullPointerWhenNoAnimationListenerIsSet() throws Throwable {
         //Sun, 08 Feb 2015 00:00:00 GMT
+        compactCalendarView.setAnimationListener(null);
         setDate(new Date(1423353600000L));
         onView(withId(R.id.show_with_animation_calendar)).perform(click());
+        onView(withId(R.id.slide_calendar)).perform(click());
     }
 
     // Nasty hack to get the toolbar to update the current month
