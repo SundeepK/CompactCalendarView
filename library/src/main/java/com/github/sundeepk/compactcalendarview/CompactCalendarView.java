@@ -37,6 +37,11 @@ public class CompactCalendarView extends View {
         public void onMonthScroll(Date firstDayOfNewMonth);
     }
 
+    public interface CompactCalendarAnimationListener {
+        public void onOpened();
+        public void onClosed();
+    }
+
     private final GestureDetector.SimpleOnGestureListener gestureListener = new GestureDetector.SimpleOnGestureListener() {
         @Override
         public void onLongPress(MotionEvent e) {
@@ -92,6 +97,10 @@ public class CompactCalendarView extends View {
                 Locale.getDefault(), TimeZone.getDefault());
         gestureDetector = new GestureDetectorCompat(getContext(), gestureListener);
         animationHandler = new AnimationHandler(compactCalendarController, this);
+    }
+
+    public void setAnimationListener(CompactCalendarAnimationListener compactCalendarAnimationListener){
+        animationHandler.setCompactCalendarAnimationListener(compactCalendarAnimationListener);
     }
 
     /*
@@ -347,6 +356,10 @@ public class CompactCalendarView extends View {
     public void showPreviousMonth(){
         compactCalendarController.showPreviousMonth();
         invalidate();
+    }
+
+    public boolean isAnimating(){
+        return animationHandler.isAnimating();
     }
 
     @Override
