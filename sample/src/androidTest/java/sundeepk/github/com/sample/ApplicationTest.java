@@ -20,6 +20,8 @@ import android.util.TypedValue;
 import android.view.View;
 import android.widget.TextView;
 
+import com.azimolabs.conditionwatcher.ConditionWatcher;
+import com.azimolabs.conditionwatcher.Instruction;
 import com.facebook.testing.screenshot.Screenshot;
 import com.facebook.testing.screenshot.ViewHelpers;
 import com.github.sundeepk.compactcalendarview.CompactCalendarView;
@@ -250,12 +252,12 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
     // Using mocks for listener causes espresso to throw an error because the callback is called from within animation handler.
     // Maybe a problem with espresso, for now manually check count.
     @Test
-    public void testOpenedAndClosedListerCalledForOpeningCalendar() throws Throwable {
+    public void testOpenedAndClosedListerCalledForOpeningExposeAnimationCalendar() throws Throwable {
         // calendar is opened by default.
         CompactCalendarAnimationListener listener = new CompactCalendarAnimationListener() {
             @Override
             public void onOpened() {
-                onOpenedCallCount++;
+                onOpenedCallCount = onOpenedCallCount + 1;
             }
 
             @Override
@@ -268,9 +270,23 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
         //Sun, 08 Feb 2015 00:00:00 GMT
         setDate(new Date(1423353600000L));
         onView(withId(R.id.show_with_animation_calendar)).perform(click());
-        onView(withId(R.id.slide_calendar)).perform(click());
-        assertEquals(onOpenedCallCount, 1);
+        onView(withId(R.id.show_with_animation_calendar)).perform(click());
+
+        ConditionWatcher.waitForCondition(new Instruction() {
+            @Override
+            public String getDescription() {
+                return null;
+            }
+
+            @Override
+            public boolean checkCondition() {
+                return !compactCalendarView.isAnimating();
+            }
+        });
+
         assertEquals(onClosedCallCount, 1);
+        assertEquals(onOpenedCallCount, 1);
+
     }
 
     @Test

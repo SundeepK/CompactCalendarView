@@ -124,10 +124,10 @@ public class CompactCalendarTab extends Fragment {
             }
         });
 
-        final View.OnClickListener showCalendarOnClickLis = getCalendarShowLis(slideCalendarBut);
+        final View.OnClickListener showCalendarOnClickLis = getCalendarShowLis();
         slideCalendarBut.setOnClickListener(showCalendarOnClickLis);
 
-        final View.OnClickListener exposeCalendarListener = getCalendarExposeLis(showCalendarWithAnimationBut);
+        final View.OnClickListener exposeCalendarListener = getCalendarExposeLis();
         showCalendarWithAnimationBut.setOnClickListener(exposeCalendarListener);
 
         compactCalendarView.setAnimationListener(new CompactCalendarView.CompactCalendarAnimationListener() {
@@ -174,7 +174,7 @@ public class CompactCalendarTab extends Fragment {
     }
 
     @NonNull
-    private View.OnClickListener getCalendarShowLis(final Button slideCalendarBut) {
+    private View.OnClickListener getCalendarShowLis() {
         return new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -191,7 +191,7 @@ public class CompactCalendarTab extends Fragment {
     }
 
     @NonNull
-    private View.OnClickListener getCalendarExposeLis(final Button showCalendarWithAnimationBut) {
+    private View.OnClickListener getCalendarExposeLis() {
         return new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -201,7 +201,7 @@ public class CompactCalendarTab extends Fragment {
                     } else {
                         compactCalendarView.hideCalendarWithAnimation();
                     }
-                    shouldShow =! shouldShow;
+                    shouldShow = !shouldShow;
                 }
             }
         };
