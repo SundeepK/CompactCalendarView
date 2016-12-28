@@ -252,7 +252,7 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
     // Using mocks for listener causes espresso to throw an error because the callback is called from within animation handler.
     // Maybe a problem with espresso, for now manually check count.
     @Test
-    public void testOpenedAndClosedListerCalledForOpeningExposeAnimationCalendar() throws Throwable {
+    public void testOpenedAndClosedListerCalledForExposeAnimationCalendar() throws Throwable {
         // calendar is opened by default.
         CompactCalendarAnimationListener listener = new CompactCalendarAnimationListener() {
             @Override
@@ -272,6 +272,42 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
         onView(withId(R.id.show_with_animation_calendar)).perform(click());
         onView(withId(R.id.show_with_animation_calendar)).perform(click());
 
+        waitForAnimationFinish();
+
+        assertEquals(onClosedCallCount, 1);
+        assertEquals(onOpenedCallCount, 1);
+    }
+
+    // Using mocks for listener causes espresso to throw an error because the callback is called from within animation handler.
+    // Maybe a problem with espresso, for now manually check count.
+    @Test
+    public void testOpenedAndClosedListerCalledForCalendar() throws Throwable {
+        // calendar is opened by default.
+        CompactCalendarAnimationListener listener = new CompactCalendarAnimationListener() {
+            @Override
+            public void onOpened() {
+                onOpenedCallCount = onOpenedCallCount + 1;
+            }
+
+            @Override
+            public void onClosed() {
+                onClosedCallCount++;
+            }
+        };
+        compactCalendarView.setAnimationListener(listener);
+
+        //Sun, 08 Feb 2015 00:00:00 GMT
+        setDate(new Date(1423353600000L));
+        onView(withId(R.id.slide_calendar)).perform(click());
+        onView(withId(R.id.slide_calendar)).perform(click());
+
+        waitForAnimationFinish();
+
+        assertEquals(onClosedCallCount, 1);
+        assertEquals(onOpenedCallCount, 1);
+    }
+
+    private void waitForAnimationFinish() throws Exception {
         ConditionWatcher.waitForCondition(new Instruction() {
             @Override
             public String getDescription() {
@@ -283,10 +319,6 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
                 return !compactCalendarView.isAnimating();
             }
         });
-
-        assertEquals(onClosedCallCount, 1);
-        assertEquals(onOpenedCallCount, 1);
-
     }
 
     @Test
