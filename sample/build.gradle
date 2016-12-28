@@ -20,7 +20,7 @@ android {
 
     defaultConfig {
         applicationId "sundeepk.github.com.sample"
-        minSdkVersion 15
+        minSdkVersion 16
         targetSdkVersion 22
         versionCode 1
         versionName "1.0"
@@ -40,6 +40,7 @@ dependencies {
     compile 'com.android.support:support-v4:24.2.0'
     compile project(':library')
     androidTestCompile 'com.android.support.test:runner:0.4'
+    androidTestCompile 'com.azimolabs.conditionwatcher:conditionwatcher:0.1'
     androidTestCompile 'com.android.support.test:rules:0.4'
     androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.1'
     androidTestCompile 'com.google.dexmaker:dexmaker-mockito:1.0'

@@ -12,9 +12,6 @@ class AnimationHandler {
 
     private static final int HEIGHT_ANIM_DURATION_MILLIS = 650;
     private static final int INDICATOR_ANIM_DURATION_MILLIS = 600;
-    private static final int IS_OPEN = 1;
-    private static final int IS_CLOSED = 0;
-    private int calendarStatus = -1;
     private boolean isAnimating = false;
     private CompactCalendarController compactCalendarController;
     private CompactCalendarView compactCalendarView;
@@ -30,6 +27,10 @@ class AnimationHandler {
     }
 
     void openCalendar() {
+        if (isAnimating) {
+            return;
+        }
+        isAnimating = true;
         Animation heightAnim = getCollapsingAnimation(true);
         heightAnim.setDuration(HEIGHT_ANIM_DURATION_MILLIS);
         heightAnim.setInterpolator(new AccelerateDecelerateInterpolator());
@@ -41,6 +42,10 @@ class AnimationHandler {
     }
 
     void closeCalendar() {
+        if (isAnimating) {
+            return;
+        }
+        isAnimating = true;
         Animation heightAnim = getCollapsingAnimation(false);
         heightAnim.setDuration(HEIGHT_ANIM_DURATION_MILLIS);
         heightAnim.setInterpolator(new AccelerateDecelerateInterpolator());
@@ -52,11 +57,10 @@ class AnimationHandler {
     }
 
     void openCalendarWithAnimation() {
-        if (calendarStatus == IS_OPEN || isAnimating) {
+        if (isAnimating) {
             return;
         }
         isAnimating = true;
-        calendarStatus = IS_OPEN;
         final Animator indicatorAnim = getIndicatorAnimator(1f, compactCalendarController.getDayIndicatorRadius());
         final Animation heightAnim = getExposeCollapsingAnimation(true);
         compactCalendarView.getLayoutParams().height = 0;
@@ -66,11 +70,10 @@ class AnimationHandler {
     }
 
     void closeCalendarWithAnimation() {
-        if ( calendarStatus == IS_CLOSED || isAnimating) {
+        if (isAnimating) {
             return;
         }
         isAnimating = true;
-        calendarStatus = IS_CLOSED;
         final Animator indicatorAnim = getIndicatorAnimator(compactCalendarController.getDayIndicatorRadius(), 1f);
         final Animation heightAnim = getExposeCollapsingAnimation(false);
         compactCalendarView.getLayoutParams().height = compactCalendarView.getHeight();
