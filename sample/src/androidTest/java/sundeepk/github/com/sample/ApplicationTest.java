@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.support.test.InstrumentationRegistry;
-import android.support.test.espresso.IdlingPolicies;
 import android.support.test.espresso.ViewAction;
 import android.support.test.espresso.action.CoordinatesProvider;
 import android.support.test.espresso.action.GeneralClickAction;
@@ -39,7 +38,6 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
-import java.util.concurrent.TimeUnit;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
@@ -79,13 +77,9 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
         injectInstrumentation(InstrumentationRegistry.getInstrumentation());
         activity = getActivity();
         compactCalendarView = (CompactCalendarView) activity.findViewById(R.id.compactcalendar_view);
-        compactCalendarView.setAnimationListener(null);
-        compactCalendarView.setListener(null);
         mainContent = (View) activity.findViewById(R.id.parent);
         onClosedCallCount = 0;
         onOpenedCallCount = 0;
-        IdlingPolicies.setMasterPolicyTimeout(3, TimeUnit.SECONDS);
-        IdlingPolicies.setIdlingResourceTimeout(3, TimeUnit.SECONDS);
     }
 
     @Test
