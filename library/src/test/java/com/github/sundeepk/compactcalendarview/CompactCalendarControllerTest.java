@@ -224,8 +224,8 @@ public class CompactCalendarControllerTest {
         when(calendar.getActualMaximum(Calendar.DAY_OF_MONTH)).thenReturn(28);
 
         underTest.setGrowProgress(1000); //set grow progress so that it simulates the calendar being open
-        underTest.setShouldShowMondayAsFirstDay(false);
         underTest.setUseWeekDayAbbreviation(true);
+        underTest.setFirstDayOfWeek(Calendar.SUNDAY);
         underTest.drawMonth(canvas, calendar, 0);
 
         InOrder inOrder = inOrder(canvas);

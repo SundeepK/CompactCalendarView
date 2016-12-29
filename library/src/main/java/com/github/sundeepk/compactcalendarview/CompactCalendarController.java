@@ -10,6 +10,7 @@ import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
@@ -64,6 +65,7 @@ class CompactCalendarController {
     private int distanceThresholdForAutoScroll;
     private int targetHeight;
     private int animationStatus = 0;
+    private int firstDayOfWeekToDraw = Calendar.MONDAY;
     private float xIndicatorOffset;
     private float multiDayIndicatorStrokeWidth;
     private float bigCircleIndicatorRadius;
@@ -74,7 +76,6 @@ class CompactCalendarController {
     private float distanceX;
     private long lastAutoScrollFromFling;
 
-    private boolean shouldShowMondayAsFirstDay = true;
     private boolean useThreeLetterAbbreviation = false;
     private boolean isSmoothScrolling;
     private boolean isScrolling;
@@ -298,22 +299,14 @@ class CompactCalendarController {
         eventsContainer.removeAllEvents();
     }
 
-    void setShouldShowMondayAsFirstDay(boolean shouldShowMondayAsFirstDay) {
-        this.shouldShowMondayAsFirstDay = shouldShowMondayAsFirstDay;
+    void setFirstDayOfWeek(int day){
+        this.firstDayOfWeekToDraw = day;
         setUseWeekDayAbbreviation(useThreeLetterAbbreviation);
-        if (shouldShowMondayAsFirstDay) {
-            eventsCalendar.setFirstDayOfWeek(Calendar.MONDAY);
-            calendarWithFirstDayOfMonth.setFirstDayOfWeek(Calendar.MONDAY);
-            todayCalender.setFirstDayOfWeek(Calendar.MONDAY);
-            currentCalender.setFirstDayOfWeek(Calendar.MONDAY);
-            tempPreviousMonthCalendar.setFirstDayOfWeek(Calendar.MONDAY);
-        } else {
-            eventsCalendar.setFirstDayOfWeek(Calendar.SUNDAY);
-            calendarWithFirstDayOfMonth.setFirstDayOfWeek(Calendar.SUNDAY);
-            todayCalender.setFirstDayOfWeek(Calendar.SUNDAY);
-            currentCalender.setFirstDayOfWeek(Calendar.SUNDAY);
-            tempPreviousMonthCalendar.setFirstDayOfWeek(Calendar.SUNDAY);
-        }
+        eventsCalendar.setFirstDayOfWeek(day);
+        calendarWithFirstDayOfMonth.setFirstDayOfWeek(day);
+        todayCalender.setFirstDayOfWeek(day);
+        currentCalender.setFirstDayOfWeek(day);
+        tempPreviousMonthCalendar.setFirstDayOfWeek(day);
     }
 
     void setCurrentSelectedDayBackgroundColor(int currentSelectedDayBackgroundColor) {
@@ -356,31 +349,7 @@ class CompactCalendarController {
 
     void setUseWeekDayAbbreviation(boolean useThreeLetterAbbreviation) {
         this.useThreeLetterAbbreviation = useThreeLetterAbbreviation;
-        DateFormatSymbols dateFormatSymbols = new DateFormatSymbols(locale);
-        String[] dayNames = dateFormatSymbols.getShortWeekdays();
-        if (dayNames == null) {
-            throw new IllegalStateException("Unable to determine weekday names from default locale");
-        }
-        if (dayNames.length != 8) {
-            throw new IllegalStateException("Expected weekday names from default locale to be of size 7 but: "
-                    + Arrays.toString(dayNames) + " with size " + dayNames.length + " was returned.");
-        }
-
-        if (useThreeLetterAbbreviation) {
-            if (!shouldShowMondayAsFirstDay) {
-                this.dayColumnNames = new String[]{dayNames[1], dayNames[2], dayNames[3], dayNames[4], dayNames[5], dayNames[6], dayNames[7]};
-            } else {
-                this.dayColumnNames = new String[]{dayNames[2], dayNames[3], dayNames[4], dayNames[5], dayNames[6], dayNames[7], dayNames[1]};
-            }
-        } else {
-            if (!shouldShowMondayAsFirstDay) {
-                this.dayColumnNames = new String[]{dayNames[1].substring(0, 1), dayNames[2].substring(0, 1),
-                        dayNames[3].substring(0, 1), dayNames[4].substring(0, 1), dayNames[5].substring(0, 1), dayNames[6].substring(0, 1), dayNames[7].substring(0, 1)};
-            } else {
-                this.dayColumnNames = new String[]{dayNames[2].substring(0, 1), dayNames[3].substring(0, 1),
-                        dayNames[4].substring(0, 1), dayNames[5].substring(0, 1), dayNames[6].substring(0, 1), dayNames[7].substring(0, 1), dayNames[1].substring(0, 1)};
-            }
-        }
+        this.dayColumnNames = WeekUtils.getWeekdayNames(locale, firstDayOfWeekToDraw, this.useThreeLetterAbbreviation);
     }
 
     void setDayColumnNames(String[] dayColumnNames) {
@@ -747,7 +716,7 @@ class CompactCalendarController {
                 long timeMillis = events.getTimeInMillis();
                 eventsCalendar.setTimeInMillis(timeMillis);
 
-                int dayOfWeek = getDayOfWeek(eventsCalendar) - 1;
+                int dayOfWeek = getDayOfWeek(eventsCalendar);
 
                 int weekNumberForMonth = eventsCalendar.get(Calendar.WEEK_OF_MONTH);
                 float xPosition = widthPerDay * dayOfWeek + paddingWidth + paddingLeft + accumulatedScrollOffset.x + offset - paddingRight;
@@ -827,13 +796,9 @@ class CompactCalendarController {
     }
 
     private int getDayOfWeek(Calendar calendar) {
-        int dayOfWeek;
-        if (!shouldShowMondayAsFirstDay) {
-            return calendar.get(Calendar.DAY_OF_WEEK);
-        } else {
-            dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK) - 1;
-            dayOfWeek = dayOfWeek <= 0 ? 7 : dayOfWeek;
-        }
+        int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK) - firstDayOfWeekToDraw;
+        //offset by one because of 0 index based calculations
+        dayOfWeek = dayOfWeek <= 0 ? 7 + dayOfWeek - 1 : dayOfWeek;
         return dayOfWeek;
     }
 
@@ -843,8 +808,6 @@ class CompactCalendarController {
         //offset by one because we want to start from Monday
         int firstDayOfMonth = getDayOfWeek(monthToDrawCalender);
 
-        //offset by one because of 0 index based calculations
-        firstDayOfMonth = firstDayOfMonth - 1;
         boolean isSameMonthAsToday = monthToDrawCalender.get(Calendar.MONTH) == todayCalender.get(Calendar.MONTH);
         boolean isSameYearAsToday = monthToDrawCalender.get(Calendar.YEAR) == todayCalender.get(Calendar.YEAR);
         boolean isSameMonthAsCurrentCalendar = monthToDrawCalender.get(Calendar.MONTH) == currentCalender.get(Calendar.MONTH);

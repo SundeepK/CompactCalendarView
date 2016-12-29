@@ -134,8 +134,8 @@ public class CompactCalendarView extends View {
         compactCalendarController.setDayColumnNames(dayColumnNames);
     }
 
-    public void setShouldShowMondayAsFirstDay(boolean shouldShowMondayAsFirstDay) {
-        compactCalendarController.setShouldShowMondayAsFirstDay(shouldShowMondayAsFirstDay);
+    public void setFirstDayOfWeek(int dayOfWeek){
+        compactCalendarController.setFirstDayOfWeek(dayOfWeek);
         invalidate();
     }
 
