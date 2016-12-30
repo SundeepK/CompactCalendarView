@@ -10,17 +10,12 @@ import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.ViewConfiguration;
 import android.widget.OverScroller;
-
 import com.github.sundeepk.compactcalendarview.domain.Event;
-
-import java.text.DateFormatSymbols;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -439,7 +434,7 @@ class CompactCalendarController {
         //Start Monday as day 1 and Sunday as day 7. Not Sunday as day 1 and Monday as day 2
         int firstDayOfMonth = getDayOfWeek(calendarWithFirstDayOfMonth);
 
-        int dayOfMonth = ((dayRow - 1) * 7 + dayColumn + 1) - firstDayOfMonth;
+        int dayOfMonth = ((dayRow - 1) * 7 + dayColumn) - firstDayOfMonth;
 
         if (dayOfMonth < calendarWithFirstDayOfMonth.getActualMaximum(Calendar.DAY_OF_MONTH)
                 && dayOfMonth >= 0) {
@@ -798,7 +793,7 @@ class CompactCalendarController {
     private int getDayOfWeek(Calendar calendar) {
         int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK) - firstDayOfWeekToDraw;
         //offset by one because of 0 index based calculations
-        dayOfWeek = dayOfWeek <= 0 ? 7 + dayOfWeek - 1 : dayOfWeek;
+        dayOfWeek = dayOfWeek < 0 ? 7 + dayOfWeek: dayOfWeek;
         return dayOfWeek;
     }
 
