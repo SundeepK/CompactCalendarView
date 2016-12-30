@@ -164,7 +164,7 @@ class CompactCalendarController {
         todayCalender = Calendar.getInstance(timeZone, locale);
         calendarWithFirstDayOfMonth = Calendar.getInstance(timeZone, locale);
         eventsCalendar = Calendar.getInstance(timeZone, locale);
-        tempPreviousMonthCalendar = Calendar.getInstance();
+        tempPreviousMonthCalendar = Calendar.getInstance(timeZone, locale);
 
         // make setMinimalDaysInFirstWeek same across android versions
         eventsCalendar.setMinimalDaysInFirstWeek(1);
@@ -173,11 +173,7 @@ class CompactCalendarController {
         currentCalender.setMinimalDaysInFirstWeek(1);
         tempPreviousMonthCalendar.setMinimalDaysInFirstWeek(1);
 
-        eventsCalendar.setFirstDayOfWeek(Calendar.MONDAY);
-        calendarWithFirstDayOfMonth.setFirstDayOfWeek(Calendar.MONDAY);
-        todayCalender.setFirstDayOfWeek(Calendar.MONDAY);
-        currentCalender.setFirstDayOfWeek(Calendar.MONDAY);
-        tempPreviousMonthCalendar.setFirstDayOfWeek(Calendar.MONDAY);
+        setFirstDayOfWeek(firstDayOfWeekToDraw);
 
         setUseWeekDayAbbreviation(false);
         dayPaint.setTextAlign(Paint.Align.CENTER);

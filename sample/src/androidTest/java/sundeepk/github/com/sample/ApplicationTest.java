@@ -38,6 +38,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
+import java.util.TimeZone;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
@@ -291,6 +292,43 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
         capture("testItDrawsSaturdayAsFirstDayOfMonth");
     }
 
+    @Test
+    public void testItDrawsWedAsFirstDayWithFrenchLocale(){
+        //Sun, 08 Feb 2015 00:00:00 GMT
+        setDate(new Date(1423353600000L));
+        setFirstDayOfWeek(Calendar.WEDNESDAY);
+        onView(withId(R.id.set_locale)).perform(clickXY(0, 0));
+        setUseThreeLetterAbbreviation(true);
+        capture("testItDrawsWednesdayAsFirstDayWithFrenchLocale");
+    }
+
+    @Test
+    public void testOnDayClickListenerIsCalledWhenLocaleIsFranceWithWedAsFirstDayOFWeek(){
+        CompactCalendarViewListener listener = mock(CompactCalendarViewListener.class);
+        compactCalendarView.setListener(listener);
+
+        Locale locale = Locale.FRANCE;
+        TimeZone timeZone = TimeZone.getTimeZone("Europe/Paris");
+        Calendar instance = Calendar.getInstance(timeZone, locale);
+        // Thu, 05 Feb 2015 12:00:00 GMT - then set to midnight
+        instance.setTimeInMillis(1423137600000L);
+        instance.set(Calendar.HOUR_OF_DAY, 0);
+        instance.set(Calendar.MINUTE, 0);
+        instance.set(Calendar.SECOND, 0);
+        instance.set(Calendar.MILLISECOND, 0);
+
+        //Sun, 08 Feb 2015 00:00:00 GMT
+        setDate(new Date(1423353600000L));
+        setFirstDayOfWeek(Calendar.WEDNESDAY);
+        onView(withId(R.id.set_locale)).perform(clickXY(0, 0));
+        onView(withId(R.id.compactcalendar_view)).perform(clickXY(60, 100));
+
+        //Thr, 05 Feb 2015 00:00:00 GMT - expected
+        verify(listener).onDayClick(instance.getTime());
+        verifyNoMoreInteractions(listener);
+        capture("testOnDayClickListenerIsCalledWhenLocaleIsFranceWithWedAsFirstDayOFWeek");
+    }
+
     // Using mocks for listener causes espresso to throw an error because the callback is called from within animation handler.
     // Maybe a problem with espresso, for now manually check count.
     @Test
@@ -391,6 +429,15 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
             @Override
             public void run() {
                 compactCalendarView.setFirstDayOfWeek(dayOfWeek);
+            }
+        });
+    }
+
+    private void setUseThreeLetterAbbreviation(final boolean useThreeLetterAbbreviation) {
+        InstrumentationRegistry.getInstrumentation().runOnMainSync(new Runnable() {
+            @Override
+            public void run() {
+                compactCalendarView.setUseThreeLetterAbbreviation(useThreeLetterAbbreviation);
             }
         });
     }
