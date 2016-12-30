@@ -431,7 +431,6 @@ class CompactCalendarController {
 
         setCalenderToFirstDayOfMonth(calendarWithFirstDayOfMonth, currentDate, -monthsScrolledSoFar, 0);
 
-        //Start Monday as day 1 and Sunday as day 7. Not Sunday as day 1 and Monday as day 2
         int firstDayOfMonth = getDayOfWeek(calendarWithFirstDayOfMonth);
 
         int dayOfMonth = ((dayRow - 1) * 7 + dayColumn) - firstDayOfMonth;
@@ -792,7 +791,6 @@ class CompactCalendarController {
 
     private int getDayOfWeek(Calendar calendar) {
         int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK) - firstDayOfWeekToDraw;
-        //offset by one because of 0 index based calculations
         dayOfWeek = dayOfWeek < 0 ? 7 + dayOfWeek: dayOfWeek;
         return dayOfWeek;
     }

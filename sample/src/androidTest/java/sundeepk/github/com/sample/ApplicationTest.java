@@ -239,8 +239,56 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
     public void testItDrawsSundayAsFirstDayOfMonth(){
         //Sun, 08 Feb 2015 00:00:00 GMT
         setDate(new Date(1423353600000L));
-        setSundayAsFirstDayOfMonth(false);
+        setFirstDayOfWeek(Calendar.SUNDAY);
         capture("testItDrawsSundayAsFirstDayOfMonth");
+    }
+
+    @Test
+    public void testItDrawsMondayAsFirstDayOfMonth(){
+        // defaults to Monday
+        //Sun, 08 Feb 2015 00:00:00 GMT
+        setDate(new Date(1423353600000L));
+        capture("testItDrawsMondayAsFirstDayOfMonth");
+    }
+
+    @Test
+    public void testItDrawsTuesdayAsFirstDayOfMonth(){
+        //Sun, 08 Feb 2015 00:00:00 GMT
+        setDate(new Date(1423353600000L));
+        setFirstDayOfWeek(Calendar.TUESDAY);
+        capture("testItDrawsTuesdayAsFirstDayOfMonth");
+    }
+
+    @Test
+    public void testItDrawsWednesdayAsFirstDayOfMonth(){
+        //Sun, 08 Feb 2015 00:00:00 GMT
+        setDate(new Date(1423353600000L));
+        setFirstDayOfWeek(Calendar.WEDNESDAY);
+        capture("testItDrawsWednesdayAsFirstDayOfMonth");
+    }
+
+    @Test
+    public void testItDrawsThursdayAsFirstDayOfMonth(){
+        //Sun, 08 Feb 2015 00:00:00 GMT
+        setDate(new Date(1423353600000L));
+        setFirstDayOfWeek(Calendar.THURSDAY);
+        capture("testItDrawsThursdayAsFirstDayOfMonth");
+    }
+
+    @Test
+    public void testItDrawsFridayAsFirstDayOfMonth(){
+        //Sun, 08 Feb 2015 00:00:00 GMT
+        setDate(new Date(1423353600000L));
+        setFirstDayOfWeek(Calendar.FRIDAY);
+        capture("testItDrawsFridayAsFirstDayOfMonth");
+    }
+
+    @Test
+    public void testItDrawsSaturdayAsFirstDayOfMonth(){
+        //Sun, 08 Feb 2015 00:00:00 GMT
+        setDate(new Date(1423353600000L));
+        setFirstDayOfWeek(Calendar.SATURDAY);
+        capture("testItDrawsSaturdayAsFirstDayOfMonth");
     }
 
     // Using mocks for listener causes espresso to throw an error because the callback is called from within animation handler.
@@ -251,7 +299,7 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
         CompactCalendarAnimationListener listener = new CompactCalendarAnimationListener() {
             @Override
             public void onOpened() {
-                onOpenedCallCount = onOpenedCallCount + 1;
+                onOpenedCallCount++;
             }
 
             @Override
@@ -324,6 +372,8 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
         onView(withId(R.id.slide_calendar)).perform(click());
     }
 
+
+
     // Nasty hack to get the toolbar to update the current month
     // TODO sample code should be refactored to do this
     private void syncToolbarDate(){
@@ -336,11 +386,11 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
         });
     }
 
-    private void setSundayAsFirstDayOfMonth(final boolean shouldSetMondayAsFirstDayOfMonth) {
+    private void setFirstDayOfWeek(final int dayOfWeek) {
         InstrumentationRegistry.getInstrumentation().runOnMainSync(new Runnable() {
             @Override
             public void run() {
-                compactCalendarView.setShouldShowMondayAsFirstDay(shouldSetMondayAsFirstDayOfMonth);
+                compactCalendarView.setFirstDayOfWeek(dayOfWeek);
             }
         });
     }
