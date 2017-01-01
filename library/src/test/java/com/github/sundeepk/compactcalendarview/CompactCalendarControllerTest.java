@@ -397,8 +397,13 @@ public class CompactCalendarControllerTest {
         when(calendar.get(Calendar.MONTH)).thenReturn(todayMonth);
         when(calendar.get(Calendar.YEAR)).thenReturn(todayYear);
 
-        // Selects first day of the month
-        todayCalendar.set(Calendar.DAY_OF_MONTH, 1);
+        // sets either 1st day or 2nd day so that there are always 2 days selected
+        int dayOfMonth = todayCalendar.get(Calendar.DAY_OF_MONTH);
+        if (dayOfMonth == 1) {
+            todayCalendar.set(Calendar.DAY_OF_MONTH, 2);
+        } else {
+            todayCalendar.set(Calendar.DAY_OF_MONTH, 1);
+        }
         todayCalendar.set(Calendar.HOUR_OF_DAY, 0);
         todayCalendar.set(Calendar.MINUTE, 0);
         todayCalendar.set(Calendar.SECOND, 0);
