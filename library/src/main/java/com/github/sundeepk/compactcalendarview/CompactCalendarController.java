@@ -291,6 +291,9 @@ class CompactCalendarController {
     }
 
     void setFirstDayOfWeek(int day){
+        if (day < 1 || day > 7) {
+            throw new IllegalArgumentException("Day must be an int between 1 and 7 or DAY_OF_WEEK from Java Calendar class. For more information please see Calendar.DAY_OF_WEEK.");
+        }
         this.firstDayOfWeekToDraw = day;
         setUseWeekDayAbbreviation(useThreeLetterAbbreviation);
         eventsCalendar.setFirstDayOfWeek(day);

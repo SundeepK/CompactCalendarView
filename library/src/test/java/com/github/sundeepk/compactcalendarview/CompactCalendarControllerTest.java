@@ -470,6 +470,16 @@ public class CompactCalendarControllerTest {
         verifyNoMoreInteractions(eventsContainer);
     }
 
+    @Test(expected=IllegalArgumentException.class)
+    public void testItThrowsWhenZeroIsUsedAsFirstDayOfWeek(){
+        underTest.setFirstDayOfWeek(0);
+    }
+
+    @Test(expected=IllegalArgumentException.class)
+    public void testItThrowsWhenValuesGreaterThanSevenIsUsedAsFirstDayOfWeek(){
+        underTest.setFirstDayOfWeek(8);
+    }
+
     private long setTimeToMidnightAndGet(Calendar cal, long epoch) {
         cal.setTime(new Date(epoch));
         cal.set(Calendar.HOUR_OF_DAY, 0);
