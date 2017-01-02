@@ -788,7 +788,9 @@ class CompactCalendarController {
         }
     }
 
-    private int getDayOfWeek(Calendar calendar) {
+    // zero based indexes used internally so instead of returning range of 1-7 like calendar class
+    // it returns 0-6 where 0 is Sunday instead of 1
+    int getDayOfWeek(Calendar calendar) {
         int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK) - firstDayOfWeekToDraw;
         dayOfWeek = dayOfWeek < 0 ? 7 + dayOfWeek: dayOfWeek;
         return dayOfWeek;

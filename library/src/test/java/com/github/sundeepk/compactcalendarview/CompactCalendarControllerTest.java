@@ -27,6 +27,7 @@ import static com.github.sundeepk.compactcalendarview.CompactCalendarHelper.getD
 import static com.github.sundeepk.compactcalendarview.CompactCalendarHelper.getDayEventWithMultipleEventsPerDay;
 import static com.github.sundeepk.compactcalendarview.CompactCalendarHelper.getEvents;
 import static com.github.sundeepk.compactcalendarview.CompactCalendarHelper.getSingleEvents;
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.anyFloat;
 import static org.mockito.Matchers.anyInt;
@@ -478,6 +479,118 @@ public class CompactCalendarControllerTest {
     @Test(expected=IllegalArgumentException.class)
     public void testItThrowsWhenValuesGreaterThanSevenIsUsedAsFirstDayOfWeek(){
         underTest.setFirstDayOfWeek(8);
+    }
+
+    @Test
+    public void testItGetsDayOfWeekWhenSundayIsFirstDayOfWeek(){
+        // zero based indexes used internally so instead of returning range of 1-7 it returns 0-6
+        // Sunday as first day means Saturday is last day of week
+        // first index corresponds to Sunday and last is Saturday
+        int[] expectedDaysOfWeekOrder = {0,1,2,3,4,5,6};
+        int[] actualDaysOfWeekOrder = new int[7];
+        Calendar calendar = Calendar.getInstance();
+        underTest.setFirstDayOfWeek(Calendar.SUNDAY);
+        for (int day = 1; day <= 7 ; day++){
+            calendar.set(Calendar.DAY_OF_WEEK, day);
+            actualDaysOfWeekOrder[day - 1] = underTest.getDayOfWeek(calendar);
+        }
+        assertArrayEquals(expectedDaysOfWeekOrder, actualDaysOfWeekOrder);
+    }
+
+    @Test
+    public void testItGetsDayOfWeekWhenMondayIsFirstDayOfWeek(){
+        // zero based indexes used internally so instead of returning range of 1-7 it returns 0-6
+        // Monday as first day means Sunday is last day of week
+        // first index corresponds to Sunday and last is Saturday
+        int[] expectedDaysOfWeekOrder = {6,0,1,2,3,4,5};
+        int[] actualDaysOfWeekOrder = new int[7];
+        Calendar calendar = Calendar.getInstance();
+        underTest.setFirstDayOfWeek(Calendar.MONDAY);
+        for (int day = 1; day <= 7 ; day++){
+            calendar.set(Calendar.DAY_OF_WEEK, day);
+            actualDaysOfWeekOrder[day - 1] = underTest.getDayOfWeek(calendar);
+        }
+        assertArrayEquals(expectedDaysOfWeekOrder, actualDaysOfWeekOrder);
+    }
+
+    @Test
+    public void testItGetsDayOfWeekWhenTuesdayIsFirstDayOfWeek(){
+        // zero based indexes used internally so instead of returning range of 1-7 it returns 0-6
+        // Tuesday as first day means Monday is last day of week
+        // first index corresponds to Sunday and last is Saturday
+        int[] expectedDaysOfWeekOrder = {5,6,0,1,2,3,4};
+        int[] actualDaysOfWeekOrder = new int[7];
+        Calendar calendar = Calendar.getInstance();
+        underTest.setFirstDayOfWeek(Calendar.TUESDAY);
+        for (int day = 1; day <= 7 ; day++){
+            calendar.set(Calendar.DAY_OF_WEEK, day);
+            actualDaysOfWeekOrder[day - 1] = underTest.getDayOfWeek(calendar);
+        }
+        assertArrayEquals(expectedDaysOfWeekOrder, actualDaysOfWeekOrder);
+    }
+
+    @Test
+    public void testItGetsDayOfWeekWhenWednesdayIsFirstDayOfWeek(){
+        // zero based indexes used internally so instead of returning range of 1-7 it returns 0-6
+        // Wednesday as first day means Tuesday is last day of week
+        // first index corresponds to Sunday and last is Saturday
+        int[] expectedDaysOfWeekOrder = {4,5,6,0,1,2,3};
+        int[] actualDaysOfWeekOrder = new int[7];
+        Calendar calendar = Calendar.getInstance();
+        underTest.setFirstDayOfWeek(Calendar.WEDNESDAY);
+        for (int day = 1; day <= 7 ; day++){
+            calendar.set(Calendar.DAY_OF_WEEK, day);
+            actualDaysOfWeekOrder[day - 1] = underTest.getDayOfWeek(calendar);
+        }
+        assertArrayEquals(expectedDaysOfWeekOrder, actualDaysOfWeekOrder);
+    }
+
+    @Test
+    public void testItGetsDayOfWeekWhenThursdayIsFirstDayOfWeek(){
+        // zero based indexes used internally so instead of returning range of 1-7 it returns 0-6
+        // Thursday as first day means Wednesday is last day of week
+        // first index corresponds to Sunday and last is Saturday
+        int[] expectedDaysOfWeekOrder = {3,4,5,6,0,1,2};
+        int[] actualDaysOfWeekOrder = new int[7];
+        Calendar calendar = Calendar.getInstance();
+        underTest.setFirstDayOfWeek(Calendar.THURSDAY);
+        for (int day = 1; day <= 7 ; day++){
+            calendar.set(Calendar.DAY_OF_WEEK, day);
+            actualDaysOfWeekOrder[day - 1] = underTest.getDayOfWeek(calendar);
+        }
+        assertArrayEquals(expectedDaysOfWeekOrder, actualDaysOfWeekOrder);
+    }
+
+    @Test
+    public void testItGetsDayOfWeekWhenFridayIsFirstDayOfWeek(){
+        // zero based indexes used internally so instead of returning range of 1-7 it returns 0-6
+        // Friday as first day means Wednesday is last day of week
+        // first index corresponds to Sunday and last is Saturday
+        int[] expectedDaysOfWeekOrder = {2,3,4,5,6,0,1};
+        int[] actualDaysOfWeekOrder = new int[7];
+        Calendar calendar = Calendar.getInstance();
+        underTest.setFirstDayOfWeek(Calendar.FRIDAY);
+        for (int day = 1; day <= 7 ; day++){
+            calendar.set(Calendar.DAY_OF_WEEK, day);
+            actualDaysOfWeekOrder[day - 1] = underTest.getDayOfWeek(calendar);
+        }
+        assertArrayEquals(expectedDaysOfWeekOrder, actualDaysOfWeekOrder);
+    }
+
+    @Test
+    public void testItGetsDayOfWeekWhenSaturdayIsFirstDayOfWeek(){
+        // zero based indexes used internally so instead of returning range of 1-7 it returns 0-6
+        // Saturday as first day means Friday is last day of week
+        // first index corresponds to Sunday and last is Saturday
+        int[] expectedDaysOfWeekOrder = {1,2,3,4,5,6,0};
+        int[] actualDaysOfWeekOrder = new int[7];
+        Calendar calendar = Calendar.getInstance();
+        underTest.setFirstDayOfWeek(Calendar.SATURDAY);
+        for (int day = 1; day <= 7 ; day++){
+            calendar.set(Calendar.DAY_OF_WEEK, day);
+            actualDaysOfWeekOrder[day - 1] = underTest.getDayOfWeek(calendar);
+        }
+        assertArrayEquals(expectedDaysOfWeekOrder, actualDaysOfWeekOrder);
     }
 
     private long setTimeToMidnightAndGet(Calendar cal, long epoch) {
