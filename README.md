@@ -43,7 +43,7 @@ Please see Sample app for full example.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         final CompactCalendarView compactCalendarView = (CompactCalendarView) findViewById(R.id.compactcalendar_view);
-        // Set first day of week to Monday, defaults to Monday
+        // Set first day of week to Monday, defaults to Monday so calling setFirstDayOfWeek is not necessary
         // Use constants provided by Java Calendar class
         compactCalendarView.setFirstDayOfWeek(Calendar.MONDAY);
        
