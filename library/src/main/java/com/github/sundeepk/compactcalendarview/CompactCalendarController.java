@@ -77,6 +77,7 @@ class CompactCalendarController {
     private boolean shouldDrawDaysHeader = true;
     private boolean shouldDrawIndicatorsBelowSelectedDays = false;
     private boolean displayOtherMonthDays = false;
+    private boolean shouldSelectFirstDayOfMonthOnScroll = true;
 
     private CompactCalendarViewListener listener;
     private VelocityTracker velocityTracker = null;
@@ -153,6 +154,7 @@ class CompactCalendarController {
                 currentDayIndicatorStyle = typedArray.getInt(R.styleable.CompactCalendarView_compactCalendarCurrentDayIndicatorStyle, FILL_LARGE_INDICATOR);
                 currentSelectedDayIndicatorStyle = typedArray.getInt(R.styleable.CompactCalendarView_compactCalendarCurrentSelectedDayIndicatorStyle, FILL_LARGE_INDICATOR);
                 displayOtherMonthDays = typedArray.getBoolean(R.styleable.CompactCalendarView_compactCalendarDisplayOtherMonthDays, displayOtherMonthDays);
+                shouldSelectFirstDayOfMonthOnScroll = typedArray.getBoolean(R.styleable.CompactCalendarView_compactCalendarShouldSelectFirstDayOfMonthOnScroll, shouldSelectFirstDayOfMonthOnScroll);
             } finally {
                 typedArray.recycle();
             }
@@ -508,10 +510,9 @@ class CompactCalendarController {
         currentDirection = Direction.NONE;
         setCalenderToFirstDayOfMonth(calendarWithFirstDayOfMonth, currentDate, -monthsScrolledSoFar, 0);
 
-        if (calendarWithFirstDayOfMonth.get(Calendar.MONTH) != currentCalender.get(Calendar.MONTH)) {
+        if (calendarWithFirstDayOfMonth.get(Calendar.MONTH) != currentCalender.get(Calendar.MONTH) && shouldSelectFirstDayOfMonthOnScroll) {
             setCalenderToFirstDayOfMonth(currentCalender, currentDate, -monthsScrolledSoFar, 0);
         }
-
     }
 
     private int computeVelocity() {
@@ -846,8 +847,6 @@ class CompactCalendarController {
                     // TODO calculate position of circle in a more reliable way
                     drawDayCircleIndicator(currentDayIndicatorStyle, canvas, xPosition, yPosition, currentDayBackgroundColor);
                 } else if (currentCalender.get(Calendar.DAY_OF_MONTH) == day && isSameMonthAsCurrentCalendar && !isAnimatingWithExpose) {
-                    drawDayCircleIndicator(currentSelectedDayIndicatorStyle, canvas, xPosition, yPosition, currentSelectedDayBackgroundColor);
-                } else if (day == 1 && !isSameMonthAsCurrentCalendar && !isAnimatingWithExpose ) {
                     drawDayCircleIndicator(currentSelectedDayIndicatorStyle, canvas, xPosition, yPosition, currentSelectedDayBackgroundColor);
                 }
                 if (day <= 0) {
