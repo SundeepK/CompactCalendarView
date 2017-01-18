@@ -232,6 +232,10 @@ class CompactCalendarController {
         calendarWithFirstDayOfMonth.set(Calendar.MILLISECOND, 0);
     }
 
+    void setShouldSelectFirstDayOfMonthOnScroll(boolean shouldSelectFirstDayOfMonthOnScroll){
+        this.shouldSelectFirstDayOfMonthOnScroll = shouldSelectFirstDayOfMonthOnScroll;
+    }
+
     void setDisplayOtherMonthDays(boolean displayOtherMonthDays) {
         this.displayOtherMonthDays = displayOtherMonthDays;
     }

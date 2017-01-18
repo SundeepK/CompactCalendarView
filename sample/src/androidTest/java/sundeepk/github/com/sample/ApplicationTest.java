@@ -75,6 +75,8 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
     @Before
     public void setUp() throws Exception {
         super.setUp();
+        Locale.setDefault(Locale.ENGLISH);
+        TimeZone.setDefault(TimeZone.getTimeZone("GMT"));
         injectInstrumentation(InstrumentationRegistry.getInstrumentation());
         activity = getActivity();
         compactCalendarView = (CompactCalendarView) activity.findViewById(R.id.compactcalendar_view);
@@ -95,6 +97,22 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
 
         verifyNoMoreInteractions(listener);
         capture("testItDoesNotScrollWhenScrollingIsDisabled");
+    }
+
+    @Test
+    public void testCorrectDateISReturnedWhenShouldSelectFirstDayOfMonthOnScrollIsFalse()  {
+        compactCalendarView.shouldSelectFirstDayOfMonthOnScroll(false);
+
+        //Sun, 08 Feb 2015 00:00:00 GMT
+        setDate(new Date(1423353600000L));
+
+        scrollCalendarForwardBy(4);
+        //Mon, 01 Jun 2015 00:00:00 GMT
+        assertEquals(new Date(1433116800000L), compactCalendarView.getFirstDayOfCurrentMonth());
+
+        //Wed, 01 Apr 2015 00:00:00 GMT
+        scrollCalendarBackwardsBy(2);
+        assertEquals(new Date(1427846400000L), compactCalendarView.getFirstDayOfCurrentMonth());
     }
 
     @Test
@@ -624,5 +642,17 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
                 compactCalendarView.invalidate();
             }
         });
+    }
+
+    private void scrollCalendarForwardBy(int months) {
+        for (int i =0; i < months; i++) {
+            onView(withId(R.id.compactcalendar_view)).perform(scroll(100, 100, -100, 0));
+        }
+    }
+
+    private void scrollCalendarBackwardsBy(int months) {
+        for (int i =0; i < months; i++) {
+            onView(withId(R.id.compactcalendar_view)).perform(scroll(100, 100, 200, 0));
+        }
     }
 }
