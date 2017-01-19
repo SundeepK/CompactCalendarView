@@ -113,6 +113,9 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
         //Wed, 01 Apr 2015 00:00:00 GMT
         scrollCalendarBackwardsBy(2);
         assertEquals(new Date(1427846400000L), compactCalendarView.getFirstDayOfCurrentMonth());
+
+        scrollCalendarBackwardsBy(12);
+        assertEquals(new Date(1398902400000L), compactCalendarView.getFirstDayOfCurrentMonth());
     }
 
     @Test
