@@ -100,7 +100,7 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
     }
 
     @Test
-    public void testCorrectDateISReturnedWhenShouldSelectFirstDayOfMonthOnScrollIsFalse()  {
+    public void testCorrectDateIsReturnedWhenShouldSelectFirstDayOfMonthOnScrollIsFalse()  {
         compactCalendarView.shouldSelectFirstDayOfMonthOnScroll(false);
 
         //Sun, 08 Feb 2015 00:00:00 GMT
@@ -114,8 +114,9 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
         scrollCalendarBackwardsBy(2);
         assertEquals(new Date(1427846400000L), compactCalendarView.getFirstDayOfCurrentMonth());
 
+        //Tue, 01 Apr 2014 00:00:00 GMT
         scrollCalendarBackwardsBy(12);
-        assertEquals(new Date(1398902400000L), compactCalendarView.getFirstDayOfCurrentMonth());
+        assertEquals(new Date(1396310400000L), compactCalendarView.getFirstDayOfCurrentMonth());
     }
 
     @Test
