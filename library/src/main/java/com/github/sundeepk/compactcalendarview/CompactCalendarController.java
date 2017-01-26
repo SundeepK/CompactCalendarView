@@ -426,8 +426,8 @@ class CompactCalendarController {
     }
 
     void onSingleTapUp(MotionEvent e) {
-        //Don't handle single tap the calendar is scrolling and is not stationary
-        if (Math.abs(accumulatedScrollOffset.x) != Math.abs(width * monthsScrolledSoFar)) {
+        // Don't handle single tap when calendar is scrolling and is not stationary
+        if (isScrolling()) {
             return;
         }
 
@@ -447,6 +447,14 @@ class CompactCalendarController {
             currentCalender.setTimeInMillis(calendarWithFirstDayOfMonth.getTimeInMillis());
             performOnDayClickCallback(currentCalender.getTime());
         }
+    }
+
+    // Add a little leeway buy checking if amount scrolled is almost same as expected scroll
+    // as it maybe off by a few pixels
+    private boolean isScrolling() {
+        float scrolledX = Math.abs(accumulatedScrollOffset.x);
+        int expectedScrollX = Math.abs(width * monthsScrolledSoFar);
+        return scrolledX < expectedScrollX - 5 || scrolledX > expectedScrollX + 5;
     }
 
     private void performOnDayClickCallback(Date date) {
