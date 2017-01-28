@@ -98,7 +98,7 @@ It's possible to set the locale so that weekday column names are automatically s
 
 ```gradle
 dependencies {
-    compile 'com.github.sundeepk:compact-calendar-view:1.9.7'
+    compile 'com.github.sundeepk:compact-calendar-view:1.9.8'
 }
 
 ```
