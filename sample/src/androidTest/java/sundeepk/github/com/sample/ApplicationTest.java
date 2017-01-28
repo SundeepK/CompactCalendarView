@@ -120,6 +120,14 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
     }
 
     @Test
+    public void testWhenShouldSelectFirstDayOfMonthOnScrollIsFalseItDoesNotSelectFIrstDayOfMonth()  {
+        compactCalendarView.shouldSelectFirstDayOfMonthOnScroll(false);
+        setDate(new Date(1423353600000L));
+        scrollCalendarForwardBy(1);
+        capture("testWhenShouldSelectFirstDayOfMonthOnScrollIsFalseItDoesNotSelectFIrstDayOfMonth");
+    }
+
+    @Test
     public void testOnMonthScrollListenerIsCalled()  {
         CompactCalendarViewListener listener = mock(CompactCalendarViewListener.class);
         compactCalendarView.setListener(listener);
