@@ -188,7 +188,7 @@ class CompactCalendarController {
         textHeight = textSizeRect.height() * 3;
         textWidth = textSizeRect.width() * 2;
 
-        todayCalender.setTime(currentDate);
+        todayCalender.setTime(new Date());
         setToMidnight(todayCalender);
 
         currentCalender.setTime(currentDate);
@@ -714,6 +714,7 @@ class CompactCalendarController {
         boolean shouldDrawSelectedDayCircle = currentMonth == currentCalender.get(Calendar.MONTH);
 
         int todayDayOfMonth = todayCalender.get(Calendar.DAY_OF_MONTH);
+        int currentYear = todayCalender.get(Calendar.YEAR);
         int selectedDayOfMonth = currentCalender.get(Calendar.DAY_OF_MONTH);
         float indicatorOffset = bigCircleIndicatorRadius / 2;
         if (uniqEvents != null) {
@@ -741,7 +742,8 @@ class CompactCalendarController {
 
                 List<Event> eventsList = events.getEvents();
                 int dayOfMonth = eventsCalendar.get(Calendar.DAY_OF_MONTH);
-                boolean isSameDayAsCurrentDay = shouldDrawCurrentDayCircle && (todayDayOfMonth == dayOfMonth);
+                int eventYear = eventsCalendar.get(Calendar.YEAR);
+                boolean isSameDayAsCurrentDay = shouldDrawCurrentDayCircle && (todayDayOfMonth == dayOfMonth) && (eventYear == currentYear);
                 boolean isCurrentSelectedDay = shouldDrawSelectedDayCircle && (selectedDayOfMonth == dayOfMonth);
 
                 if (shouldDrawIndicatorsBelowSelectedDays || (!shouldDrawIndicatorsBelowSelectedDays && !isSameDayAsCurrentDay && !isCurrentSelectedDay) || animationStatus == EXPOSE_CALENDAR_ANIMATION) {
