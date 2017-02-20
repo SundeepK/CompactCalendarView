@@ -100,6 +100,74 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
     }
 
     @Test
+    public void testItDoesNotSelectFirstDayWhenItsDisableOnNextMonth() throws InterruptedException {
+        CompactCalendarViewListener listener = mock(CompactCalendarViewListener.class);
+        compactCalendarView.setListener(listener);
+
+        //Sun, 08 Feb 2015 00:00:00 GMT
+        setDate(new Date(1423353600000L));
+
+        shouldSelectFirstDayOfMonthOnScroll(false);
+        onView(withId(R.id.next_button)).perform(clickXY(0, 0));
+
+        verify(listener).onMonthScroll(new Date(1425168000000L));
+
+        syncToolbarDate();
+        capture("testItDoesNotSelectFirstDayWhenItsDisableOnNextMonth");
+    }
+
+    @Test
+    public void testItDoesNotSelectFirstDayWhenItsDisableOnPreviousMonth(){
+        CompactCalendarViewListener listener = mock(CompactCalendarViewListener.class);
+        compactCalendarView.setListener(listener);
+
+        //Sun, 08 Feb 2015 00:00:00 GMT
+        setDate(new Date(1423353600000L));
+
+        shouldSelectFirstDayOfMonthOnScroll(false);
+        onView(withId(R.id.prev_button)).perform(clickXY(0, 0));
+
+        verify(listener).onMonthScroll(new Date(1420070400000L));
+
+        syncToolbarDate();
+        capture("testItDoesNotSelectFirstDayWhenItsDisableOnPreviousMonth");
+    }
+
+    @Test
+    public void testItDoesSelectFirstDayWhenItsDisableOnNextMonth(){
+        CompactCalendarViewListener listener = mock(CompactCalendarViewListener.class);
+        compactCalendarView.setListener(listener);
+
+        //Sun, 08 Feb 2015 00:00:00 GMT
+        setDate(new Date(1423353600000L));
+
+        shouldSelectFirstDayOfMonthOnScroll(true);
+        onView(withId(R.id.next_button)).perform(clickXY(0, 0));
+
+        verify(listener).onMonthScroll(new Date(1425168000000L));
+
+        syncToolbarDate();
+        capture("testItDoesSelectFirstDayWhenItsDisableOnNextMonth");
+    }
+
+    @Test
+    public void testItDoesSelectFirstDayWhenItsDisableOnPreviousMonth(){
+        CompactCalendarViewListener listener = mock(CompactCalendarViewListener.class);
+        compactCalendarView.setListener(listener);
+
+        //Sun, 08 Feb 2015 00:00:00 GMT
+        setDate(new Date(1423353600000L));
+
+        shouldSelectFirstDayOfMonthOnScroll(true);
+        onView(withId(R.id.prev_button)).perform(clickXY(0, 0));
+
+        verify(listener).onMonthScroll(new Date(1420070400000L));
+
+        syncToolbarDate();
+        capture("testItDoesSelectFirstDayWhenItsDisableOnPreviousMonth");
+    }
+
+    @Test
     public void testCorrectDateIsReturnedWhenShouldSelectFirstDayOfMonthOnScrollIsFalse()  {
         compactCalendarView.shouldSelectFirstDayOfMonthOnScroll(false);
 
@@ -523,6 +591,17 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
             @Override
             public void run() {
                 compactCalendarView.setCurrentDate(date);
+            }
+        });
+        syncToolbarDate();
+    }
+
+    private void shouldSelectFirstDayOfMonthOnScroll(final boolean shouldSelectFirstDay) {
+        InstrumentationRegistry.getInstrumentation().runOnMainSync(new Runnable() {
+            @Override
+            public void run() {
+                compactCalendarView.shouldSelectFirstDayOfMonthOnScroll(shouldSelectFirstDay);
+
             }
         });
         syncToolbarDate();
