@@ -731,7 +731,9 @@ class CompactCalendarController {
                 long timeMillis = events.getTimeInMillis();
                 eventsCalendar.setTimeInMillis(timeMillis);
 
-                int dayOfWeek = getDayOfWeek(eventsCalendar);
+                int dayOfWeek = eventsCalendar.get(Calendar.DAY_OF_WEEK) - firstDayOfWeekToDraw;
+                dayOfWeek = 7 - eventsCalendar.get(Calendar.DAY_OF_WEEK);
+//                dayOfWeek = dayOfWeek > 7 ? 7 - dayOfWeek: dayOfWeek;
 
                 int weekNumberForMonth = eventsCalendar.get(Calendar.WEEK_OF_MONTH);
                 float xPosition = widthPerDay * dayOfWeek + paddingWidth + paddingLeft + accumulatedScrollOffset.x + offset - paddingRight;
@@ -837,8 +839,9 @@ class CompactCalendarController {
         tempPreviousMonthCalendar.add(Calendar.MONTH, -1);
         int maximumPreviousMonthDay = tempPreviousMonthCalendar.getActualMaximum(Calendar.DAY_OF_MONTH);
 
-        for (int dayColumn = 0, dayRow = 0; dayColumn <= 6; dayRow++) {
+        for (int dayColumn = 0, rtl = 6, dayRow = 0; dayColumn <= 6; dayRow++) {
             if (dayRow == 7) {
+                rtl--;
                 dayRow = 0;
                 if (dayColumn <= 6) {
                     dayColumn++;
@@ -860,11 +863,11 @@ class CompactCalendarController {
                     dayPaint.setTypeface(Typeface.DEFAULT_BOLD);
                     dayPaint.setStyle(Paint.Style.FILL);
                     dayPaint.setColor(calenderTextColor);
-                    canvas.drawText(dayColumnNames[dayColumn], xPosition, paddingHeight, dayPaint);
+                    canvas.drawText(dayColumnNames[rtl], xPosition, paddingHeight, dayPaint);
                     dayPaint.setTypeface(Typeface.DEFAULT);
                 }
             } else {
-                int day = ((dayRow - 1) * 7 + dayColumn + 1) - firstDayOfMonth;
+                int day = ((dayRow - 1) * 7 + rtl + 1) - firstDayOfMonth;
                 if (currentCalender.get(Calendar.DAY_OF_MONTH) == day && isSameMonthAsCurrentCalendar && !isAnimatingWithExpose) {
                     drawDayCircleIndicator(currentSelectedDayIndicatorStyle, canvas, xPosition, yPosition, currentSelectedDayBackgroundColor);
                 } else if (isSameYearAsToday && isSameMonthAsToday && todayDayOfMonth == day && !isAnimatingWithExpose) {
@@ -888,7 +891,7 @@ class CompactCalendarController {
                 } else {
                     dayPaint.setStyle(Paint.Style.FILL);
                     dayPaint.setColor(calenderTextColor);
-                    canvas.drawText(String.valueOf(day), xPosition, yPosition, dayPaint);
+                    canvas.drawText(String.valueOf(day ), xPosition, yPosition, dayPaint);
                 }
             }
         }
