@@ -447,11 +447,11 @@ class CompactCalendarController {
 
         int firstDayOfMonth = getDayOfWeek(calendarWithFirstDayOfMonth);
 
-        int dayOfMonth = ((dayRow - 1) * 7 + dayColumn) - firstDayOfMonth;
-
+        int dayOfMonth = ((dayRow - 1) * 7) - firstDayOfMonth;
+        dayOfMonth +=  6 - dayColumn;
         if (dayOfMonth < calendarWithFirstDayOfMonth.getActualMaximum(Calendar.DAY_OF_MONTH)
                 && dayOfMonth >= 0) {
-            calendarWithFirstDayOfMonth.add(Calendar.DATE, dayOfMonth);
+            calendarWithFirstDayOfMonth.add(Calendar.DATE, dayOfMonth  );
 
             currentCalender.setTimeInMillis(calendarWithFirstDayOfMonth.getTimeInMillis());
             performOnDayClickCallback(currentCalender.getTime());
