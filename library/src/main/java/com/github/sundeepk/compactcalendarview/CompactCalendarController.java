@@ -10,6 +10,7 @@ import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
@@ -732,8 +733,8 @@ class CompactCalendarController {
                 eventsCalendar.setTimeInMillis(timeMillis);
 
                 int dayOfWeek = eventsCalendar.get(Calendar.DAY_OF_WEEK) - firstDayOfWeekToDraw;
-                dayOfWeek = 7 - eventsCalendar.get(Calendar.DAY_OF_WEEK);
-//                dayOfWeek = dayOfWeek > 7 ? 7 - dayOfWeek: dayOfWeek;
+                dayOfWeek = dayOfWeek < 0 ? 7 + dayOfWeek: dayOfWeek;
+                dayOfWeek =  6 - dayOfWeek ;
 
                 int weekNumberForMonth = eventsCalendar.get(Calendar.WEEK_OF_MONTH);
                 float xPosition = widthPerDay * dayOfWeek + paddingWidth + paddingLeft + accumulatedScrollOffset.x + offset - paddingRight;
