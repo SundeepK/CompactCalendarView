@@ -188,6 +188,19 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
     }
 
     @Test
+    public void testItDoesNotDrawSelectedDayOnDifferentYearsWhenShouldSelectFirstDayOfMonthOnScrollIsFalse()  {
+        compactCalendarView.shouldSelectFirstDayOfMonthOnScroll(false);
+
+        //Sun, 08 Feb 2015 00:00:00 GMT
+        setDate(new Date(1423353600000L));
+
+        //01 Feb 2016 00:00:00 GMT
+        scrollCalendarForwardBy(12);
+        assertEquals(new Date(1454284800000L), compactCalendarView.getFirstDayOfCurrentMonth());
+        capture("testItDoesNotDrawSelectedDayOnDifferentYearsWhenShouldSelectFirstDayOfMonthOnScrollIsFalse");
+    }
+
+    @Test
     public void testWhenShouldSelectFirstDayOfMonthOnScrollIsFalseItDoesNotSelectFIrstDayOfMonth()  {
         compactCalendarView.shouldSelectFirstDayOfMonthOnScroll(false);
         setDate(new Date(1423353600000L));

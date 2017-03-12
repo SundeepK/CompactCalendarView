@@ -78,7 +78,6 @@ class CompactCalendarController {
     private boolean shouldDrawIndicatorsBelowSelectedDays = false;
     private boolean displayOtherMonthDays = false;
     private boolean shouldSelectFirstDayOfMonthOnScroll = true;
-    private boolean shouldSelectSameDayOfEveryYear = true;
 
     private CompactCalendarViewListener listener;
     private VelocityTracker velocityTracker = null;
@@ -156,7 +155,6 @@ class CompactCalendarController {
                 currentSelectedDayIndicatorStyle = typedArray.getInt(R.styleable.CompactCalendarView_compactCalendarCurrentSelectedDayIndicatorStyle, FILL_LARGE_INDICATOR);
                 displayOtherMonthDays = typedArray.getBoolean(R.styleable.CompactCalendarView_compactCalendarDisplayOtherMonthDays, displayOtherMonthDays);
                 shouldSelectFirstDayOfMonthOnScroll = typedArray.getBoolean(R.styleable.CompactCalendarView_compactCalendarShouldSelectFirstDayOfMonthOnScroll, shouldSelectFirstDayOfMonthOnScroll);
-                shouldSelectSameDayOfEveryYear = typedArray.getBoolean(R.styleable.CompactCalendarView_compactCalendarShouldSelectSameDayOfEveryYear, shouldSelectSameDayOfEveryYear);
             } finally {
                 typedArray.recycle();
             }
@@ -236,10 +234,6 @@ class CompactCalendarController {
 
     void setShouldSelectFirstDayOfMonthOnScroll(boolean shouldSelectFirstDayOfMonthOnScroll){
         this.shouldSelectFirstDayOfMonthOnScroll = shouldSelectFirstDayOfMonthOnScroll;
-    }
-
-    void setShouldSelectSameDayOfEveryYear(boolean shouldSelectSameDayOfEveryYear){
-        this.shouldSelectSameDayOfEveryYear = shouldSelectSameDayOfEveryYear;
     }
 
     void setDisplayOtherMonthDays(boolean displayOtherMonthDays) {
@@ -833,10 +827,8 @@ class CompactCalendarController {
 
         boolean isSameMonthAsToday = monthToDrawCalender.get(Calendar.MONTH) == todayCalender.get(Calendar.MONTH);
         boolean isSameYearAsToday = monthToDrawCalender.get(Calendar.YEAR) == todayCalender.get(Calendar.YEAR);
-        boolean isSameMonthAsCurrentCalendar = shouldSelectSameDayOfEveryYear ?
-                monthToDrawCalender.get(Calendar.MONTH) == currentCalender.get(Calendar.MONTH) :
-                monthToDrawCalender.get(Calendar.MONTH) == currentCalender.get(Calendar.MONTH) &&
-                monthToDrawCalender.get(Calendar.YEAR) == currentCalender.get(Calendar.YEAR);
+        boolean isSameMonthAsCurrentCalendar = monthToDrawCalender.get(Calendar.MONTH) == currentCalender.get(Calendar.MONTH) &&
+                                               monthToDrawCalender.get(Calendar.YEAR) == currentCalender.get(Calendar.YEAR);
         int todayDayOfMonth = todayCalender.get(Calendar.DAY_OF_MONTH);
         boolean isAnimatingWithExpose = animationStatus == EXPOSE_CALENDAR_ANIMATION;
 
