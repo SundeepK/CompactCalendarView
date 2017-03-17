@@ -5,9 +5,13 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.support.annotation.Nullable;
 import android.support.v4.view.GestureDetectorCompat;
+import android.support.v4.view.ViewCompat;
+import android.support.v4.widget.ExploreByTouchHelper;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
@@ -31,6 +35,7 @@ public class CompactCalendarView extends View {
     private CompactCalendarController compactCalendarController;
     private GestureDetectorCompat gestureDetector;
     private boolean shouldScroll = true;
+    private ExploreByTouchHelper touchHelper;
 
     public interface CompactCalendarViewListener {
         public void onDayClick(Date dateClicked);
@@ -97,6 +102,24 @@ public class CompactCalendarView extends View {
                 Locale.getDefault(), TimeZone.getDefault());
         gestureDetector = new GestureDetectorCompat(getContext(), gestureListener);
         animationHandler = new AnimationHandler(compactCalendarController, this);
+
+        touchHelper = compactCalendarController.getAccessibilityDelegate(this);
+        ViewCompat.setAccessibilityDelegate(this, touchHelper);
+    }
+
+    @Override
+    protected boolean dispatchHoverEvent(MotionEvent event) {
+        return touchHelper.dispatchHoverEvent(event) || super.dispatchHoverEvent(event);
+    }
+
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        return touchHelper.dispatchKeyEvent(event) || super.dispatchKeyEvent(event);
+    }
+    @Override
+    protected void onFocusChanged(boolean gainFocus, int direction, @Nullable Rect previouslyFocusedRect) {
+        super.onFocusChanged(gainFocus, direction, previouslyFocusedRect);
+        touchHelper.onFocusChanged(gainFocus, direction, previouslyFocusedRect);
     }
 
     public void setAnimationListener(CompactCalendarAnimationListener compactCalendarAnimationListener){
