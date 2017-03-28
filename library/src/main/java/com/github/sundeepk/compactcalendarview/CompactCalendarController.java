@@ -830,7 +830,8 @@ class CompactCalendarController {
 
         boolean isSameMonthAsToday = monthToDrawCalender.get(Calendar.MONTH) == todayCalender.get(Calendar.MONTH);
         boolean isSameYearAsToday = monthToDrawCalender.get(Calendar.YEAR) == todayCalender.get(Calendar.YEAR);
-        boolean isSameMonthAsCurrentCalendar = monthToDrawCalender.get(Calendar.MONTH) == currentCalender.get(Calendar.MONTH);
+        boolean isSameMonthAsCurrentCalendar = monthToDrawCalender.get(Calendar.MONTH) == currentCalender.get(Calendar.MONTH) &&
+                                               monthToDrawCalender.get(Calendar.YEAR) == currentCalender.get(Calendar.YEAR);
         int todayDayOfMonth = todayCalender.get(Calendar.DAY_OF_MONTH);
         boolean isAnimatingWithExpose = animationStatus == EXPOSE_CALENDAR_ANIMATION;
 
