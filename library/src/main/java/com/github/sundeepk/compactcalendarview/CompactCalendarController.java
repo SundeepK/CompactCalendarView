@@ -327,23 +327,31 @@ class CompactCalendarController {
     }
 
     void showNextMonth() {
-        monthsScrolledSoFar = monthsScrolledSoFar - 1;
-        accumulatedScrollOffset.x = monthsScrolledSoFar * width;
-        if(shouldSelectFirstDayOfMonthOnScroll){
-            setCalenderToFirstDayOfMonth(calendarWithFirstDayOfMonth, currentCalender.getTime(), 0, 1);
-            setCurrentDate(calendarWithFirstDayOfMonth.getTime());
+        if (isRtl) {
+            showPreviousMonth();
+        } else {
+            monthsScrolledSoFar = monthsScrolledSoFar - 1;
+            accumulatedScrollOffset.x = monthsScrolledSoFar * width;
+            if(shouldSelectFirstDayOfMonthOnScroll){
+                setCalenderToFirstDayOfMonth(calendarWithFirstDayOfMonth, currentCalender.getTime(), 0, 1);
+                setCurrentDate(calendarWithFirstDayOfMonth.getTime());
+            }
+            performMonthScrollCallback();
         }
-        performMonthScrollCallback();
     }
 
     void showPreviousMonth() {
-        monthsScrolledSoFar = monthsScrolledSoFar + 1;
-        accumulatedScrollOffset.x = monthsScrolledSoFar * width;
-        if(shouldSelectFirstDayOfMonthOnScroll){
-            setCalenderToFirstDayOfMonth(calendarWithFirstDayOfMonth, currentCalender.getTime(), 0, -1);
-            setCurrentDate(calendarWithFirstDayOfMonth.getTime());
+        if (isRtl) {
+            showNextMonth();
+        } else {
+            monthsScrolledSoFar = monthsScrolledSoFar + 1;
+            accumulatedScrollOffset.x = monthsScrolledSoFar * width;
+            if(shouldSelectFirstDayOfMonthOnScroll){
+                setCalenderToFirstDayOfMonth(calendarWithFirstDayOfMonth, currentCalender.getTime(), 0, -1);
+                setCurrentDate(calendarWithFirstDayOfMonth.getTime());
+            }
+            performMonthScrollCallback();
         }
-        performMonthScrollCallback();
     }
 
     void setLocale(TimeZone timeZone, Locale locale) {
@@ -537,7 +545,7 @@ class CompactCalendarController {
         handleSmoothScrolling(velocityX);
 
         currentDirection = Direction.NONE;
-        setCalenderToFirstDayOfMonth(calendarWithFirstDayOfMonth, currentDate, -monthsScrolledSoFar, 0);
+        setCalenderToFirstDayOfMonth(calendarWithFirstDayOfMonth, currentDate,  isRtl? monthsScrolledSoFar : -monthsScrolledSoFar, 0);
 
         if (calendarWithFirstDayOfMonth.get(Calendar.MONTH) != currentCalender.get(Calendar.MONTH) && shouldSelectFirstDayOfMonthOnScroll) {
             setCalenderToFirstDayOfMonth(currentCalender, currentDate, -monthsScrolledSoFar, 0);
@@ -589,7 +597,7 @@ class CompactCalendarController {
     }
 
     private void performScroll() {
-        int targetScroll = monthsScrolledSoFar * width;
+        int targetScroll = (monthsScrolledSoFar ) * width;
         float remainingScrollAfterFingerLifted = targetScroll - accumulatedScrollOffset.x;
         scroller.startScroll((int) accumulatedScrollOffset.x, 0, (int) (remainingScrollAfterFingerLifted), 0,
                 (int) (Math.abs((int) (remainingScrollAfterFingerLifted)) / (float) width * ANIMATION_SCREEN_SET_DURATION_MILLIS));
@@ -608,7 +616,7 @@ class CompactCalendarController {
     Date getFirstDayOfCurrentMonth() {
         Calendar calendar = Calendar.getInstance(timeZone, locale);
         calendar.setTime(currentDate);
-        calendar.add(Calendar.MONTH, -monthsScrolledSoFar);
+        calendar.add(Calendar.MONTH, isRtl? monthsScrolledSoFar : -monthsScrolledSoFar);
         calendar.set(Calendar.DAY_OF_MONTH, 1);
         setToMidnight(calendar);
         return calendar.getTime();
@@ -687,25 +695,29 @@ class CompactCalendarController {
     }
 
     private void drawScrollableCalender(Canvas canvas) {
-        drawPreviousMonth(canvas);
-
-        drawCurrentMonth(canvas);
-
-        drawNextMonth(canvas);
+        if (isRtl) {
+            drawNextMonth(canvas, -1);
+            drawCurrentMonth(canvas);
+            drawPreviousMonth(canvas,1);
+        } else {
+            drawPreviousMonth(canvas, -1);
+            drawCurrentMonth(canvas);
+            drawNextMonth(canvas, 1);
+        }
     }
 
-    private void drawNextMonth(Canvas canvas) {
-        setCalenderToFirstDayOfMonth(calendarWithFirstDayOfMonth, currentDate, -monthsScrolledSoFar, 1);
+    private void drawNextMonth(Canvas canvas, int offset) {
+        setCalenderToFirstDayOfMonth(calendarWithFirstDayOfMonth, currentDate, -monthsScrolledSoFar, offset);
         drawMonth(canvas, calendarWithFirstDayOfMonth, (width * (-monthsScrolledSoFar + 1)));
     }
 
     private void drawCurrentMonth(Canvas canvas) {
-        setCalenderToFirstDayOfMonth(calendarWithFirstDayOfMonth, currentDate, -monthsScrolledSoFar, 0);
+        setCalenderToFirstDayOfMonth(calendarWithFirstDayOfMonth, currentDate,  isRtl? monthsScrolledSoFar : -monthsScrolledSoFar, 0);
         drawMonth(canvas, calendarWithFirstDayOfMonth, width * -monthsScrolledSoFar);
     }
 
-    private void drawPreviousMonth(Canvas canvas) {
-        setCalenderToFirstDayOfMonth(calendarWithFirstDayOfMonth, currentDate, -monthsScrolledSoFar, -1);
+    private void drawPreviousMonth(Canvas canvas, int offset) {
+        setCalenderToFirstDayOfMonth(calendarWithFirstDayOfMonth, currentDate, -monthsScrolledSoFar, offset);
         drawMonth(canvas, calendarWithFirstDayOfMonth, (width * (-monthsScrolledSoFar - 1)));
     }
 
