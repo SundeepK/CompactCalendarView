@@ -297,6 +297,10 @@ public class CompactCalendarView extends View {
         invalidate();
     }
 
+    public void setIsRtl(boolean isRtl) {
+        compactCalendarController.setIsRtl(isRtl);
+    }
+
     public void shouldSelectFirstDayOfMonthOnScroll(boolean shouldSelectFirstDayOfMonthOnScroll){
         compactCalendarController.setShouldSelectFirstDayOfMonthOnScroll(shouldSelectFirstDayOfMonthOnScroll);
     }

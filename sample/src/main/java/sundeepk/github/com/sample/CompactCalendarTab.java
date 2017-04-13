@@ -65,6 +65,7 @@ public class CompactCalendarTab extends Fragment {
         // compactCalendarView.setCurrentSelectedDayBackgroundColor(getResources().getColor(R.color.dark_red));
         compactCalendarView.setUseThreeLetterAbbreviation(false);
         compactCalendarView.setFirstDayOfWeek(Calendar.MONDAY);
+        compactCalendarView.setIsRtl(false);
 
         loadEvents();
         loadEventsForYear(2017);

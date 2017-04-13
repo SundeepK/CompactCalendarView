@@ -10,7 +10,6 @@ import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
@@ -79,6 +78,7 @@ class CompactCalendarController {
     private boolean shouldDrawIndicatorsBelowSelectedDays = false;
     private boolean displayOtherMonthDays = false;
     private boolean shouldSelectFirstDayOfMonthOnScroll = true;
+    private boolean isRtl = false;
 
     private CompactCalendarViewListener listener;
     private VelocityTracker velocityTracker = null;
@@ -233,6 +233,10 @@ class CompactCalendarController {
         calendarWithFirstDayOfMonth.set(Calendar.MILLISECOND, 0);
     }
 
+    void setIsRtl(boolean isRtl){
+        this.isRtl = isRtl;
+    }
+
     void setShouldSelectFirstDayOfMonthOnScroll(boolean shouldSelectFirstDayOfMonthOnScroll){
         this.shouldSelectFirstDayOfMonthOnScroll = shouldSelectFirstDayOfMonthOnScroll;
     }
@@ -323,23 +327,31 @@ class CompactCalendarController {
     }
 
     void showNextMonth() {
-        monthsScrolledSoFar = monthsScrolledSoFar - 1;
-        accumulatedScrollOffset.x = monthsScrolledSoFar * width;
-        if(shouldSelectFirstDayOfMonthOnScroll){
-            setCalenderToFirstDayOfMonth(calendarWithFirstDayOfMonth, currentCalender.getTime(), 0, 1);
-            setCurrentDate(calendarWithFirstDayOfMonth.getTime());
+        if (isRtl) {
+            showPreviousMonth();
+        } else {
+            monthsScrolledSoFar = monthsScrolledSoFar - 1;
+            accumulatedScrollOffset.x = monthsScrolledSoFar * width;
+            if(shouldSelectFirstDayOfMonthOnScroll){
+                setCalenderToFirstDayOfMonth(calendarWithFirstDayOfMonth, currentCalender.getTime(), 0, 1);
+                setCurrentDate(calendarWithFirstDayOfMonth.getTime());
+            }
+            performMonthScrollCallback();
         }
-        performMonthScrollCallback();
     }
 
     void showPreviousMonth() {
-        monthsScrolledSoFar = monthsScrolledSoFar + 1;
-        accumulatedScrollOffset.x = monthsScrolledSoFar * width;
-        if(shouldSelectFirstDayOfMonthOnScroll){
-            setCalenderToFirstDayOfMonth(calendarWithFirstDayOfMonth, currentCalender.getTime(), 0, -1);
-            setCurrentDate(calendarWithFirstDayOfMonth.getTime());
+        if (isRtl) {
+            showNextMonth();
+        } else {
+            monthsScrolledSoFar = monthsScrolledSoFar + 1;
+            accumulatedScrollOffset.x = monthsScrolledSoFar * width;
+            if(shouldSelectFirstDayOfMonthOnScroll){
+                setCalenderToFirstDayOfMonth(calendarWithFirstDayOfMonth, currentCalender.getTime(), 0, -1);
+                setCurrentDate(calendarWithFirstDayOfMonth.getTime());
+            }
+            performMonthScrollCallback();
         }
-        performMonthScrollCallback();
     }
 
     void setLocale(TimeZone timeZone, Locale locale) {
@@ -448,10 +460,14 @@ class CompactCalendarController {
         int firstDayOfMonth = getDayOfWeek(calendarWithFirstDayOfMonth);
 
         int dayOfMonth = ((dayRow - 1) * 7) - firstDayOfMonth;
-        dayOfMonth +=  6 - dayColumn;
+        if (isRtl) {
+            dayOfMonth +=  6 - dayColumn;
+        } else {
+            dayOfMonth += dayColumn;
+        }
         if (dayOfMonth < calendarWithFirstDayOfMonth.getActualMaximum(Calendar.DAY_OF_MONTH)
                 && dayOfMonth >= 0) {
-            calendarWithFirstDayOfMonth.add(Calendar.DATE, dayOfMonth  );
+            calendarWithFirstDayOfMonth.add(Calendar.DATE, dayOfMonth);
 
             currentCalender.setTimeInMillis(calendarWithFirstDayOfMonth.getTimeInMillis());
             performOnDayClickCallback(currentCalender.getTime());
@@ -529,7 +545,7 @@ class CompactCalendarController {
         handleSmoothScrolling(velocityX);
 
         currentDirection = Direction.NONE;
-        setCalenderToFirstDayOfMonth(calendarWithFirstDayOfMonth, currentDate, -monthsScrolledSoFar, 0);
+        setCalenderToFirstDayOfMonth(calendarWithFirstDayOfMonth, currentDate,  isRtl? monthsScrolledSoFar : -monthsScrolledSoFar, 0);
 
         if (calendarWithFirstDayOfMonth.get(Calendar.MONTH) != currentCalender.get(Calendar.MONTH) && shouldSelectFirstDayOfMonthOnScroll) {
             setCalenderToFirstDayOfMonth(currentCalender, currentDate, -monthsScrolledSoFar, 0);
@@ -581,7 +597,7 @@ class CompactCalendarController {
     }
 
     private void performScroll() {
-        int targetScroll = monthsScrolledSoFar * width;
+        int targetScroll = (monthsScrolledSoFar ) * width;
         float remainingScrollAfterFingerLifted = targetScroll - accumulatedScrollOffset.x;
         scroller.startScroll((int) accumulatedScrollOffset.x, 0, (int) (remainingScrollAfterFingerLifted), 0,
                 (int) (Math.abs((int) (remainingScrollAfterFingerLifted)) / (float) width * ANIMATION_SCREEN_SET_DURATION_MILLIS));
@@ -600,7 +616,7 @@ class CompactCalendarController {
     Date getFirstDayOfCurrentMonth() {
         Calendar calendar = Calendar.getInstance(timeZone, locale);
         calendar.setTime(currentDate);
-        calendar.add(Calendar.MONTH, -monthsScrolledSoFar);
+        calendar.add(Calendar.MONTH, isRtl? monthsScrolledSoFar : -monthsScrolledSoFar);
         calendar.set(Calendar.DAY_OF_MONTH, 1);
         setToMidnight(calendar);
         return calendar.getTime();
@@ -679,25 +695,29 @@ class CompactCalendarController {
     }
 
     private void drawScrollableCalender(Canvas canvas) {
-        drawPreviousMonth(canvas);
-
-        drawCurrentMonth(canvas);
-
-        drawNextMonth(canvas);
+        if (isRtl) {
+            drawNextMonth(canvas, -1);
+            drawCurrentMonth(canvas);
+            drawPreviousMonth(canvas,1);
+        } else {
+            drawPreviousMonth(canvas, -1);
+            drawCurrentMonth(canvas);
+            drawNextMonth(canvas, 1);
+        }
     }
 
-    private void drawNextMonth(Canvas canvas) {
-        setCalenderToFirstDayOfMonth(calendarWithFirstDayOfMonth, currentDate, -monthsScrolledSoFar, 1);
+    private void drawNextMonth(Canvas canvas, int offset) {
+        setCalenderToFirstDayOfMonth(calendarWithFirstDayOfMonth, currentDate, -monthsScrolledSoFar, offset);
         drawMonth(canvas, calendarWithFirstDayOfMonth, (width * (-monthsScrolledSoFar + 1)));
     }
 
     private void drawCurrentMonth(Canvas canvas) {
-        setCalenderToFirstDayOfMonth(calendarWithFirstDayOfMonth, currentDate, -monthsScrolledSoFar, 0);
+        setCalenderToFirstDayOfMonth(calendarWithFirstDayOfMonth, currentDate,  isRtl? monthsScrolledSoFar : -monthsScrolledSoFar, 0);
         drawMonth(canvas, calendarWithFirstDayOfMonth, width * -monthsScrolledSoFar);
     }
 
-    private void drawPreviousMonth(Canvas canvas) {
-        setCalenderToFirstDayOfMonth(calendarWithFirstDayOfMonth, currentDate, -monthsScrolledSoFar, -1);
+    private void drawPreviousMonth(Canvas canvas, int offset) {
+        setCalenderToFirstDayOfMonth(calendarWithFirstDayOfMonth, currentDate, -monthsScrolledSoFar, offset);
         drawMonth(canvas, calendarWithFirstDayOfMonth, (width * (-monthsScrolledSoFar - 1)));
     }
 
@@ -732,9 +752,10 @@ class CompactCalendarController {
                 long timeMillis = events.getTimeInMillis();
                 eventsCalendar.setTimeInMillis(timeMillis);
 
-                int dayOfWeek = eventsCalendar.get(Calendar.DAY_OF_WEEK) - firstDayOfWeekToDraw;
-                dayOfWeek = dayOfWeek < 0 ? 7 + dayOfWeek: dayOfWeek;
-                dayOfWeek =  6 - dayOfWeek ;
+                int dayOfWeek = getDayOfWeek(eventsCalendar);
+                if (isRtl) {
+                    dayOfWeek =  6 - dayOfWeek;
+                }
 
                 int weekNumberForMonth = eventsCalendar.get(Calendar.WEEK_OF_MONTH);
                 float xPosition = widthPerDay * dayOfWeek + paddingWidth + paddingLeft + accumulatedScrollOffset.x + offset - paddingRight;
@@ -841,9 +862,13 @@ class CompactCalendarController {
         tempPreviousMonthCalendar.add(Calendar.MONTH, -1);
         int maximumPreviousMonthDay = tempPreviousMonthCalendar.getActualMaximum(Calendar.DAY_OF_MONTH);
 
-        for (int dayColumn = 0, rtl = 6, dayRow = 0; dayColumn <= 6; dayRow++) {
+        for (int dayColumn = 0, colDirection = isRtl? 6 : 0, dayRow = 0; dayColumn <= 6; dayRow++) {
             if (dayRow == 7) {
-                rtl--;
+                if (isRtl) {
+                    colDirection--;
+                } else {
+                    colDirection++;
+                }
                 dayRow = 0;
                 if (dayColumn <= 6) {
                     dayColumn++;
@@ -865,11 +890,11 @@ class CompactCalendarController {
                     dayPaint.setTypeface(Typeface.DEFAULT_BOLD);
                     dayPaint.setStyle(Paint.Style.FILL);
                     dayPaint.setColor(calenderTextColor);
-                    canvas.drawText(dayColumnNames[rtl], xPosition, paddingHeight, dayPaint);
+                    canvas.drawText(dayColumnNames[colDirection], xPosition, paddingHeight, dayPaint);
                     dayPaint.setTypeface(Typeface.DEFAULT);
                 }
             } else {
-                int day = ((dayRow - 1) * 7 + rtl + 1) - firstDayOfMonth;
+                int day = ((dayRow - 1) * 7 + colDirection + 1) - firstDayOfMonth;
                 if (currentCalender.get(Calendar.DAY_OF_MONTH) == day && isSameMonthAsCurrentCalendar && !isAnimatingWithExpose) {
                     drawDayCircleIndicator(currentSelectedDayIndicatorStyle, canvas, xPosition, yPosition, currentSelectedDayBackgroundColor);
                 } else if (isSameYearAsToday && isSameMonthAsToday && todayDayOfMonth == day && !isAnimatingWithExpose) {
@@ -893,7 +918,7 @@ class CompactCalendarController {
                 } else {
                     dayPaint.setStyle(Paint.Style.FILL);
                     dayPaint.setColor(calenderTextColor);
-                    canvas.drawText(String.valueOf(day ), xPosition, yPosition, dayPaint);
+                    canvas.drawText(String.valueOf(day), xPosition, yPosition, dayPaint);
                 }
             }
         }
