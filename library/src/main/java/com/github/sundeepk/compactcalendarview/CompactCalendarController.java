@@ -455,7 +455,7 @@ class CompactCalendarController {
         int dayColumn = Math.round((paddingLeft + e.getX() - paddingWidth - paddingRight) / widthPerDay);
         int dayRow = Math.round((e.getY() - paddingHeight) / heightPerDay);
 
-        setCalenderToFirstDayOfMonth(calendarWithFirstDayOfMonth, currentDate, -monthsScrolledSoFar, 0);
+        setCalenderToFirstDayOfMonth(calendarWithFirstDayOfMonth, currentDate, isRtl? monthsScrolledSoFar : -monthsScrolledSoFar, 0);
 
         int firstDayOfMonth = getDayOfWeek(calendarWithFirstDayOfMonth);
 
@@ -548,7 +548,7 @@ class CompactCalendarController {
         setCalenderToFirstDayOfMonth(calendarWithFirstDayOfMonth, currentDate,  isRtl? monthsScrolledSoFar : -monthsScrolledSoFar, 0);
 
         if (calendarWithFirstDayOfMonth.get(Calendar.MONTH) != currentCalender.get(Calendar.MONTH) && shouldSelectFirstDayOfMonthOnScroll) {
-            setCalenderToFirstDayOfMonth(currentCalender, currentDate, -monthsScrolledSoFar, 0);
+            setCalenderToFirstDayOfMonth(currentCalender, currentDate, isRtl? monthsScrolledSoFar : -monthsScrolledSoFar, 0);
         }
     }
 
