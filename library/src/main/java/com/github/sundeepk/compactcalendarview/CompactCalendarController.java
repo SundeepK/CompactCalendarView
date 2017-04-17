@@ -328,30 +328,38 @@ class CompactCalendarController {
 
     void showNextMonth() {
         if (isRtl) {
-            showPreviousMonth();
+            scrollPrev();
         } else {
-            monthsScrolledSoFar = monthsScrolledSoFar - 1;
-            accumulatedScrollOffset.x = monthsScrolledSoFar * width;
-            if(shouldSelectFirstDayOfMonthOnScroll){
-                setCalenderToFirstDayOfMonth(calendarWithFirstDayOfMonth, currentCalender.getTime(), 0, 1);
-                setCurrentDate(calendarWithFirstDayOfMonth.getTime());
-            }
-            performMonthScrollCallback();
+            scrollNext();
         }
     }
 
     void showPreviousMonth() {
         if (isRtl) {
-            showNextMonth();
+            scrollNext();
         } else {
-            monthsScrolledSoFar = monthsScrolledSoFar + 1;
-            accumulatedScrollOffset.x = monthsScrolledSoFar * width;
-            if(shouldSelectFirstDayOfMonthOnScroll){
-                setCalenderToFirstDayOfMonth(calendarWithFirstDayOfMonth, currentCalender.getTime(), 0, -1);
-                setCurrentDate(calendarWithFirstDayOfMonth.getTime());
-            }
-            performMonthScrollCallback();
+            scrollPrev();
         }
+    }
+
+    private void scrollNext() {
+        monthsScrolledSoFar = monthsScrolledSoFar - 1;
+        accumulatedScrollOffset.x = monthsScrolledSoFar * width;
+        if(shouldSelectFirstDayOfMonthOnScroll){
+            setCalenderToFirstDayOfMonth(calendarWithFirstDayOfMonth, currentCalender.getTime(), 0, 1);
+            setCurrentDate(calendarWithFirstDayOfMonth.getTime());
+        }
+        performMonthScrollCallback();
+    }
+
+    private void scrollPrev() {
+        monthsScrolledSoFar = monthsScrolledSoFar + 1;
+        accumulatedScrollOffset.x = monthsScrolledSoFar * width;
+        if(shouldSelectFirstDayOfMonthOnScroll){
+            setCalenderToFirstDayOfMonth(calendarWithFirstDayOfMonth, currentCalender.getTime(), 0, -1);
+            setCurrentDate(calendarWithFirstDayOfMonth.getTime());
+        }
+        performMonthScrollCallback();
     }
 
     void setLocale(TimeZone timeZone, Locale locale) {

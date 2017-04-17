@@ -66,6 +66,7 @@ public class CompactCalendarTab extends Fragment {
         compactCalendarView.setUseThreeLetterAbbreviation(false);
         compactCalendarView.setFirstDayOfWeek(Calendar.MONDAY);
         compactCalendarView.setIsRtl(false);
+        compactCalendarView.displayOtherMonthDays(false);
 
         loadEvents();
         loadEventsForYear(2017);
