@@ -32,6 +32,7 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
@@ -86,6 +87,48 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
     }
 
     @Test
+    public void testItDrawsEventsRtl(){
+        Calendar currentCalender = Calendar.getInstance();
+        currentCalender.set(Calendar.DAY_OF_MONTH, 1);
+        currentCalender.set(Calendar.ERA, GregorianCalendar.AD);
+        currentCalender.set(Calendar.YEAR, 2015);
+        currentCalender.set(Calendar.MONTH, Calendar.MARCH);
+
+        compactCalendarView.setIsRtl(true);
+        setDate(new Date(1423353600000L));
+        addEvents(Calendar.FEBRUARY, 2015);
+        addEvents(Calendar.MARCH, 2015);
+        scrollCalendarBackwardsBy(1);
+
+        assertEquals(getEventsFor(Calendar.MARCH, 2015), compactCalendarView.getEventsForMonth(currentCalender.getTime()));
+
+        syncToolbarDate();
+        capture("testItDrawsEventsRtl");
+    }
+
+    @Test
+    public void testCorrectDateIsReturnedWhenRtl()  {
+        compactCalendarView.shouldSelectFirstDayOfMonthOnScroll(false);
+        compactCalendarView.setIsRtl(true);
+
+        //Sun, 08 Feb 2015 00:00:00 GMT
+        setDate(new Date(1423353600000L));
+
+        scrollCalendarBackwardsBy(4);
+        //Mon, 01 Jun 2015 00:00:00 GMT
+        assertEquals(new Date(1433116800000L), compactCalendarView.getFirstDayOfCurrentMonth());
+
+        //Wed, 01 Apr 2015 00:00:00 GMT
+        scrollCalendarForwardBy(2);
+        assertEquals(new Date(1427846400000L), compactCalendarView.getFirstDayOfCurrentMonth());
+
+        //Tue, 01 Apr 2014 00:00:00 GMT
+        scrollCalendarForwardBy(12);
+        assertEquals(new Date(1396310400000L), compactCalendarView.getFirstDayOfCurrentMonth());
+    }
+
+
+    @Test
     public void testItScrollsPrevMonthRtl(){
         CompactCalendarViewListener listener = mock(CompactCalendarViewListener.class);
         compactCalendarView.setListener(listener);
@@ -99,6 +142,9 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
         //Thu, 01 Jan 2015 00:00:00 GMT - expected
         verify(listener).onMonthScroll(new Date(1420070400000L));
         verifyNoMoreInteractions(listener);
+
+        syncToolbarDate();
+        capture("testItScrollsPrevMonthRtl");
     }
 
     @Test
@@ -115,6 +161,9 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
         //Sun, 01 Mar 2015 00:00:00 GMT - expected
         verify(listener).onMonthScroll(new Date(1425168000000L));
         verifyNoMoreInteractions(listener);
+
+        syncToolbarDate();
+        capture("testItScrollsNextMonthRtl");
     }
 
     @Test
@@ -719,29 +768,32 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
         ((Activity) context).runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Calendar currentCalender = Calendar.getInstance();
-                currentCalender.setTime(new Date());
-                currentCalender.set(Calendar.DAY_OF_MONTH, 1);
-                Date firstDayOfMonth = currentCalender.getTime();
-                for (int i = 0; i < 6; i++) {
-                    currentCalender.setTime(firstDayOfMonth);
-                    if (month > -1) {
-                        currentCalender.set(Calendar.MONTH, month);
-                    }
-                    if (year > -1) {
-                        currentCalender.set(Calendar.ERA, GregorianCalendar.AD);
-                        currentCalender.set(Calendar.YEAR, year);
-                    }
-                    currentCalender.add(Calendar.DATE, i);
-                    setToMidnight(currentCalender);
-                    long timeInMillis = currentCalender.getTimeInMillis();
-
-                    List<Event> events = getEvents(timeInMillis, i);
-
-                    compactCalendarView.addEvents(events);
-                }
+                compactCalendarView.addEvents(getEventsFor(month, year));
             }
         });
+    }
+
+    private List<Event> getEventsFor(final int month, final int year){
+        Calendar currentCalender = Calendar.getInstance();
+        currentCalender.setTime(new Date());
+        currentCalender.set(Calendar.DAY_OF_MONTH, 1);
+        Date firstDayOfMonth = currentCalender.getTime();
+        List<Event> events = new ArrayList<>();
+        for (int i = 0; i < 6; i++) {
+            currentCalender.setTime(firstDayOfMonth);
+            if (month > -1) {
+                currentCalender.set(Calendar.MONTH, month);
+            }
+            if (year > -1) {
+                currentCalender.set(Calendar.ERA, GregorianCalendar.AD);
+                currentCalender.set(Calendar.YEAR, year);
+            }
+            currentCalender.add(Calendar.DATE, i);
+            setToMidnight(currentCalender);
+            long timeInMillis = currentCalender.getTimeInMillis();
+            events.addAll(getEvents(timeInMillis, i));
+        }
+        return events;
     }
 
     private List<Event> getEvents(long timeInMillis, int day) {
