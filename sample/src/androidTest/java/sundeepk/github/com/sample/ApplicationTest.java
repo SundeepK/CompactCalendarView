@@ -86,6 +86,38 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
     }
 
     @Test
+    public void testItScrollsPrevMonthRtl(){
+        CompactCalendarViewListener listener = mock(CompactCalendarViewListener.class);
+        compactCalendarView.setListener(listener);
+        compactCalendarView.setIsRtl(true);
+
+        //Sun, 08 Feb 2015 00:00:00 GMT
+        setDate(new Date(1423353600000L));
+        //rtl so scroll direction is flipped
+        scrollCalendarForwardBy(1);
+
+        //Thu, 01 Jan 2015 00:00:00 GMT - expected
+        verify(listener).onMonthScroll(new Date(1420070400000L));
+        verifyNoMoreInteractions(listener);
+    }
+
+    @Test
+    public void testItScrollsNextMonthRtl(){
+        CompactCalendarViewListener listener = mock(CompactCalendarViewListener.class);
+        compactCalendarView.setListener(listener);
+        compactCalendarView.setIsRtl(true);
+
+        //Sun, 08 Feb 2015 00:00:00 GMT
+        setDate(new Date(1423353600000L));
+        //rtl so scroll direction is flipped
+        scrollCalendarBackwardsBy(1);
+
+        //Sun, 01 Mar 2015 00:00:00 GMT - expected
+        verify(listener).onMonthScroll(new Date(1425168000000L));
+        verifyNoMoreInteractions(listener);
+    }
+
+    @Test
     public void testItDoesNotScrollWhenScrollingIsDisabled(){
         CompactCalendarViewListener listener = mock(CompactCalendarViewListener.class);
         compactCalendarView.setListener(listener);
