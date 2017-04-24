@@ -95,6 +95,7 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
         currentCalender.set(Calendar.MONTH, Calendar.MARCH);
 
         compactCalendarView.setIsRtl(true);
+        //Sun, 08 Feb 2015 00:00:00 GMT
         setDate(new Date(1423353600000L));
         addEvents(Calendar.FEBRUARY, 2015);
         addEvents(Calendar.MARCH, 2015);
@@ -427,6 +428,82 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
         onView(withId(R.id.compactcalendar_view)).perform(scroll(100, 100, 200, 0));
         capture("testItDisplaysDaysFromOtherMonthsForAfterScrollingFromFebToJan");
     }
+
+
+    @Test
+    public void testItDrawsSundayAsFirstDayOfMonthRtl(){
+        compactCalendarView.setIsRtl(true);
+        //Sun, 08 Feb 2015 00:00:00 GMT
+        setDate(new Date(1423353600000L));
+        setFirstDayOfWeek(Calendar.SUNDAY);
+        capture("testItDrawsSundayAsFirstDayOfMonthRtl");
+    }
+
+    @Test
+    public void testItDrawsMondayAsFirstDayOfMonthRtl(){
+        compactCalendarView.setIsRtl(true);
+        // defaults to Monday
+        //Sun, 08 Feb 2015 00:00:00 GMT
+        setDate(new Date(1423353600000L));
+        capture("testItDrawsMondayAsFirstDayOfMonthRtl");
+    }
+
+    @Test
+    public void testItDrawsTuesdayAsFirstDayOfMonthRtl(){
+        compactCalendarView.setIsRtl(true);
+        //Sun, 08 Feb 2015 00:00:00 GMT
+        setDate(new Date(1423353600000L));
+        setFirstDayOfWeek(Calendar.TUESDAY);
+        capture("testItDrawsTuesdayAsFirstDayOfMonthRtl");
+    }
+
+    @Test
+    public void testItDrawsWednesdayAsFirstDayOfMonthRtl(){
+        compactCalendarView.setIsRtl(true);
+        //Sun, 08 Feb 2015 00:00:00 GMT
+        setDate(new Date(1423353600000L));
+        setFirstDayOfWeek(Calendar.WEDNESDAY);
+        capture("testItDrawsWednesdayAsFirstDayOfMonthRtl");
+    }
+
+    @Test
+    public void testItDrawsThursdayAsFirstDayOfMonthRtl(){
+        compactCalendarView.setIsRtl(true);
+        //Sun, 08 Feb 2015 00:00:00 GMT
+        setDate(new Date(1423353600000L));
+        setFirstDayOfWeek(Calendar.THURSDAY);
+        capture("testItDrawsThursdayAsFirstDayOfMonthRtl");
+    }
+
+    @Test
+    public void testItDrawsFridayAsFirstDayOfMonthRtl(){
+        compactCalendarView.setIsRtl(true);
+        //Sun, 08 Feb 2015 00:00:00 GMT
+        setDate(new Date(1423353600000L));
+        setFirstDayOfWeek(Calendar.FRIDAY);
+        capture("testItDrawsFridayAsFirstDayOfMonthRtl");
+    }
+
+    @Test
+    public void testItDrawsSaturdayAsFirstDayOfMonthRtl(){
+        compactCalendarView.setIsRtl(true);
+        //Sun, 08 Feb 2015 00:00:00 GMT
+        setDate(new Date(1423353600000L));
+        setFirstDayOfWeek(Calendar.SATURDAY);
+        capture("testItDrawsSaturdayAsFirstDayOfMonthRtl");
+    }
+
+    @Test
+    public void testItDrawsWedAsFirstDayWithFrenchLocaleRtl(){
+        compactCalendarView.setIsRtl(true);
+        //Sun, 08 Feb 2015 00:00:00 GMT
+        setDate(new Date(1423353600000L));
+        setFirstDayOfWeek(Calendar.WEDNESDAY);
+        onView(withId(R.id.set_locale)).perform(clickXY(0, 0));
+        setUseThreeLetterAbbreviation(true);
+        capture("testItDrawsWedAsFirstDayWithFrenchLocaleRtl");
+    }
+
 
     @Test
     public void testItDrawsSundayAsFirstDayOfMonth(){
