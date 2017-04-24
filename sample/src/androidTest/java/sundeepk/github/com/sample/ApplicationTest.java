@@ -412,12 +412,31 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
     }
 
     @Test
+    public void testItDisplaysDaysFromOtherMonthsForFebRtl(){
+        compactCalendarView.setIsRtl(true);
+        //Sun, 08 Feb 2015 00:00:00 GMT
+        setDate(new Date(1423353600000L));
+        setShouldDrawDaysFromOtherMonths(true);
+        capture("testItDisplaysDaysFromOtherMonthsForFebRtl");
+    }
+
+    @Test
     public void testItDisplaysDaysFromOtherMonthsForAfterScrollingFromFebToMarch(){
         //Sun, 08 Feb 2015 00:00:00 GMT
         setDate(new Date(1423353600000L));
         setShouldDrawDaysFromOtherMonths(true);
-        onView(withId(R.id.compactcalendar_view)).perform(scroll(100, 100, -100, 0));
+        scrollCalendarForwardBy(1);
         capture("testItDisplaysDaysFromOtherMonthsForAfterScrollingFromFebToMarch");
+    }
+
+    @Test
+    public void testItDisplaysDaysFromOtherMonthsForAfterScrollingFromFebToMarchRtl(){
+        compactCalendarView.setIsRtl(true);
+        //Sun, 08 Feb 2015 00:00:00 GMT
+        setDate(new Date(1423353600000L));
+        setShouldDrawDaysFromOtherMonths(true);
+        scrollCalendarBackwardsBy(1);
+        capture("testItDisplaysDaysFromOtherMonthsForAfterScrollingFromFebToMarchRtl");
     }
 
     @Test
