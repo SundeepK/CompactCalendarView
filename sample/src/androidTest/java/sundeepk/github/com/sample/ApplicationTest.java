@@ -128,6 +128,21 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
         assertEquals(new Date(1396310400000L), compactCalendarView.getFirstDayOfCurrentMonth());
     }
 
+    @Test
+    public void testCorrectDateIsReturnedWhenRtlFor1YearBackwards()  {
+        compactCalendarView.shouldSelectFirstDayOfMonthOnScroll(false);
+        compactCalendarView.setIsRtl(true);
+
+        //Sun, 08 Feb 2015 00:00:00 GMT
+        setDate(new Date(1423353600000L));
+
+        scrollCalendarForwardBy(12);
+        //Sat, 01 Feb 2014 00:00:00 GMT
+
+        syncToolbarDate();
+        assertEquals(new Date(1391212800000L), compactCalendarView.getFirstDayOfCurrentMonth());
+        capture("testCorrectDateIsReturnedWhenRtlFor1YearBackwards");
+    }
 
     @Test
     public void testItScrollsPrevMonthRtl(){
@@ -368,6 +383,23 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
         verify(listener).onDayClick(new Date(1422921600000L));
         verifyNoMoreInteractions(listener);
         capture("testOnDayClickListenerIsCalled");
+    }
+
+
+    @Test
+    public void testOnDayClickListenerIsCalledRtl(){
+        CompactCalendarViewListener listener = mock(CompactCalendarViewListener.class);
+        compactCalendarView.setListener(listener);
+        compactCalendarView.setIsRtl(true);
+
+        //Sun, 08 Feb 2015 00:00:00 GMT
+        setDate(new Date(1423353600000L));
+        onView(withId(R.id.compactcalendar_view)).perform(clickXY(60, 100));
+
+        //Sat, 07 Feb 2015 00:00:00 GMT
+        verify(listener).onDayClick(new Date(1423267200000L));
+        verifyNoMoreInteractions(listener);
+        capture("testOnDayClickListenerIsCalledRtl");
     }
 
     @Test
