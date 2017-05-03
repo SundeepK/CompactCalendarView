@@ -48,7 +48,7 @@ Please see Sample app for full example.
         compactCalendarView.setFirstDayOfWeek(Calendar.MONDAY);
        
         // Add event 1 on Sun, 07 Jun 2015 18:20:51 GMT
-        Event ev1 new Event(Color.GREEN, 1433701251000L, "Some extra data that I want to store.");
+        Event ev1 = new Event(Color.GREEN, 1433701251000L, "Some extra data that I want to store.");
         compactCalendar.addEvent(ev1);
 
         // Added event 2 GMT: Sun, 07 Jun 2015 19:10:51 GMT
