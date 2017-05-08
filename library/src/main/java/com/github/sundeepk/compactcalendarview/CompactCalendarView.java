@@ -178,6 +178,14 @@ public class CompactCalendarView extends View {
         compactCalendarController.setShouldDrawDaysHeader(shouldDrawDaysHeader);
     }
 
+    public void setCurrentSelectedDayTextColor(int currentSelectedDayTextColor) {
+        compactCalendarController.setCurrentSelectedDayTextColor(currentSelectedDayTextColor);
+    }
+
+    public void setCurrentDayTextColor(int currentDayTextColor) {
+        compactCalendarController.setCurrentDayTextColor(currentDayTextColor);
+    }
+
     /**
      * see {@link #addEvent(Event, boolean)} when adding single events
      * or {@link #addEvents(java.util.List)}  when adding multiple events
