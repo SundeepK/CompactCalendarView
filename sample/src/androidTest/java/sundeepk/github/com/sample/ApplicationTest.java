@@ -730,7 +730,14 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
         onView(withId(R.id.slide_calendar)).perform(click());
     }
 
-
+    @Test
+    public void testItDrawsDifferentColorsForCurrentSelectedDay(){
+        //Sun, 08 Feb 2015 00:00:00 GMT
+        setDate(new Date(1423353600000L));
+        compactCalendarView.setCurrentDayTextColor(Color.BLACK);
+        compactCalendarView.setCurrentSelectedDayTextColor(Color.BLUE);
+        capture("testItDrawsDifferentColorsForCurrentSelectedDay");
+    }
 
     // Nasty hack to get the toolbar to update the current month
     // TODO sample code should be refactored to do this
