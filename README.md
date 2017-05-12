@@ -102,7 +102,7 @@ dependencies {
 }
 ```
 
-RTL support beta for rght-to-left languages
+RTL support beta for right-to-left languages
 ```gradle
 dependencies {
     compile 'com.github.sundeepk:compact-calendar-view:2.0.3-beta'
