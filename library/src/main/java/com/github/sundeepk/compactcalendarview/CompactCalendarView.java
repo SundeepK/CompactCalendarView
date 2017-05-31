@@ -30,7 +30,7 @@ public class CompactCalendarView extends View {
     private final AnimationHandler animationHandler;
     private CompactCalendarController compactCalendarController;
     private GestureDetectorCompat gestureDetector;
-    private boolean shouldScroll = true;
+    private boolean horizontalScrollEnabled = true;
 
     public interface CompactCalendarViewListener {
         public void onDayClick(Date dateClicked);
@@ -66,7 +66,7 @@ public class CompactCalendarView extends View {
 
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-            if(shouldScroll) {
+            if(horizontalScrollEnabled) {
                 if (Math.abs(distanceX) > 0) {
                     getParent().requestDisallowInterceptTouchEvent(true);
 
@@ -398,18 +398,18 @@ public class CompactCalendarView extends View {
         }
     }
 
-    public void shouldScrollMonth(boolean shouldDisableScroll){
-        this.shouldScroll = shouldDisableScroll;
+    public void shouldScrollMonth(boolean enableHorizontalScroll){
+        this.horizontalScrollEnabled = enableHorizontalScroll;
     }
 
     public boolean onTouchEvent(MotionEvent event) {
-        if (shouldScroll) {
+        if (horizontalScrollEnabled) {
             compactCalendarController.onTouch(event);
             invalidate();
         }
 
         // on touch action finished (CANCEL or UP), we re-allow the parent container to intercept touch events (scroll inside ViewPager + RecyclerView issue #82)
-        if((event.getAction() == MotionEvent.ACTION_CANCEL || event.getAction() == MotionEvent.ACTION_UP) && shouldScroll) {
+        if((event.getAction() == MotionEvent.ACTION_CANCEL || event.getAction() == MotionEvent.ACTION_UP) && horizontalScrollEnabled) {
             getParent().requestDisallowInterceptTouchEvent(false);
         }
 
