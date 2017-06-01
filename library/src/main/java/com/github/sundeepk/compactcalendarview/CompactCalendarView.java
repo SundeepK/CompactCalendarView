@@ -49,7 +49,7 @@ public class CompactCalendarView extends View {
 
         @Override
         public boolean onSingleTapUp(MotionEvent e) {
-            //compactCalendarController.onSingleTapUp(e);
+            compactCalendarController.onSingleTapUp(e);
             invalidate();
             return super.onSingleTapUp(e);
         }
