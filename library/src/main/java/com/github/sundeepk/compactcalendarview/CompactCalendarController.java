@@ -8,14 +8,24 @@ import android.graphics.Paint;
 import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.Typeface;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v4.view.accessibility.AccessibilityNodeInfoCompat;
+import android.support.v4.widget.ExploreByTouchHelper;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
+import android.view.View;
 import android.view.ViewConfiguration;
 import android.widget.OverScroller;
+
 import com.github.sundeepk.compactcalendarview.domain.Event;
+
+import java.text.DateFormatSymbols;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -107,6 +117,11 @@ class CompactCalendarController {
     private int otherMonthDaysTextColor;
     private TimeZone timeZone;
 
+    private final Context context;
+
+    @Nullable
+    private CompactCalendarTouchHelper compactCalendarTouchHelper;
+
     /**
      * Only used in onDrawCurrentMonth to temporarily calculate previous month days
      */
@@ -121,6 +136,7 @@ class CompactCalendarController {
                               int currentSelectedDayBackgroundColor, VelocityTracker velocityTracker,
                               int multiEventIndicatorColor, EventsContainer eventsContainer,
                               Locale locale, TimeZone timeZone) {
+        this.context = context;
         this.dayPaint = dayPaint;
         this.scroller = scroller;
         this.textSizeRect = textSizeRect;
@@ -397,6 +413,8 @@ class CompactCalendarController {
 
         // scale the selected day indicators slightly so that event indicators can be drawn below
         bigCircleIndicatorRadius = shouldDrawIndicatorsBelowSelectedDays && eventIndicatorStyle == CompactCalendarView.SMALL_INDICATOR ? bigCircleIndicatorRadius * 0.85f : bigCircleIndicatorRadius;
+
+        compactCalendarTouchHelper.init();
     }
 
     //assume square around each day of width and height = heightPerDay and get diagonal line length
@@ -640,7 +658,7 @@ class CompactCalendarController {
     }
 
     void addEvents(List<Event> events) {
-       eventsContainer.addEvents(events);
+        eventsContainer.addEvents(events);
     }
 
     List<Event> getCalendarEventsFor(long epochMillis) {
@@ -656,11 +674,11 @@ class CompactCalendarController {
     }
 
     void removeEvent(Event event) {
-       eventsContainer.removeEvent(event);
+        eventsContainer.removeEvent(event);
     }
 
     void removeEvents(List<Event> events) {
-       eventsContainer.removeEvents(events);
+        eventsContainer.removeEvents(events);
     }
 
     void setGrowProgress(float grow) {
@@ -786,6 +804,10 @@ class CompactCalendarController {
                             drawSingleEvent(canvas, xPosition, yPosition, eventsList);
                         }
                     }
+
+                    if (compactCalendarTouchHelper != null) {
+                        compactCalendarTouchHelper.addEventContentDescription(eventsList.size(), xPosition, yPosition);
+                    }
                 }
             }
         }
@@ -839,8 +861,7 @@ class CompactCalendarController {
 
         boolean isSameMonthAsToday = monthToDrawCalender.get(Calendar.MONTH) == todayCalender.get(Calendar.MONTH);
         boolean isSameYearAsToday = monthToDrawCalender.get(Calendar.YEAR) == todayCalender.get(Calendar.YEAR);
-        boolean isSameMonthAsCurrentCalendar = monthToDrawCalender.get(Calendar.MONTH) == currentCalender.get(Calendar.MONTH) &&
-                                               monthToDrawCalender.get(Calendar.YEAR) == currentCalender.get(Calendar.YEAR);
+        boolean isSameMonthAsCurrentCalendar = monthToDrawCalender.get(Calendar.MONTH) == currentCalender.get(Calendar.MONTH);
         int todayDayOfMonth = todayCalender.get(Calendar.DAY_OF_MONTH);
         boolean isAnimatingWithExpose = animationStatus == EXPOSE_CALENDAR_ANIMATION;
 
@@ -893,6 +914,7 @@ class CompactCalendarController {
                         dayPaint.setStyle(Paint.Style.FILL);
                         dayPaint.setColor(otherMonthDaysTextColor);
                         canvas.drawText(String.valueOf(maximumPreviousMonthDay + day), xPosition, yPosition, dayPaint);
+                        compactCalendarTouchHelper.addDateContentDescription(tempPreviousMonthCalendar, maximumPreviousMonthDay + day, xPosition, yPosition);
                     }
                 } else if (day > maximumMonthDay) {
                     if (displayOtherMonthDays) {
@@ -900,11 +922,17 @@ class CompactCalendarController {
                         dayPaint.setStyle(Paint.Style.FILL);
                         dayPaint.setColor(otherMonthDaysTextColor);
                         canvas.drawText(String.valueOf(day - maximumMonthDay), xPosition, yPosition, dayPaint);
+
+                        Calendar nextMonthCalendar = Calendar.getInstance();
+                        nextMonthCalendar.setTimeInMillis(monthToDrawCalender.getTimeInMillis());
+                        nextMonthCalendar.add(Calendar.MONTH, 1);
+                        compactCalendarTouchHelper.addDateContentDescription(nextMonthCalendar, day - maximumMonthDay, xPosition, yPosition);
                     }
                 } else {
                     dayPaint.setStyle(Paint.Style.FILL);
                     dayPaint.setColor(defaultCalenderTextColorToUse);
                     canvas.drawText(String.valueOf(day), xPosition, yPosition, dayPaint);
+                    compactCalendarTouchHelper.addDateContentDescription(monthToDrawCalender, day, xPosition, yPosition);
                 }
             }
         }
@@ -954,4 +982,183 @@ class CompactCalendarController {
     private void drawCircle(Canvas canvas, float radius, float x, float y) {
         canvas.drawCircle(x, y, radius, dayPaint);
     }
+
+    public ExploreByTouchHelper getAccessibilityDelegate(View host) {
+        if (compactCalendarTouchHelper == null) {
+            compactCalendarTouchHelper = new CompactCalendarTouchHelper(host);
+        }
+        return compactCalendarTouchHelper;
+    }
+
+    private class CompactCalendarTouchHelper extends ExploreByTouchHelper {
+
+        private int numColumns = DAYS_IN_WEEK;
+        private int numRows;
+
+        List<Rect> boundsList = new ArrayList<>();
+        List<Integer> virtualViewIdList = new ArrayList<>();
+        List<CalendarContentDescription> contentDescriptionList = new ArrayList<>();
+
+        public CompactCalendarTouchHelper(View host) {
+            super(host);
+        }
+
+        public void init() {
+            numRows = shouldDrawDaysHeader ? DAYS_IN_WEEK : DAYS_IN_WEEK - 1;
+
+            boundsList.clear();
+            virtualViewIdList.clear();
+            contentDescriptionList.clear();
+
+            int id = 0;
+            for (int row = 0; row < numRows; row++) {
+                for (int col = 0; col < numColumns; col++) {
+                    int left = col * widthPerDay;
+                    int top = row * heightPerDay;
+                    Rect bounds = new Rect(left, top, left + widthPerDay, top + heightPerDay);
+
+                    boundsList.add(bounds);
+                    contentDescriptionList.add(new CalendarContentDescription());
+                    virtualViewIdList.add(id);
+                }
+            }
+
+            if (shouldDrawDaysHeader) {
+                DateFormatSymbols dateFormatSymbols = new DateFormatSymbols(locale);
+                String[] weekdays = dateFormatSymbols.getWeekdays();
+                for (int i = 0; i < weekdays.length - 1; i++) {
+                    int index = (i + firstDayOfWeekToDraw);
+                    if (index >= weekdays.length) {
+                        index = index % weekdays.length + 1;
+                    }
+                    CalendarContentDescription description = contentDescriptionList.get(i);
+                    description.setWeekdayDescription(weekdays[index]);
+                }
+            }
+        }
+
+        public void invalidate() {
+            boundsList.clear();
+            virtualViewIdList.clear();
+            contentDescriptionList.clear();
+
+            init();
+        }
+
+        @Override
+        protected int getVirtualViewAt(float x, float y) {
+            Integer virtualViewId = virtualIdForCoordinates(x, y);
+            return virtualViewId == null ? 0 : virtualViewId;
+        }
+
+        @Override
+        protected void getVisibleVirtualViews(List<Integer> virtualViewIds) {
+            virtualViewIds.addAll(virtualViewIdList);
+        }
+
+        @Override
+        protected void onPopulateNodeForVirtualView(int virtualViewId, AccessibilityNodeInfoCompat node) {
+            node.addAction(AccessibilityNodeInfoCompat.AccessibilityActionCompat.ACTION_CLICK);
+
+
+            CalendarContentDescription description = contentDescriptionList.get(virtualViewId);
+            if (description != null) {
+                node.setContentDescription(description.getContentDescription());
+            } else {
+                node.setContentDescription("");
+            }
+            node.setBoundsInParent(boundsList.get(virtualViewId));
+        }
+
+        @Override
+        protected boolean onPerformActionForVirtualView(int virtualViewId, int action, Bundle arguments) {
+            return false;
+        }
+
+        public void addEventContentDescription(int numEvents, float xPosition, float yPosition) {
+            Integer virtualId = virtualIdForCoordinates(xPosition, yPosition);
+            if (virtualId == null) {
+                return;
+            }
+            CalendarContentDescription description = contentDescriptionList.get(virtualId);
+            description.setEventDescription(numEvents);
+        }
+
+        public void addDateContentDescription(Calendar calendar, int day, float xPosition, float yPosition) {
+            Integer virtualId = virtualIdForCoordinates(xPosition, yPosition);
+            if (virtualId == null) {
+                return;
+            }
+
+            CalendarContentDescription description = contentDescriptionList.get(virtualId);
+            description.setDateString(calendar, day);
+        }
+
+        @Nullable
+        private Integer virtualIdForRowCol(int row, int col) {
+            if (row < 0 || row >= numRows || col < 0 || col >= numColumns) {
+                return null;
+            }
+            return row * DAYS_IN_WEEK + col;
+        }
+
+        @Nullable
+        private Integer virtualIdForCoordinates(float xPos, float yPos) {
+            if (xPos < 0 || xPos > width) {
+                return null;
+            }
+
+            int row = (int) (yPos / heightPerDay);
+            int col = (int) (xPos / widthPerDay);
+
+            return virtualIdForRowCol(row, col);
+        }
+
+        private class CalendarContentDescription {
+            private String weekdayDescription = "";
+            private String dateDescription = "";
+            private String eventDescription = "";
+
+            public CalendarContentDescription() {
+                setEventDescription(0);
+            }
+
+            public CharSequence getContentDescription() {
+                if (!TextUtils.isEmpty(weekdayDescription)) {
+                    return weekdayDescription;
+                }
+
+                if (TextUtils.isEmpty(eventDescription)) {
+                    return dateDescription + emptyEventDescription();
+                }
+
+                return  dateDescription + " " + eventDescription;
+            }
+
+            public void setDateString(Calendar calendar, int day) {
+                String yearString = String.valueOf(calendar.get(Calendar.YEAR));
+                String monthString = calendar.getDisplayName(Calendar.MONTH, Calendar.LONG, locale);
+                String dayString = String.valueOf(day);
+
+                dateDescription = monthString + " " + dayString + " " + yearString;
+            }
+
+            public void setEventDescription(int numEvents) {
+                eventDescription = eventDescription(numEvents);
+            }
+
+            private String emptyEventDescription() {
+                return eventDescription(0);
+            }
+
+            private String eventDescription(int numEvents) {
+                return context.getResources().getQuantityString(R.plurals.event_content_description, numEvents, numEvents);
+            }
+
+            public void setWeekdayDescription(String weekdayDescription) {
+                this.weekdayDescription = weekdayDescription;
+            }
+        }
+    }
+
 }
