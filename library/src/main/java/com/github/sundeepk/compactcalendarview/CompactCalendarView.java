@@ -419,6 +419,9 @@ public class CompactCalendarView extends View {
 
     @Override
     public boolean canScrollHorizontally(int direction) {
+        if (this.getVisibility() == View.GONE) {
+            return false;
+        }
         // Prevents ViewPager from scrolling horizontally by announcing that (issue #82)
         return this.horizontalScrollEnabled;
     }
