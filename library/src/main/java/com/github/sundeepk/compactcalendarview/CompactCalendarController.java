@@ -788,7 +788,9 @@ class CompactCalendarController {
                             drawSingleEvent(canvas, xPosition, yPosition, eventsList);
                         }
                     }
-                    canvas.drawBitmap(eventsList.get(0).getIcon(), xPosition + 10, yPosition - heightPerDay, dayPaint);
+                    if (eventsList.get(0).getIcon() != null) {
+                        canvas.drawBitmap(eventsList.get(0).getIcon(), xPosition + (screenDensity * 5), yPosition - heightPerDay, dayPaint);
+                    }
                 }
             }
         }
