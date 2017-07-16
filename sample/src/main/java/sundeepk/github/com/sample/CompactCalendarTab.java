@@ -1,5 +1,7 @@
 package sundeepk.github.com.sample;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -40,11 +42,12 @@ public class CompactCalendarTab extends Fragment {
     private boolean shouldShow = false;
     private CompactCalendarView compactCalendarView;
     private ActionBar toolbar;
+    private Bitmap icon;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.main_tab,container,false);
-
+        icon = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_info_outline_white_18dp);
         final List<String> mutableBookings = new ArrayList<>();
 
         final ListView bookingsListView = (ListView) v.findViewById(R.id.bookings_listview);
@@ -282,16 +285,16 @@ public class CompactCalendarTab extends Fragment {
 
     private List<Event> getEvents(long timeInMillis, int day) {
         if (day < 2) {
-            return Arrays.asList(new Event(Color.argb(255, 169, 68, 65), timeInMillis, "Event at " + new Date(timeInMillis)));
+            return Arrays.asList(new Event(Color.argb(255, 169, 68, 65), timeInMillis, "Event at " + new Date(timeInMillis), icon));
         } else if ( day > 2 && day <= 4) {
             return Arrays.asList(
-                    new Event(Color.argb(255, 169, 68, 65), timeInMillis, "Event at " + new Date(timeInMillis)),
-                    new Event(Color.argb(255, 100, 68, 65), timeInMillis, "Event 2 at " + new Date(timeInMillis)));
+                    new Event(Color.argb(255, 169, 68, 65), timeInMillis, "Event at " + new Date(timeInMillis), icon),
+                    new Event(Color.argb(255, 100, 68, 65), timeInMillis, "Event 2 at " + new Date(timeInMillis), icon));
         } else {
             return Arrays.asList(
-                    new Event(Color.argb(255, 169, 68, 65), timeInMillis, "Event at " + new Date(timeInMillis) ),
-                    new Event(Color.argb(255, 100, 68, 65), timeInMillis, "Event 2 at " + new Date(timeInMillis)),
-                    new Event(Color.argb(255, 70, 68, 65), timeInMillis, "Event 3 at " + new Date(timeInMillis)));
+                    new Event(Color.argb(255, 169, 68, 65), timeInMillis, "Event at " + new Date(timeInMillis), icon),
+                    new Event(Color.argb(255, 100, 68, 65), timeInMillis, "Event 2 at " + new Date(timeInMillis), icon),
+                    new Event(Color.argb(255, 70, 68, 65), timeInMillis, "Event 3 at " + new Date(timeInMillis), icon));
         }
     }
 
