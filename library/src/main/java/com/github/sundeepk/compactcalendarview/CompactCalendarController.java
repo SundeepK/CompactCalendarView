@@ -841,15 +841,16 @@ class CompactCalendarController {
         int firstDayOfMonth = getDayOfWeek(monthToDrawCalender);
 
         int currentDayOfMonth = currentCalender.get(Calendar.DAY_OF_MONTH);
-        boolean isSameMonthAsToday = monthToDrawCalender.get(Calendar.MONTH) == todayCalender.get(Calendar.MONTH);
-        boolean isSameYearAsToday = monthToDrawCalender.get(Calendar.YEAR) == todayCalender.get(Calendar.YEAR);
+        int todayDayOfMonth = todayCalender.get(Calendar.DAY_OF_MONTH);
+
+        boolean isSameMonthAsToday = monthToDrawCalender.get(Calendar.MONTH) == todayCalender.get(Calendar.MONTH)
+                && monthToDrawCalender.get(Calendar.YEAR) == todayCalender.get(Calendar.YEAR);
         boolean isSameMonthAsCurrentCalendar = monthToDrawCalender.get(Calendar.MONTH) == currentCalender.get(Calendar.MONTH) &&
                                                monthToDrawCalender.get(Calendar.YEAR) == currentCalender.get(Calendar.YEAR);
-        boolean isPastMonth = monthToDrawCalender.get(Calendar.YEAR) < currentCalender.get(Calendar.YEAR)
-                || monthToDrawCalender.get(Calendar.YEAR) == currentCalender.get(Calendar.YEAR)
-                && monthToDrawCalender.get(Calendar.MONTH) < currentCalender.get(Calendar.MONTH);
+        boolean isPastMonth = monthToDrawCalender.get(Calendar.YEAR) < todayCalender.get(Calendar.YEAR)
+                || monthToDrawCalender.get(Calendar.YEAR) == todayCalender.get(Calendar.YEAR)
+                && monthToDrawCalender.get(Calendar.MONTH) < todayCalender.get(Calendar.MONTH);
 
-        int todayDayOfMonth = todayCalender.get(Calendar.DAY_OF_MONTH);
         boolean isAnimatingWithExpose = animationStatus == EXPOSE_CALENDAR_ANIMATION;
 
         int maximumMonthDay = monthToDrawCalender.getActualMaximum(Calendar.DAY_OF_MONTH);
@@ -890,11 +891,11 @@ class CompactCalendarController {
                 if (currentDayOfMonth == day && isSameMonthAsCurrentCalendar && !isAnimatingWithExpose) {
                     drawDayCircleIndicator(currentSelectedDayIndicatorStyle, canvas, xPosition, yPosition, currentSelectedDayBackgroundColor);
                     defaultCalenderTextColorToUse = currentSelectedDayTextColor;
-                } else if (isSameYearAsToday && isSameMonthAsToday && todayDayOfMonth == day && !isAnimatingWithExpose) {
+                } else if (isSameMonthAsToday && todayDayOfMonth == day && !isAnimatingWithExpose) {
                     // TODO calculate position of circle in a more reliable way
                     drawDayCircleIndicator(currentDayIndicatorStyle, canvas, xPosition, yPosition, currentDayBackgroundColor);
                     defaultCalenderTextColorToUse = currentDayTextColor;
-                } else if (isPastMonth || isSameMonthAsCurrentCalendar && currentDayOfMonth > day) {
+                } else if (isPastMonth || isSameMonthAsToday && todayDayOfMonth > day) {
                     defaultCalenderTextColorToUse = pastDaysTextColor;
                 }
                 if (day <= 0) {
