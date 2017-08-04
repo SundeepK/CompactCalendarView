@@ -105,6 +105,7 @@ class CompactCalendarController {
     private int currentSelectedDayTextColor;
     private int calenderBackgroundColor = Color.WHITE;
     private int otherMonthDaysTextColor;
+    private int pastDaysTextColor;
     private TimeZone timeZone;
 
     /**
@@ -128,6 +129,7 @@ class CompactCalendarController {
         this.calenderTextColor = calenderTextColor;
         this.currentSelectedDayBackgroundColor = currentSelectedDayBackgroundColor;
         this.otherMonthDaysTextColor = calenderTextColor;
+        this.pastDaysTextColor = calenderTextColor;
         this.velocityTracker = velocityTracker;
         this.multiEventIndicatorColor = multiEventIndicatorColor;
         this.eventsContainer = eventsContainer;
@@ -146,6 +148,7 @@ class CompactCalendarController {
                 calenderTextColor = typedArray.getColor(R.styleable.CompactCalendarView_compactCalendarTextColor, calenderTextColor);
                 currentDayTextColor = typedArray.getColor(R.styleable.CompactCalendarView_compactCalendarCurrentDayTextColor, calenderTextColor);
                 otherMonthDaysTextColor = typedArray.getColor(R.styleable.CompactCalendarView_compactCalendarOtherMonthDaysTextColor, otherMonthDaysTextColor);
+                pastDaysTextColor = typedArray.getColor(R.styleable.CompactCalendarView_compactCalendarPastDaysTextColor, calenderTextColor);
                 currentSelectedDayBackgroundColor = typedArray.getColor(R.styleable.CompactCalendarView_compactCalendarCurrentSelectedDayBackgroundColor, currentSelectedDayBackgroundColor);
                 currentSelectedDayTextColor = typedArray.getColor(R.styleable.CompactCalendarView_compactCalendarCurrentSelectedDayTextColor, calenderTextColor);
                 calenderBackgroundColor = typedArray.getColor(R.styleable.CompactCalendarView_compactCalendarBackgroundColor, calenderBackgroundColor);
@@ -837,6 +840,7 @@ class CompactCalendarController {
         //offset by one because we want to start from Monday
         int firstDayOfMonth = getDayOfWeek(monthToDrawCalender);
 
+        int currentDayOfMonth = currentCalender.get(Calendar.DAY_OF_MONTH);
         boolean isSameMonthAsToday = monthToDrawCalender.get(Calendar.MONTH) == todayCalender.get(Calendar.MONTH);
         boolean isSameYearAsToday = monthToDrawCalender.get(Calendar.YEAR) == todayCalender.get(Calendar.YEAR);
         boolean isSameMonthAsCurrentCalendar = monthToDrawCalender.get(Calendar.MONTH) == currentCalender.get(Calendar.MONTH) &&
@@ -879,13 +883,15 @@ class CompactCalendarController {
             } else {
                 int day = ((dayRow - 1) * 7 + dayColumn + 1) - firstDayOfMonth;
                 int defaultCalenderTextColorToUse = calenderTextColor;
-                if (currentCalender.get(Calendar.DAY_OF_MONTH) == day && isSameMonthAsCurrentCalendar && !isAnimatingWithExpose) {
+                if (currentDayOfMonth == day && isSameMonthAsCurrentCalendar && !isAnimatingWithExpose) {
                     drawDayCircleIndicator(currentSelectedDayIndicatorStyle, canvas, xPosition, yPosition, currentSelectedDayBackgroundColor);
                     defaultCalenderTextColorToUse = currentSelectedDayTextColor;
                 } else if (isSameYearAsToday && isSameMonthAsToday && todayDayOfMonth == day && !isAnimatingWithExpose) {
                     // TODO calculate position of circle in a more reliable way
                     drawDayCircleIndicator(currentDayIndicatorStyle, canvas, xPosition, yPosition, currentDayBackgroundColor);
                     defaultCalenderTextColorToUse = currentDayTextColor;
+                } else if (currentDayOfMonth < day && isSameMonthAsCurrentCalendar) {
+                    defaultCalenderTextColorToUse = pastDaysTextColor;
                 }
                 if (day <= 0) {
                     if (displayOtherMonthDays) {
