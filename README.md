@@ -1,4 +1,4 @@
-# CompactCalendarView
+# CompactCalendarView [![Build Status](https://travis-ci.org/SundeepK/CompactCalendarView.svg?branch=master)](https://travis-ci.org/SundeepK/CompactCalendarView)
 CompactCalendarView is a simple calendar view which provides scrolling between months. It's based on Java's Date and Calendar classes. It provides a simple api to query for dates and listeners for specific events.  For example, when the calendar has scrolled to a new month or a day has been selected.
 Still under active development.
 
