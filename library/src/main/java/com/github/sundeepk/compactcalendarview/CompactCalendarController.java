@@ -792,8 +792,10 @@ class CompactCalendarController {
                             yPosition += indicatorOffset;
                         }
 
-                        if (eventsList.size() >= 3) {
+                        if (eventsList.size() >= 4) {
                             drawEventsWithPlus(canvas, xPosition, yPosition, eventsList);
+                        } else if (eventsList.size() == 3) {
+                            drawThreeEvents(canvas, xPosition, yPosition, eventsList);
                         } else if (eventsList.size() == 2) {
                             drawTwoEvents(canvas, xPosition, yPosition, eventsList);
                         } else if (eventsList.size() == 1) {
@@ -811,10 +813,19 @@ class CompactCalendarController {
     }
 
     private void drawTwoEvents(Canvas canvas, float xPosition, float yPosition, List<Event> eventsList) {
-        //draw fist event just left of center
+        //draw first event just left of center
         drawEventIndicatorCircle(canvas, xPosition + (xIndicatorOffset * -1), yPosition, eventsList.get(0).getColor());
         //draw second event just right of center
         drawEventIndicatorCircle(canvas, xPosition + (xIndicatorOffset * 1), yPosition, eventsList.get(1).getColor());
+    }
+
+    private void drawThreeEvents(Canvas canvas, float xPosition, float yPosition, List<Event> eventsList) {
+        //draw first event just left of center
+        drawEventIndicatorCircle(canvas, xPosition + (xIndicatorOffset * -2), yPosition, eventsList.get(0).getColor());
+        //draw second event centered
+        drawEventIndicatorCircle(canvas, xPosition, yPosition, eventsList.get(1).getColor());
+        //draw third event just right of center
+        drawEventIndicatorCircle(canvas, xPosition + (xIndicatorOffset * 2), yPosition, eventsList.get(2).getColor());
     }
 
     //draw 2 eventsByMonthAndYearMap followed by plus indicator to show there are more than 2 eventsByMonthAndYearMap
