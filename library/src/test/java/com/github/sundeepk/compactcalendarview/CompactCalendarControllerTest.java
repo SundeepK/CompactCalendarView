@@ -300,6 +300,7 @@ public class CompactCalendarControllerTest {
         when(calendar.get(Calendar.MONTH)).thenReturn(5);
         when(calendar.get(Calendar.YEAR)).thenReturn(2015);
 
+        underTest.shouldDrawIndicatorsBelowSelectedDays(true); // always draw events, even on current day
         underTest.setGrowProgress(1000); //set grow progress so that it simulates the calendar being open
         underTest.drawEvents(canvas, calendar, 0);
 
@@ -317,6 +318,7 @@ public class CompactCalendarControllerTest {
         when(calendar.get(Calendar.MONTH)).thenReturn(5);
         when(calendar.get(Calendar.YEAR)).thenReturn(2015);
 
+        underTest.shouldDrawIndicatorsBelowSelectedDays(true); // always draw events, even on current day
         underTest.setGrowProgress(1000); //set grow progress so that it simulates the calendar being open
         underTest.drawEvents(canvas, calendar, 0);
 
@@ -334,6 +336,7 @@ public class CompactCalendarControllerTest {
         when(calendar.get(Calendar.MONTH)).thenReturn(5);
         when(calendar.get(Calendar.YEAR)).thenReturn(2015);
 
+        underTest.shouldDrawIndicatorsBelowSelectedDays(true); // always draw events, even on current day
         underTest.setGrowProgress(1000); //set grow progress so that it simulates the calendar being open
         underTest.drawEvents(canvas, calendar, 0);
 

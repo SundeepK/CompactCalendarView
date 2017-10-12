@@ -99,8 +99,10 @@ class CompactCalendarController {
     // colors
     private int multiEventIndicatorColor;
     private int currentDayBackgroundColor;
+    private int currentDayTextColor;
     private int calenderTextColor;
     private int currentSelectedDayBackgroundColor;
+    private int currentSelectedDayTextColor;
     private int calenderBackgroundColor = Color.WHITE;
     private int otherMonthDaysTextColor;
     private TimeZone timeZone;
@@ -142,8 +144,10 @@ class CompactCalendarController {
             try {
                 currentDayBackgroundColor = typedArray.getColor(R.styleable.CompactCalendarView_compactCalendarCurrentDayBackgroundColor, currentDayBackgroundColor);
                 calenderTextColor = typedArray.getColor(R.styleable.CompactCalendarView_compactCalendarTextColor, calenderTextColor);
+                currentDayTextColor = typedArray.getColor(R.styleable.CompactCalendarView_compactCalendarCurrentDayTextColor, calenderTextColor);
                 otherMonthDaysTextColor = typedArray.getColor(R.styleable.CompactCalendarView_compactCalendarOtherMonthDaysTextColor, otherMonthDaysTextColor);
                 currentSelectedDayBackgroundColor = typedArray.getColor(R.styleable.CompactCalendarView_compactCalendarCurrentSelectedDayBackgroundColor, currentSelectedDayBackgroundColor);
+                currentSelectedDayTextColor = typedArray.getColor(R.styleable.CompactCalendarView_compactCalendarCurrentSelectedDayTextColor, calenderTextColor);
                 calenderBackgroundColor = typedArray.getColor(R.styleable.CompactCalendarView_compactCalendarBackgroundColor, calenderBackgroundColor);
                 multiEventIndicatorColor = typedArray.getColor(R.styleable.CompactCalendarView_compactCalendarMultiEventIndicatorColor, multiEventIndicatorColor);
                 textSize = typedArray.getDimensionPixelSize(R.styleable.CompactCalendarView_compactCalendarTextSize,
@@ -313,12 +317,20 @@ class CompactCalendarController {
         this.currentSelectedDayBackgroundColor = currentSelectedDayBackgroundColor;
     }
 
+    void setCurrentSelectedDayTextColor(int currentSelectedDayTextColor) {
+        this.currentSelectedDayTextColor = currentSelectedDayTextColor;
+    }
+
     void setCalenderBackgroundColor(int calenderBackgroundColor) {
         this.calenderBackgroundColor = calenderBackgroundColor;
     }
 
     void setCurrentDayBackgroundColor(int currentDayBackgroundColor) {
         this.currentDayBackgroundColor = currentDayBackgroundColor;
+    }
+
+    void setCurrentDayTextColor(int currentDayTextColor) {
+        this.currentDayTextColor = currentDayTextColor;
     }
 
     void showNextMonth() {
@@ -866,7 +878,7 @@ class CompactCalendarController {
                 }
             } else {
                 int day = ((dayRow - 1) * 7 + dayColumn + 1) - firstDayOfMonth;
-
+              
                 if (day <= 0) {
                     if (displayOtherMonthDays) {
                         // Display day month before
@@ -883,7 +895,7 @@ class CompactCalendarController {
                     }
                 } else {
                     dayPaint.setStyle(Paint.Style.FILL);
-                    dayPaint.setColor(calenderTextColor);
+                    dayPaint.setColor(defaultCalenderTextColorToUse);
                     canvas.drawText(String.valueOf(day), xPosition, yPosition, dayPaint);
                 }
             }
