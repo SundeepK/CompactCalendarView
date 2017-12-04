@@ -771,6 +771,9 @@ class CompactCalendarController {
                         Event event = eventsList.get(0);
                         drawEventIndicatorCircle(canvas, xPosition, yPosition, event.getColor());
                     } else {
+                        if(animationStatus != EXPOSE_CALENDAR_ANIMATION)
+                            drawCircleRing(canvas, xPosition, yPosition, event.getColor());
+                        
                         yPosition += indicatorOffset;
                         // offset event indicators to draw below selected day indicators
                         // this makes sure that they do no overlap
@@ -954,4 +957,10 @@ class CompactCalendarController {
     private void drawCircle(Canvas canvas, float radius, float x, float y) {
         canvas.drawCircle(x, y, radius, dayPaint);
     }
+    
+    private void drawCircleRing(Canvas canvas, float x, float y, int color){
+        drawDayCircleIndicator(NO_FILL_LARGE_INDICATOR, canvas, x, y, color, 1.2f);
+    }
+    
+    
 }
