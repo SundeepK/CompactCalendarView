@@ -28,7 +28,7 @@ import static com.github.sundeepk.compactcalendarview.CompactCalendarView.NO_FIL
 import static com.github.sundeepk.compactcalendarview.CompactCalendarView.SMALL_INDICATOR;
 
 
-class CompactCalendarController {
+class CompactCalendarController { 
 
     public static final int IDLE = 0;
     public static final int EXPOSE_CALENDAR_ANIMATION = 1;
