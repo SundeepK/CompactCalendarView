@@ -3,7 +3,7 @@
 See https://github.com/SundeepK/CompactCalendarView/issues/97
 An example of how it shows: 
 
-<img src="https://github.com/GGLabCenter/CompactCalendarView/tree/master/images/date-range-sample.png" width="500">
+<img src="https://github.com/GGLabCenter/CompactCalendarView/tree/master/images/date-range-example.png" width="500">
 
 
 # CompactCalendarView [![Build Status](https://travis-ci.org/SundeepK/CompactCalendarView.svg?branch=master)](https://travis-ci.org/SundeepK/CompactCalendarView)
