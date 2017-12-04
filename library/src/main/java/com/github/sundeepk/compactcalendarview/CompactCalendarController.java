@@ -962,5 +962,33 @@ class CompactCalendarController {
         drawDayCircleIndicator(NO_FILL_LARGE_INDICATOR, canvas, x, y, color, 1.2f);
     }
     
+    void addEventForDateRange(Event event) {
+        eventsContainer.addEventForDateRange(event);
+    }
+
+    void addEventsForDateRange(List<Event> events) {
+        eventsContainer.addEventsForDateRange(events);
+    }
+
+    List<Event> getCalendarEventsForForDateRange(long epochMillis) {
+        return eventsContainer.getEventsForForDateRange(epochMillis);
+    }
+
+    List<Event> getCalendarEventsForMonthForDateRange(long epochMillis) {
+        return eventsContainer.getEventsForMonthForPeriod(epochMillis);
+    }
+
+    void removeEventsForForDateRange(long epochMillis) {
+        eventsContainer.removeEventByEpochMillis(epochMillis);
+    }
+
+    void removeEventForDateRange(Event event) {
+        eventsContainer.removeEventForPeriod(event);
+    }
+
+    void removeEventsForDateRange(List<Event> events) {
+        eventsContainer.removeEventsForPeriod(events);
+    }
+    
     
 } 
