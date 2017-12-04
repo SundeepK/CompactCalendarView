@@ -2,6 +2,7 @@
 # Note on this fork: added the date range selection.
 See https://github.com/SundeepK/CompactCalendarView/issues/97
 An example of how it shows: 
+
 ![ScreenShot](https://github.com/GGLabCenter/CompactCalendarView/tree/master/images/date-range-example.png)
 
 # CompactCalendarView [![Build Status](https://travis-ci.org/SundeepK/CompactCalendarView.svg?branch=master)](https://travis-ci.org/SundeepK/CompactCalendarView)
