@@ -963,4 +963,4 @@ class CompactCalendarController {
     }
     
     
-}
+} 
