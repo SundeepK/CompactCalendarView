@@ -425,5 +425,14 @@ public class CompactCalendarView extends View {
         // Prevents ViewPager from scrolling horizontally by announcing that (issue #82)
         return this.horizontalScrollEnabled;
     }
+    
+    
+    public void addEventForDateRange(Event event, boolean shouldInvalidate){
+        compactCalendarController.addEventForDateRange(event);
+        if(shouldInvalidate){
+            invalidate();
+        }
+    }
+    
 
 }
