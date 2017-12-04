@@ -2,9 +2,7 @@
 # Note on this fork: added the date range selection.
 See https://github.com/SundeepK/CompactCalendarView/issues/97
 An example of how it shows: 
-
-<img src="https://github.com/GGLabCenter/CompactCalendarView/tree/master/images/date-range-example.png" width="500">
-
+![ScreenShot](https://github.com/GGLabCenter/CompactCalendarView/tree/master/images/date-range-example.png)
 
 # CompactCalendarView [![Build Status](https://travis-ci.org/SundeepK/CompactCalendarView.svg?branch=master)](https://travis-ci.org/SundeepK/CompactCalendarView)
 CompactCalendarView is a simple calendar view which provides scrolling between months. It's based on Java's Date and Calendar classes. It provides a simple api to query for dates and listeners for specific events.  For example, when the calendar has scrolled to a new month or a day has been selected.
