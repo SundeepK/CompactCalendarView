@@ -832,8 +832,6 @@ class CompactCalendarController {
     }
 
     void drawMonth(Canvas canvas, Calendar monthToDrawCalender, int offset) {
-        drawEvents(canvas, monthToDrawCalender, offset);
-
         //offset by one because we want to start from Monday
         int firstDayOfMonth = getDayOfWeek(monthToDrawCalender);
 
@@ -908,6 +906,7 @@ class CompactCalendarController {
                 }
             }
         }
+        drawEvents(canvas, monthToDrawCalender, offset);
     }
 
     private void drawDayCircleIndicator(int indicatorStyle, Canvas canvas, float x, float y, int color) {
