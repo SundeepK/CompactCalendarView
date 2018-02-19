@@ -26,7 +26,6 @@ import java.util.TimeZone;
 import static com.github.sundeepk.compactcalendarview.CompactCalendarHelper.getDayEventWith2EventsPerDay;
 import static com.github.sundeepk.compactcalendarview.CompactCalendarHelper.getDayEventWithMultipleEventsPerDay;
 import static com.github.sundeepk.compactcalendarview.CompactCalendarHelper.getEvents;
-import static com.github.sundeepk.compactcalendarview.CompactCalendarHelper.getSingleEvents;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.anyFloat;
@@ -423,7 +422,7 @@ public class CompactCalendarControllerTest {
 
     @Test
     public void testItAddsEvent(){
-        Event event = getSingleEvents(0, 30, 1433701251000L).get(0);
+        Event event = CompactCalendarHelper.getOneEventPerDayForMonth(0, 30, 1433701251000L).get(0);
         underTest.addEvent(event);
         verify(eventsContainer).addEvent(event);
         verifyNoMoreInteractions(eventsContainer);
@@ -431,7 +430,7 @@ public class CompactCalendarControllerTest {
 
     @Test
     public void testItAddsEvents(){
-        List<Event> events = getSingleEvents(0, 30, 1433701251000L);
+        List<Event> events = CompactCalendarHelper.getOneEventPerDayForMonth(0, 30, 1433701251000L);
         underTest.addEvents(events);
         verify(eventsContainer).addEvents(events);
         verifyNoMoreInteractions(eventsContainer);
@@ -439,7 +438,7 @@ public class CompactCalendarControllerTest {
 
     @Test
     public void testItRemovesEvent(){
-        Event event = getSingleEvents(0, 30, 1433701251000L).get(0);
+        Event event = CompactCalendarHelper.getOneEventPerDayForMonth(0, 30, 1433701251000L).get(0);
         underTest.removeEvent(event);
         verify(eventsContainer).removeEvent(event);
         verifyNoMoreInteractions(eventsContainer);
@@ -447,7 +446,7 @@ public class CompactCalendarControllerTest {
 
     @Test
     public void testItRemovesEvents(){
-        List<Event> events = getSingleEvents(0, 30, 1433701251000L);
+        List<Event> events = CompactCalendarHelper.getOneEventPerDayForMonth(0, 30, 1433701251000L);
         underTest.removeEvents(events);
         verify(eventsContainer).removeEvents(events);
         verifyNoMoreInteractions(eventsContainer);

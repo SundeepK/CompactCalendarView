@@ -15,12 +15,12 @@ import java.util.Map;
 
 public class CompactCalendarHelper {
 
-    public static List<Event> getSingleEvents(int start, int days, long timeStamp) {
-        return getSingleEvents(start, days, timeStamp, Color.BLUE);
+    public static List<Event> getOneEventPerDayForMonth(int start, int days, long timeStamp) {
+        return getOneEventPerDayForMonth(start, days, timeStamp, Color.BLUE);
     }
 
     //generate one event per a day for a month
-    public static List<Event> getSingleEvents(int start, int days, long timeStamp, int color) {
+    public static List<Event> getOneEventPerDayForMonth(int start, int days, long timeStamp, int color) {
         Calendar currentCalender = Calendar.getInstance(Locale.getDefault());
         List<Event> events = new ArrayList<>();
         for(int i = start; i < days; i++){

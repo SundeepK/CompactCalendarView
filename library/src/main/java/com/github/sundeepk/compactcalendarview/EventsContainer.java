@@ -110,8 +110,11 @@ public class EventsContainer {
                 int dayInMonthFromCache = eventsCalendar.get(Calendar.DAY_OF_MONTH);
                 if (dayInMonthFromCache == dayInMonth) {
                     calendarDayEventIterator.remove();
-                    return;
+                    break;
                 }
+            }
+            if (!calendarDayEventIterator.hasNext()) {
+                eventsByMonthAndYearMap.remove(key);
             }
         }
     }
@@ -121,12 +124,21 @@ public class EventsContainer {
         String key = getKeyForCalendarEvent(eventsCalendar);
         List<Events> eventsForMonthAndYear = eventsByMonthAndYearMap.get(key);
         if (eventsForMonthAndYear != null) {
-            for(Events events : eventsForMonthAndYear){
+            Iterator<Events> eventsForMonthYrItr = eventsForMonthAndYear.iterator();
+            while(eventsForMonthYrItr.hasNext()) {
+                Events events = eventsForMonthYrItr.next();
                 int indexOfEvent = events.getEvents().indexOf(event);
                 if (indexOfEvent >= 0) {
-                    events.getEvents().remove(indexOfEvent);
-                    return;
+                    if (events.getEvents().size() == 1) {
+                        eventsForMonthYrItr.remove();
+                    } else {
+                        events.getEvents().remove(indexOfEvent);
+                    }
+                    break;
                 }
+            }
+            if (!eventsForMonthYrItr.hasNext()) {
+                eventsByMonthAndYearMap.remove(key);
             }
         }
     }
