@@ -113,7 +113,7 @@ public class EventsContainer {
                     break;
                 }
             }
-            if (!calendarDayEventIterator.hasNext()) {
+            if (eventsForMonthAndYear.isEmpty()) {
                 eventsByMonthAndYearMap.remove(key);
             }
         }
@@ -137,7 +137,7 @@ public class EventsContainer {
                     break;
                 }
             }
-            if (!eventsForMonthYrItr.hasNext()) {
+            if (eventsForMonthAndYear.isEmpty()) {
                 eventsByMonthAndYearMap.remove(key);
             }
         }

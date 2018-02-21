@@ -109,14 +109,50 @@ public class EventsContainerTest {
     @Test
     public void testItRemovesEventFromCacheIfEmpty(){
         //Sun, 01 Feb 2015 00:00:00 GMT
-        List<Event> events = CompactCalendarHelper.getOneEventPerDayForMonth(0, 30, 1422748800001L);
-        underTest.addEvent(events.get(0));
+        Event event = new Event(Color.BLUE, 1422748800001L);
+        Event event2 = new Event(Color.BLUE, 1442758800000L);
+        underTest.addEvent(event);
+        underTest.addEvent(event2);
 
-        assertEquals(events.get(0), underTest.getEventsForMonthAndYear(1, 2015).get(0).getEvents().get(0));
+        assertEquals(event, underTest.getEventsForMonthAndYear(1, 2015).get(0).getEvents().get(0));
 
-        underTest.removeEvent(events.get(0));
+        underTest.removeEvent(event);
 
         assertNull(underTest.getEventsForMonthAndYear(1, 2015));
+        assertEquals(Arrays.asList(event2), underTest.getEventsFor(1442758800000L));
+    }
+
+    @Test
+    public void testItRemovesEventFromCacheIfEmptyUsingEpoch(){
+        //Sun, 01 Feb 2015 00:00:00 GMT
+        Event event = new Event(Color.BLUE, 1422748800001L);
+        Event event2 = new Event(Color.BLUE, 1442758800000L);
+        underTest.addEvent(event);
+        underTest.addEvent(event2);
+
+        assertEquals(event, underTest.getEventsForMonthAndYear(1, 2015).get(0).getEvents().get(0));
+
+        underTest.removeEventByEpochMillis(1422748800001L);
+
+        assertNull(underTest.getEventsForMonthAndYear(1, 2015));
+        assertEquals(Arrays.asList(event2), underTest.getEventsFor(1442758800000L));
+    }
+
+    @Test
+    public void testItDoesNotInterfereWithOtherEventsWhenRemovingUnknownEvent(){
+        //Sun, 01 Feb 2015 00:00:00 GMT
+        List<Event> expectedEvents = CompactCalendarHelper.getOneEventPerDayForMonth(0, 28, 1422748800000L);
+
+        underTest.addEvents(expectedEvents);
+
+        //Sun, 20 September 2015 14:20:00 GMT
+        underTest.removeEvent(new Event(Color.BLUE, 1442758800000L));
+
+        List<Event> actualEvents = underTest.getEventsForMonth(1422748800000L);
+        List<Event> empty = underTest.getEventsForMonth(1442758800000L);
+
+        assertEquals(empty, new ArrayList<Event>());
+        assertEquals(expectedEvents, actualEvents);
     }
 
     @Test

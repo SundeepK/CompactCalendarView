@@ -768,10 +768,8 @@ class CompactCalendarController {
 
                 if (shouldDrawIndicatorsBelowSelectedDays || (!shouldDrawIndicatorsBelowSelectedDays && !isSameDayAsCurrentDay && !isCurrentSelectedDay) || animationStatus == EXPOSE_CALENDAR_ANIMATION) {
                     if (eventIndicatorStyle == FILL_LARGE_INDICATOR || eventIndicatorStyle == NO_FILL_LARGE_INDICATOR) {
-                        if(!eventsList.isEmpty()){
-                            Event event = eventsList.get(0);
-                            drawEventIndicatorCircle(canvas, xPosition, yPosition, event.getColor());
-                        }
+                        Event event = eventsList.get(0);
+                        drawEventIndicatorCircle(canvas, xPosition, yPosition, event.getColor());
                     } else {
                         yPosition += indicatorOffset;
                         // offset event indicators to draw below selected day indicators
