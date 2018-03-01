@@ -192,7 +192,7 @@ public class CompactCalendarView extends View {
      * @param event
      */
     public void addEvent(Event event){
-        addEvent(event, false);
+        addEvent(event, true);
     }
 
     /**
@@ -270,7 +270,7 @@ public class CompactCalendarView extends View {
      * @param event
      */
     public void removeEvent(Event event){
-        removeEvent(event, false);
+        removeEvent(event, true);
     }
 
     /**
