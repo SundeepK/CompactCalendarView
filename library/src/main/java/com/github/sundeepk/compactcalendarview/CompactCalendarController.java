@@ -9,6 +9,7 @@ import android.graphics.Paint;
 import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.Typeface;
+import android.os.Build;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
@@ -771,7 +772,12 @@ class CompactCalendarController {
 
                 if (shouldDrawIndicatorsBelowSelectedDays || (!shouldDrawIndicatorsBelowSelectedDays && !isSameDayAsCurrentDay && !isCurrentSelectedDay) || animationStatus == EXPOSE_CALENDAR_ANIMATION) {
                     if (eventIndicatorStyle == FILL_LARGE_INDICATOR || eventIndicatorStyle == NO_FILL_LARGE_INDICATOR) {
-                        drawEventArcs(canvas, xPosition, yPosition, eventsList);
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                            drawEventArcs(canvas, xPosition, yPosition, eventsList);
+                        } else if(!eventsList.isEmpty()) {
+                            Event event = eventsList.get(0);
+                            drawEventIndicatorCircle(canvas, xPosition, yPosition, event.getColor());
+                        }
                     } else {
                         yPosition += indicatorOffset;
                         // offset event indicators to draw below selected day indicators
