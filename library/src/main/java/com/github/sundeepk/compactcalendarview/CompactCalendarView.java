@@ -161,6 +161,10 @@ public class CompactCalendarView extends View {
         return compactCalendarController.getFirstDayOfCurrentMonth();
     }
 
+    public void disableBackgroundForSelectedDay(boolean disableBackgroundForSelectedDay){
+        compactCalendarController.disableBackgroundForSelectedDay(disableBackgroundForSelectedDay);
+    }
+
     public void shouldDrawIndicatorsBelowSelectedDays(boolean shouldDrawIndicatorsBelowSelectedDays){
         compactCalendarController.shouldDrawIndicatorsBelowSelectedDays(shouldDrawIndicatorsBelowSelectedDays);
     }
