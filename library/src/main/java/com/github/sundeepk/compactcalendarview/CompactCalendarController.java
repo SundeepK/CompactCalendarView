@@ -79,7 +79,7 @@ class CompactCalendarController {
     private boolean isSmoothScrolling;
     private boolean isScrolling;
     private boolean shouldDrawDaysHeader = true;
-    private boolean shouldDrawIndicatorsBelowSelectedDays = false;
+    private boolean shouldDrawIndicatorsBelowSelectedDays = true;
     private boolean displayOtherMonthDays = false;
     private boolean shouldSelectFirstDayOfMonthOnScroll = true;
 
