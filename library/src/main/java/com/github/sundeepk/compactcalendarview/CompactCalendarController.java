@@ -78,7 +78,7 @@ class CompactCalendarController {
     private boolean isSmoothScrolling;
     private boolean isScrolling;
     private boolean shouldDrawDaysHeader = true;
-    private boolean shouldDrawIndicatorsBelowSelectedDays = false;
+    private boolean shouldDrawIndicatorsBelowSelectedDays = true;
     private boolean displayOtherMonthDays = false;
     private boolean shouldSelectFirstDayOfMonthOnScroll = true;
 
@@ -399,7 +399,7 @@ class CompactCalendarController {
         bigCircleIndicatorRadius = getInterpolatedBigCircleIndicator();
 
         // scale the selected day indicators slightly so that event indicators can be drawn below
-        bigCircleIndicatorRadius = shouldDrawIndicatorsBelowSelectedDays && eventIndicatorStyle == CompactCalendarView.SMALL_INDICATOR ? bigCircleIndicatorRadius * 0.85f : bigCircleIndicatorRadius;
+        bigCircleIndicatorRadius = shouldDrawIndicatorsBelowSelectedDays && eventIndicatorStyle == CompactCalendarView.SMALL_INDICATOR ? bigCircleIndicatorRadius * 0.65f : bigCircleIndicatorRadius;
     }
 
     //assume square around each day of width and height = heightPerDay and get diagonal line length
