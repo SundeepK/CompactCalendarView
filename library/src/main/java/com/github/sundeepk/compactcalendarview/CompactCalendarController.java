@@ -772,7 +772,7 @@ class CompactCalendarController {
 
                 if (shouldDrawIndicatorsBelowSelectedDays || (!shouldDrawIndicatorsBelowSelectedDays && !isSameDayAsCurrentDay && !isCurrentSelectedDay) || animationStatus == EXPOSE_CALENDAR_ANIMATION) {
                     if (eventIndicatorStyle == FILL_LARGE_INDICATOR || eventIndicatorStyle == NO_FILL_LARGE_INDICATOR) {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && eventIndicatorStyle == NO_FILL_LARGE_INDICATOR) {
                             drawEventArcs(canvas, xPosition, yPosition, eventsList);
                         } else if(!eventsList.isEmpty()) {
                             Event event = eventsList.get(0);
