@@ -29,7 +29,6 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
-import java.util.Random;
 import java.util.TimeZone;
 
 public class CompactCalendarTab extends Fragment {
@@ -283,22 +282,17 @@ public class CompactCalendarTab extends Fragment {
 
     private List<Event> getEvents(long timeInMillis, int day) {
         if (day < 2) {
-            return Arrays.asList(new Event(getRandomColor(), timeInMillis, "Event at " + new Date(timeInMillis)));
+            return Arrays.asList(new Event(Color.argb(255, 169, 68, 65), timeInMillis, "Event at " + new Date(timeInMillis)));
         } else if ( day > 2 && day <= 4) {
             return Arrays.asList(
-                    new Event(getRandomColor(), timeInMillis, "Event at " + new Date(timeInMillis)),
-                    new Event(getRandomColor(), timeInMillis, "Event 2 at " + new Date(timeInMillis)));
+                    new Event(Color.argb(255, 169, 68, 65), timeInMillis, "Event at " + new Date(timeInMillis)),
+                    new Event(Color.argb(255, 100, 68, 65), timeInMillis, "Event 2 at " + new Date(timeInMillis)));
         } else {
             return Arrays.asList(
-                    new Event(getRandomColor(), timeInMillis, "Event at " + new Date(timeInMillis) ),
-                    new Event(getRandomColor(), timeInMillis, "Event 2 at " + new Date(timeInMillis)),
-                    new Event(getRandomColor(), timeInMillis, "Event 3 at " + new Date(timeInMillis)));
+                    new Event(Color.argb(255, 169, 68, 65), timeInMillis, "Event at " + new Date(timeInMillis) ),
+                    new Event(Color.argb(255, 100, 68, 65), timeInMillis, "Event 2 at " + new Date(timeInMillis)),
+                    new Event(Color.argb(255, 70, 68, 65), timeInMillis, "Event 3 at " + new Date(timeInMillis)));
         }
-    }
-
-    private int getRandomColor() {
-        Random rand = new Random();
-        return Color.rgb(rand.nextInt(256), rand.nextInt(256), rand.nextInt(256));
     }
 
     private void setToMidnight(Calendar calendar) {
