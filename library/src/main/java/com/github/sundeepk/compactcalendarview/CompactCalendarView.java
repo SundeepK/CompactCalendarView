@@ -32,6 +32,14 @@ public class CompactCalendarView extends View {
     private GestureDetectorCompat gestureDetector;
     private boolean horizontalScrollEnabled = true;
 
+    public void setSpecifiMode(@SpecificMode int specifiMode) {
+        compactCalendarController.setSpecificMode(specifiMode);
+    }
+
+    public void setSpecificDates(SpecifiDates dates) {
+        compactCalendarController.setSpecificDates(dates);
+    }
+
     public interface CompactCalendarViewListener {
         public void onDayClick(Date dateClicked);
         public void onMonthScroll(Date firstDayOfNewMonth);
