@@ -1,6 +1,7 @@
 package com.github.sundeepk.compactcalendarview;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -78,6 +79,7 @@ class CompactCalendarController {
     private boolean shouldDrawIndicatorsBelowSelectedDays = false;
     private boolean displayOtherMonthDays = false;
     private boolean shouldSelectFirstDayOfMonthOnScroll = true;
+    private boolean shouldUppercaseWeekDaysHeader = false;
 
     private CompactCalendarViewListener listener;
     private VelocityTracker velocityTracker = null;
@@ -142,8 +144,19 @@ class CompactCalendarController {
         if (attrs != null && context != null) {
             TypedArray typedArray = context.getTheme().obtainStyledAttributes(attrs, R.styleable.CompactCalendarView, 0, 0);
             try {
+
+                int id = typedArray.getResourceId(R.styleable.CompactCalendarView_compactCalendarTextColor, -1);
+                if (id != -1) {
+                    TypedArray app = context.getTheme().obtainStyledAttributes(id, new int[]{ android.R.attr.textColor, android.R.attr.typeface, android.R.attr.textStyle});
+                    if (app != null){
+                        calenderTextColor = app.getColor(0, 0);
+                        app.recycle();
+                    }
+                } else {
+                    calenderTextColor = typedArray.getColor(R.styleable.CompactCalendarView_compactCalendarTextColor, calenderTextColor);
+                }
+
                 currentDayBackgroundColor = typedArray.getColor(R.styleable.CompactCalendarView_compactCalendarCurrentDayBackgroundColor, currentDayBackgroundColor);
-                calenderTextColor = typedArray.getColor(R.styleable.CompactCalendarView_compactCalendarTextColor, calenderTextColor);
                 currentDayTextColor = typedArray.getColor(R.styleable.CompactCalendarView_compactCalendarCurrentDayTextColor, calenderTextColor);
                 otherMonthDaysTextColor = typedArray.getColor(R.styleable.CompactCalendarView_compactCalendarOtherMonthDaysTextColor, otherMonthDaysTextColor);
                 currentSelectedDayBackgroundColor = typedArray.getColor(R.styleable.CompactCalendarView_compactCalendarCurrentSelectedDayBackgroundColor, currentSelectedDayBackgroundColor);
@@ -159,6 +172,7 @@ class CompactCalendarController {
                 currentSelectedDayIndicatorStyle = typedArray.getInt(R.styleable.CompactCalendarView_compactCalendarCurrentSelectedDayIndicatorStyle, FILL_LARGE_INDICATOR);
                 displayOtherMonthDays = typedArray.getBoolean(R.styleable.CompactCalendarView_compactCalendarDisplayOtherMonthDays, displayOtherMonthDays);
                 shouldSelectFirstDayOfMonthOnScroll = typedArray.getBoolean(R.styleable.CompactCalendarView_compactCalendarShouldSelectFirstDayOfMonthOnScroll, shouldSelectFirstDayOfMonthOnScroll);
+                shouldUppercaseWeekDaysHeader = typedArray.getBoolean(R.styleable.CompactCalendarView_compactCalendarUppercaseWeekDaysHeader, shouldUppercaseWeekDaysHeader);
             } finally {
                 typedArray.recycle();
             }
@@ -780,8 +794,10 @@ class CompactCalendarController {
                             yPosition += indicatorOffset;
                         }
 
-                        if (eventsList.size() >= 3) {
+                        if (eventsList.size() >= 4) {
                             drawEventsWithPlus(canvas, xPosition, yPosition, eventsList);
+                        } else if (eventsList.size() == 3) {
+                            drawThreeEvents(canvas, xPosition, yPosition, eventsList);
                         } else if (eventsList.size() == 2) {
                             drawTwoEvents(canvas, xPosition, yPosition, eventsList);
                         } else if (eventsList.size() == 1) {
@@ -799,10 +815,19 @@ class CompactCalendarController {
     }
 
     private void drawTwoEvents(Canvas canvas, float xPosition, float yPosition, List<Event> eventsList) {
-        //draw fist event just left of center
+        //draw first event just left of center
         drawEventIndicatorCircle(canvas, xPosition + (xIndicatorOffset * -1), yPosition, eventsList.get(0).getColor());
         //draw second event just right of center
         drawEventIndicatorCircle(canvas, xPosition + (xIndicatorOffset * 1), yPosition, eventsList.get(1).getColor());
+    }
+
+    private void drawThreeEvents(Canvas canvas, float xPosition, float yPosition, List<Event> eventsList) {
+        //draw first event just left of center
+        drawEventIndicatorCircle(canvas, xPosition + (xIndicatorOffset * -2), yPosition, eventsList.get(0).getColor());
+        //draw second event centered
+        drawEventIndicatorCircle(canvas, xPosition, yPosition, eventsList.get(1).getColor());
+        //draw third event just right of center
+        drawEventIndicatorCircle(canvas, xPosition + (xIndicatorOffset * 2), yPosition, eventsList.get(2).getColor());
     }
 
     //draw 2 eventsByMonthAndYearMap followed by plus indicator to show there are more than 2 eventsByMonthAndYearMap
@@ -875,7 +900,7 @@ class CompactCalendarController {
                     dayPaint.setTypeface(Typeface.DEFAULT_BOLD);
                     dayPaint.setStyle(Paint.Style.FILL);
                     dayPaint.setColor(calenderTextColor);
-                    canvas.drawText(dayColumnNames[dayColumn], xPosition, paddingHeight, dayPaint);
+                    canvas.drawText(shouldUppercaseWeekDaysHeader ? dayColumnNames[dayColumn].toUpperCase() : dayColumnNames[dayColumn], xPosition, paddingHeight, dayPaint);
                     dayPaint.setTypeface(Typeface.DEFAULT);
                 }
             } else {
