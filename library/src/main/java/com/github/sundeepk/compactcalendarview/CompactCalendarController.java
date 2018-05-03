@@ -117,6 +117,11 @@ class CompactCalendarController {
     @Nullable
     private SpecifiDates specificDates;
 
+    @Nullable
+    private Calendar minDate = null;
+    @Nullable
+    private Calendar maxDate = null;
+
     /**
      * Only used in onDrawCurrentMonth to temporarily calculate previous month days
      */
@@ -221,6 +226,18 @@ class CompactCalendarController {
 
     public void setSpecificMode(@SpecificMode int specificMode) {
         this.specificMode = specificMode;
+    }
+
+    public void setMinDate(int year, int month, int day) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(year, month, day);
+        this.minDate = calendar;
+    }
+
+    public void setMaxDate(int year, int month, int day) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(year, month, day);
+        this.maxDate = calendar;
     }
 
     public void setSpecificDates(SpecifiDates dates) {
@@ -500,10 +517,11 @@ class CompactCalendarController {
             }
         }
 
+        isClickPermitted = isClickPermitted && !isOutOfRange(calendarWithFirstDayOfMonth.get(Calendar.YEAR),
+                calendarWithFirstDayOfMonth.get(Calendar.MONTH), dayOfMonth + 1);
+
         if (!isClickPermitted) {
             return;
-        } else {
-            isClickPermitted = true;
         }
 
         if (dayOfMonth < calendarWithFirstDayOfMonth.getActualMaximum(Calendar.DAY_OF_MONTH)
@@ -975,6 +993,13 @@ class CompactCalendarController {
                         canvas.drawText(String.valueOf(day - maximumMonthDay), xPosition, yPosition, dayPaint);
                     }
                 } else {
+                    if (alpha != DISABLED_ALPHA) {
+                        boolean disabledByRange = isOutOfRange(monthToDrawCalender.get(Calendar.YEAR),
+                                monthToDrawCalender.get(Calendar.MONTH), day);
+                        if (disabledByRange) {
+                            alpha = DISABLED_ALPHA;
+                        }
+                    }
                     dayPaint.setStyle(Paint.Style.FILL);
                     dayPaint.setColor(defaultCalenderTextColorToUse);
                     dayPaint.setAlpha(alpha);
@@ -982,6 +1007,27 @@ class CompactCalendarController {
                 }
             }
         }
+    }
+
+    private boolean isOutOfRange(int year, int month, int day) {
+        int minDay = minDate != null ? minDate.get(Calendar.DAY_OF_MONTH) : Integer.MIN_VALUE;
+        int minMonth = minDate != null ? minDate.get(Calendar.MONTH) : Integer.MIN_VALUE;
+        int minYear = minDate != null ? minDate.get(Calendar.YEAR) : Integer.MIN_VALUE;
+
+        int maxDay = maxDate != null ? maxDate.get(Calendar.DAY_OF_MONTH) : Integer.MAX_VALUE;
+        int maxMonth = maxDate != null ? maxDate.get(Calendar.MONTH) : Integer.MAX_VALUE;
+        int maxYear = maxDate != null ? maxDate.get(Calendar.YEAR) : Integer.MAX_VALUE;
+
+        boolean disabledByRange;
+        disabledByRange = year < minYear;
+        disabledByRange = disabledByRange || year == minYear && month < minMonth;
+        disabledByRange = disabledByRange || year == minYear && month == minMonth && day < minDay;
+
+        disabledByRange = disabledByRange || year > maxYear;
+        disabledByRange = disabledByRange || year == maxYear && month > maxMonth;
+        disabledByRange = disabledByRange || year == maxYear && month == maxMonth && day > maxDay;
+
+        return disabledByRange;
     }
 
     private boolean isDaySpecific(int year, int month, int day) {

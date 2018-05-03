@@ -376,6 +376,16 @@ public class CompactCalendarView extends View {
         invalidate();
     }
 
+    public void setMinDate(int year, int month, int day) {
+        compactCalendarController.setMinDate(year, month - 1, day);
+        invalidate();
+    }
+
+    public void setMaxDate(int year, int month, int day) {
+        compactCalendarController.setMaxDate(year, month - 1, day);
+        invalidate();
+    }
+
     public boolean isAnimating(){
         return animationHandler.isAnimating();
     }

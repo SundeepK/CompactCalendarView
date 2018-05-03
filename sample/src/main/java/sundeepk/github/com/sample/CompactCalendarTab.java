@@ -179,6 +179,9 @@ public class CompactCalendarTab extends Fragment {
         specificDates.add(item);
         compactCalendarView.setSpecificDates(specificDates);
 
+        compactCalendarView.setMinDate(2017, 2, 10);
+        compactCalendarView.setMaxDate(2019, 2, 28);
+
 
         // uncomment below to show indicators above small indicator events
         // compactCalendarView.shouldDrawIndicatorsBelowSelectedDays(true);
