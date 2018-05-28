@@ -187,13 +187,12 @@ public class CompactCalendarView extends View {
     }
 
     /**
-     * see {@link #addEvent(Event, boolean)} when adding single events
+     * see {@link #addEvent(Event, boolean)} when adding single events to control if calendar should redraw
      * or {@link #addEvents(java.util.List)}  when adding multiple events
      * @param event
      */
-    @Deprecated
     public void addEvent(Event event){
-        addEvent(event, false);
+        addEvent(event, true);
     }
 
     /**
@@ -266,13 +265,12 @@ public class CompactCalendarView extends View {
     }
 
     /**
-     * see {@link #removeEvent(Event, boolean)} when removing single events
+     * see {@link #removeEvent(Event, boolean)} when removing single events to control if calendar should redraw
      * or {@link #removeEvents(java.util.List)} (java.util.List)}  when removing multiple events
      * @param event
      */
-    @Deprecated
     public void removeEvent(Event event){
-        removeEvent(event, false);
+        removeEvent(event, true);
     }
 
     /**

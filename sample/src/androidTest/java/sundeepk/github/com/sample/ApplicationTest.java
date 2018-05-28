@@ -376,6 +376,18 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
     }
 
     @Test
+    public void testItAddsAndRemovesEventsForFilledLargeIndicator() {
+        //Sun, 08 Feb 2015 00:00:00 GMT
+        setDate(new Date(1423353600000L));
+        onView(withId(R.id.compactcalendar_view)).perform(clickXY(60, 150));
+        setIndicatorType(FILL_LARGE_INDICATOR, FILL_LARGE_INDICATOR, FILL_LARGE_INDICATOR);
+        List<Event> events = getEvents(1423353600000L, 1);
+
+        compactCalendarView.addEvents(events);
+        compactCalendarView.removeEvent(events.get(0));
+    }
+
+    @Test
     public void testOnDayClickListenerIsCalled(){
         CompactCalendarViewListener listener = mock(CompactCalendarViewListener.class);
         compactCalendarView.setListener(listener);
