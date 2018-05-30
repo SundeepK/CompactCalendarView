@@ -6,6 +6,7 @@
     android:id="@+id/main_content"
     >
 
+
     <com.github.sundeepk.compactcalendarview.CompactCalendarView
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/compactcalendar_view"

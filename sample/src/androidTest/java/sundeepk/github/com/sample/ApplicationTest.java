@@ -18,7 +18,6 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
-import android.widget.TextView;
 
 import com.azimolabs.conditionwatcher.ConditionWatcher;
 import com.azimolabs.conditionwatcher.Instruction;
@@ -44,16 +43,9 @@ import java.util.TimeZone;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
-import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
-import static android.support.test.espresso.matcher.ViewMatchers.withParent;
-import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static com.github.sundeepk.compactcalendarview.CompactCalendarView.CompactCalendarViewListener;
 import static com.github.sundeepk.compactcalendarview.CompactCalendarView.FILL_LARGE_INDICATOR;
-import static com.github.sundeepk.compactcalendarview.CompactCalendarView.NO_FILL_LARGE_INDICATOR;
-import static com.github.sundeepk.compactcalendarview.CompactCalendarView.SMALL_INDICATOR;
-import static org.hamcrest.Matchers.allOf;
-import static org.hamcrest.Matchers.instanceOf;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -108,315 +100,8 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
         assertEquals(getEventsFor(Calendar.MARCH, 2015), compactCalendarView.getEventsForMonth(currentCalender.getTime()));
 
         syncToolbarDate();
-        capture("testItDrawsEventsRtl");
-    }
 
-    @Test
-    public void testCorrectDateIsReturnedWhenRtl()  {
-        compactCalendarView.shouldSelectFirstDayOfMonthOnScroll(false);
-        compactCalendarView.setIsRtl(true);
-
-        //Sun, 08 Feb 2015 00:00:00 GMT
-        setDate(new Date(1423353600000L));
-
-        scrollCalendarBackwardsBy(4);
-        //Mon, 01 Jun 2015 00:00:00 GMT
-        assertEquals(new Date(1433116800000L), compactCalendarView.getFirstDayOfCurrentMonth());
-
-        //Wed, 01 Apr 2015 00:00:00 GMT
-        scrollCalendarForwardBy(2);
-        assertEquals(new Date(1427846400000L), compactCalendarView.getFirstDayOfCurrentMonth());
-
-        //Tue, 01 Apr 2014 00:00:00 GMT
-        scrollCalendarForwardBy(12);
-        assertEquals(new Date(1396310400000L), compactCalendarView.getFirstDayOfCurrentMonth());
-    }
-
-    @Test
-    public void testCorrectDateIsReturnedWhenRtlFor1YearBackwards()  {
-        compactCalendarView.shouldSelectFirstDayOfMonthOnScroll(false);
-        compactCalendarView.setIsRtl(true);
-
-        //Sun, 08 Feb 2015 00:00:00 GMT
-        setDate(new Date(1423353600000L));
-
-        scrollCalendarForwardBy(12);
-        //Sat, 01 Feb 2014 00:00:00 GMT
-
-        syncToolbarDate();
-        assertEquals(new Date(1391212800000L), compactCalendarView.getFirstDayOfCurrentMonth());
-        capture("testCorrectDateIsReturnedWhenRtlFor1YearBackwards");
-    }
-
-    @Test
-    public void testItScrollsPrevMonthRtl(){
-        CompactCalendarViewListener listener = mock(CompactCalendarViewListener.class);
-        compactCalendarView.setListener(listener);
-        compactCalendarView.setIsRtl(true);
-
-        //Sun, 08 Feb 2015 00:00:00 GMT
-        setDate(new Date(1423353600000L));
-        //rtl so scroll direction is flipped
-        scrollCalendarForwardBy(1);
-
-        //Thu, 01 Jan 2015 00:00:00 GMT - expected
-        verify(listener).onMonthScroll(new Date(1420070400000L));
-        verifyNoMoreInteractions(listener);
-
-        syncToolbarDate();
-        capture("testItScrollsPrevMonthRtl");
-    }
-
-    @Test
-    public void testItScrollsNextMonthRtl(){
-        CompactCalendarViewListener listener = mock(CompactCalendarViewListener.class);
-        compactCalendarView.setListener(listener);
-        compactCalendarView.setIsRtl(true);
-
-        //Sun, 08 Feb 2015 00:00:00 GMT
-        setDate(new Date(1423353600000L));
-        //rtl so scroll direction is flipped
-        scrollCalendarBackwardsBy(1);
-
-        //Sun, 01 Mar 2015 00:00:00 GMT - expected
-        verify(listener).onMonthScroll(new Date(1425168000000L));
-        verifyNoMoreInteractions(listener);
-
-        syncToolbarDate();
-        capture("testItScrollsNextMonthRtl");
-    }
-
-    @Test
-    public void testItDoesNotScrollWhenScrollingIsDisabled(){
-        CompactCalendarViewListener listener = mock(CompactCalendarViewListener.class);
-        compactCalendarView.setListener(listener);
-        compactCalendarView.shouldScrollMonth(false);
-
-        //Sun, 08 Feb 2015 00:00:00 GMT
-        setDate(new Date(1423353600000L));
-        scrollCalendarForwardBy(1);
-
-        verifyNoMoreInteractions(listener);
-        capture("testItDoesNotScrollWhenScrollingIsDisabled");
-    }
-
-    @Test
-    public void testItDoesNotSelectFirstDayWhenItsDisableOnNextMonth() throws InterruptedException {
-        CompactCalendarViewListener listener = mock(CompactCalendarViewListener.class);
-        compactCalendarView.setListener(listener);
-
-        //Sun, 08 Feb 2015 00:00:00 GMT
-        setDate(new Date(1423353600000L));
-
-        shouldSelectFirstDayOfMonthOnScroll(false);
-        onView(withId(R.id.next_button)).perform(clickXY(0, 0));
-
-        verify(listener).onMonthScroll(new Date(1425168000000L));
-
-        syncToolbarDate();
-        capture("testItDoesNotSelectFirstDayWhenItsDisableOnNextMonth");
-    }
-
-    @Test
-    public void testItDoesNotSelectFirstDayWhenItsDisableOnPreviousMonth(){
-        CompactCalendarViewListener listener = mock(CompactCalendarViewListener.class);
-        compactCalendarView.setListener(listener);
-
-        //Sun, 08 Feb 2015 00:00:00 GMT
-        setDate(new Date(1423353600000L));
-
-        shouldSelectFirstDayOfMonthOnScroll(false);
-        onView(withId(R.id.prev_button)).perform(clickXY(0, 0));
-
-        verify(listener).onMonthScroll(new Date(1420070400000L));
-
-        syncToolbarDate();
-        capture("testItDoesNotSelectFirstDayWhenItsDisableOnPreviousMonth");
-    }
-
-    @Test
-    public void testItDoesSelectFirstDayWhenItsDisableOnNextMonth(){
-        CompactCalendarViewListener listener = mock(CompactCalendarViewListener.class);
-        compactCalendarView.setListener(listener);
-
-        //Sun, 08 Feb 2015 00:00:00 GMT
-        setDate(new Date(1423353600000L));
-
-        shouldSelectFirstDayOfMonthOnScroll(true);
-        onView(withId(R.id.next_button)).perform(clickXY(0, 0));
-
-        verify(listener).onMonthScroll(new Date(1425168000000L));
-
-        syncToolbarDate();
-        capture("testItDoesSelectFirstDayWhenItsDisableOnNextMonth");
-    }
-
-    @Test
-    public void testItDoesSelectFirstDayWhenItsDisableOnPreviousMonth(){
-        CompactCalendarViewListener listener = mock(CompactCalendarViewListener.class);
-        compactCalendarView.setListener(listener);
-
-        //Sun, 08 Feb 2015 00:00:00 GMT
-        setDate(new Date(1423353600000L));
-
-        shouldSelectFirstDayOfMonthOnScroll(true);
-        onView(withId(R.id.prev_button)).perform(clickXY(0, 0));
-
-        verify(listener).onMonthScroll(new Date(1420070400000L));
-
-        syncToolbarDate();
-        capture("testItDoesSelectFirstDayWhenItsDisableOnPreviousMonth");
-    }
-
-    @Test
-    public void testCorrectDateIsReturnedWhenShouldSelectFirstDayOfMonthOnScrollIsFalse()  {
-        compactCalendarView.shouldSelectFirstDayOfMonthOnScroll(false);
-
-        //Sun, 08 Feb 2015 00:00:00 GMT
-        setDate(new Date(1423353600000L));
-
-        scrollCalendarForwardBy(4);
-        //Mon, 01 Jun 2015 00:00:00 GMT
-        assertEquals(new Date(1433116800000L), compactCalendarView.getFirstDayOfCurrentMonth());
-
-        //Wed, 01 Apr 2015 00:00:00 GMT
-        scrollCalendarBackwardsBy(2);
-        assertEquals(new Date(1427846400000L), compactCalendarView.getFirstDayOfCurrentMonth());
-
-        //Tue, 01 Apr 2014 00:00:00 GMT
-        scrollCalendarBackwardsBy(12);
-        assertEquals(new Date(1396310400000L), compactCalendarView.getFirstDayOfCurrentMonth());
-    }
-
-    @Test
-    public void testItDoesNotDrawSelectedDayOnDifferentYearsWhenShouldSelectFirstDayOfMonthOnScrollIsFalse()  {
-        compactCalendarView.shouldSelectFirstDayOfMonthOnScroll(false);
-
-        //Sun, 08 Feb 2015 00:00:00 GMT
-        setDate(new Date(1423353600000L));
-
-        //01 Feb 2016 00:00:00 GMT
-        scrollCalendarForwardBy(12);
-        assertEquals(new Date(1454284800000L), compactCalendarView.getFirstDayOfCurrentMonth());
-        capture("testItDoesNotDrawSelectedDayOnDifferentYearsWhenShouldSelectFirstDayOfMonthOnScrollIsFalse");
-    }
-
-    @Test
-    public void testWhenShouldSelectFirstDayOfMonthOnScrollIsFalseItDoesNotSelectFIrstDayOfMonth()  {
-        compactCalendarView.shouldSelectFirstDayOfMonthOnScroll(false);
-        setDate(new Date(1423353600000L));
-        scrollCalendarForwardBy(1);
-        capture("testWhenShouldSelectFirstDayOfMonthOnScrollIsFalseItDoesNotSelectFIrstDayOfMonth");
-    }
-
-    @Test
-    public void testOnMonthScrollListenerIsCalled()  {
-        CompactCalendarViewListener listener = mock(CompactCalendarViewListener.class);
-        compactCalendarView.setListener(listener);
-
-        //Sun, 08 Feb 2015 00:00:00 GMT
-        setDate(new Date(1423353600000L));
-        onView(withId(R.id.compactcalendar_view)).perform(scroll(100, 100, -100, 0));
-
-        //Sun, 01 Mar 2015 00:00:00 GMT - expected
-        verify(listener).onMonthScroll(new Date(1425168000000L));
-        verifyNoMoreInteractions(listener);
-    }
-
-    @Test
-    public void testToolbarIsUpdatedOnScroll()  {
-        getInstrumentation().waitForIdleSync();
-        //Sun, 08 Feb 2015 00:00:00 GMT
-        setDate(new Date(1423353600000L));
-        onView(withId(R.id.compactcalendar_view)).perform(scroll(100, 100, -100, 0));
-
-        onView(allOf(instanceOf(TextView.class), withParent(withId(R.id.tool_bar))))
-                .check(matches(withText("Mar - 2015")));
-        capture("testToolbarIsUpdatedOnScroll");
-    }
-
-    @Test
-    public void testItDrawNoFillLargeIndicatorOnCurrentSelectedDayWithSmallIndicatorForEvents(){
-        //Sun, 08 Feb 2015 00:00:00 GMT
-        setDate(new Date(1423353600000L));
-        addEvents(Calendar.FEBRUARY, 2015);
-        onView(withId(R.id.compactcalendar_view)).perform(clickXY(60, 150));
-        setIndicatorType(NO_FILL_LARGE_INDICATOR, SMALL_INDICATOR, FILL_LARGE_INDICATOR);
-        capture("testItDrawNoFillLargeIndicatorOnCurrentSelectedDayWithSmallIndicatorForEvents");
-    }
-
-    @Test
-    public void testItDrawNoFillLargeIndicatorOnCurrentSelectedDayWithNoFillLargeIndicatorForEvents(){
-        //Sun, 08 Feb 2015 00:00:00 GMT
-        setDate(new Date(1423353600000L));
-        addEvents(Calendar.FEBRUARY, 2015);
-        onView(withId(R.id.compactcalendar_view)).perform(clickXY(60, 150));
-        setIndicatorType(NO_FILL_LARGE_INDICATOR, NO_FILL_LARGE_INDICATOR, FILL_LARGE_INDICATOR);
-        capture("testItDrawNoFillLargeIndicatorOnCurrentSelectedDayWithNoFillLargeIndicatorForEvents");
-    }
-
-    @Test
-    public void testItDrawFillLargeIndicatorOnCurrentSelectedDayWithSmallIndicatorForEvents(){
-        //Sun, 08 Feb 2015 00:00:00 GMT
-        setDate(new Date(1423353600000L));
-        addEvents(Calendar.FEBRUARY, 2015);
-        onView(withId(R.id.compactcalendar_view)).perform(clickXY(60, 150));
-        setIndicatorType(FILL_LARGE_INDICATOR, SMALL_INDICATOR, FILL_LARGE_INDICATOR);
-        capture("testItDrawFillLargeIndicatorOnCurrentSelectedDayWithSmallIndicatorForEvents");
-    }
-
-    @Test
-    public void testItDrawFillLargeIndicatorOnCurrentSelectedDayWithFillLargeIndicatorForEvents() {
-        //Sun, 08 Feb 2015 00:00:00 GMT
-        setDate(new Date(1423353600000L));
-        addEvents(Calendar.FEBRUARY, 2015);
-        onView(withId(R.id.compactcalendar_view)).perform(clickXY(60, 150));
-        setIndicatorType(FILL_LARGE_INDICATOR, FILL_LARGE_INDICATOR, FILL_LARGE_INDICATOR);
-        capture("testItDrawFillLargeIndicatorOnCurrentSelectedDayWithFillLargeIndicatorForEvents");
-    }
-
-    @Test
-    public void testItAddsAndRemovesEventsForFilledLargeIndicator() {
-        //Sun, 08 Feb 2015 00:00:00 GMT
-        setDate(new Date(1423353600000L));
-        onView(withId(R.id.compactcalendar_view)).perform(clickXY(60, 150));
-        setIndicatorType(FILL_LARGE_INDICATOR, FILL_LARGE_INDICATOR, FILL_LARGE_INDICATOR);
-        List<Event> events = getEvents(1423353600000L, 1);
-
-        compactCalendarView.addEvents(events);
-        compactCalendarView.removeEvent(events.get(0));
-    }
-
-    @Test
-    public void testOnDayClickListenerIsCalled(){
-        CompactCalendarViewListener listener = mock(CompactCalendarViewListener.class);
-        compactCalendarView.setListener(listener);
-
-        //Sun, 08 Feb 2015 00:00:00 GMT
-        setDate(new Date(1423353600000L));
-        onView(withId(R.id.compactcalendar_view)).perform(clickXY(60, 100));
-
-        //Tue, 03 Feb 2015 00:00:00 GMT - expected
-        verify(listener).onDayClick(new Date(1422921600000L));
-        verifyNoMoreInteractions(listener);
-        capture("testOnDayClickListenerIsCalled");
-    }
-
-
-    @Test
-    public void testOnDayClickListenerIsCalledRtl(){
-        CompactCalendarViewListener listener = mock(CompactCalendarViewListener.class);
-        compactCalendarView.setListener(listener);
-        compactCalendarView.setIsRtl(true);
-
-        //Sun, 08 Feb 2015 00:00:00 GMT
-        setDate(new Date(1423353600000L));
-        onView(withId(R.id.compactcalendar_view)).perform(clickXY(60, 100));
-
-        //Sat, 07 Feb 2015 00:00:00 GMT
-        verify(listener).onDayClick(new Date(1423267200000L));
-        verifyNoMoreInteractions(listener);
-        capture("testOnDayClickListenerIsCalledRtl");
+        takeScreenShot();
     }
 
     @Test
@@ -424,7 +109,8 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
         setDrawEventsBelowDayIndicators(true);
         setDate(new Date(1423094400000L));
         addEvents(Calendar.FEBRUARY, 2015);
-        capture("testItDrawsEventIndicatorsBelowHighlightedDayIndicators");
+        takeScreenShot();
+
     }
 
     @Test
@@ -437,7 +123,7 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
         addEvents(Calendar.FEBRUARY, 2015);
         onView(withId(R.id.compactcalendar_view)).perform(clickXY(60, 150));
         setIndicatorType(FILL_LARGE_INDICATOR, FILL_LARGE_INDICATOR, FILL_LARGE_INDICATOR);
-        capture("testItDrawsFillLargeIndicatorForEventsWhenDrawEventsBelowDayIndicatorsIsTrue");
+        takeScreenShot();
     }
 
     @Test
@@ -449,7 +135,7 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
         setDate(new Date(1423353600000L));
         addEvents(Calendar.FEBRUARY, 2015);
         onView(withId(R.id.compactcalendar_view)).perform(clickXY(60, 120));
-        capture("testItDrawsIndicatorsBelowCurrentSelectedDayWithLargeHeight");
+        takeScreenShot(400);
     }
 
     @Test
@@ -457,7 +143,7 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
         //Sun, 08 Feb 2015 00:00:00 GMT
         setDate(new Date(1423353600000L));
         setShouldDrawDaysFromOtherMonths(true);
-        capture("testItDisplaysDaysFromOtherMonthsForFeb");
+        takeScreenShot();
     }
 
     @Test
@@ -466,7 +152,7 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
         //Sun, 08 Feb 2015 00:00:00 GMT
         setDate(new Date(1423353600000L));
         setShouldDrawDaysFromOtherMonths(true);
-        capture("testItDisplaysDaysFromOtherMonthsForFebRtl");
+        takeScreenShot();
     }
 
     @Test
@@ -475,7 +161,7 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
         setDate(new Date(1423353600000L));
         setShouldDrawDaysFromOtherMonths(true);
         scrollCalendarForwardBy(1);
-        capture("testItDisplaysDaysFromOtherMonthsForAfterScrollingFromFebToMarch");
+        takeScreenShot();
     }
 
     @Test
@@ -485,7 +171,7 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
         setDate(new Date(1423353600000L));
         setShouldDrawDaysFromOtherMonths(true);
         scrollCalendarBackwardsBy(1);
-        capture("testItDisplaysDaysFromOtherMonthsForAfterScrollingFromFebToMarchRtl");
+        takeScreenShot();
     }
 
     @Test
@@ -495,7 +181,7 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
         setDate(new Date(1423353600000L));
         getInstrumentation().waitForIdleSync();
         scrollCalendarBackwardsBy(1);
-        capture("testItDisplaysDaysFromOtherMonthsForAfterScrollingFromFebToJan");
+        takeScreenShot();
     }
 
 
@@ -505,7 +191,7 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
         //Sun, 08 Feb 2015 00:00:00 GMT
         setDate(new Date(1423353600000L));
         setFirstDayOfWeek(Calendar.SUNDAY);
-        capture("testItDrawsSundayAsFirstDayOfMonthRtl");
+        takeScreenShot();
     }
 
     @Test
@@ -514,7 +200,7 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
         // defaults to Monday
         //Sun, 08 Feb 2015 00:00:00 GMT
         setDate(new Date(1423353600000L));
-        capture("testItDrawsMondayAsFirstDayOfMonthRtl");
+        takeScreenShot();
     }
 
     @Test
@@ -523,7 +209,7 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
         //Sun, 08 Feb 2015 00:00:00 GMT
         setDate(new Date(1423353600000L));
         setFirstDayOfWeek(Calendar.TUESDAY);
-        capture("testItDrawsTuesdayAsFirstDayOfMonthRtl");
+        takeScreenShot();
     }
 
     @Test
@@ -532,7 +218,7 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
         //Sun, 08 Feb 2015 00:00:00 GMT
         setDate(new Date(1423353600000L));
         setFirstDayOfWeek(Calendar.WEDNESDAY);
-        capture("testItDrawsWednesdayAsFirstDayOfMonthRtl");
+        takeScreenShot();
     }
 
     @Test
@@ -541,7 +227,7 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
         //Sun, 08 Feb 2015 00:00:00 GMT
         setDate(new Date(1423353600000L));
         setFirstDayOfWeek(Calendar.THURSDAY);
-        capture("testItDrawsThursdayAsFirstDayOfMonthRtl");
+        takeScreenShot();
     }
 
     @Test
@@ -550,7 +236,7 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
         //Sun, 08 Feb 2015 00:00:00 GMT
         setDate(new Date(1423353600000L));
         setFirstDayOfWeek(Calendar.FRIDAY);
-        capture("testItDrawsFridayAsFirstDayOfMonthRtl");
+        takeScreenShot();
     }
 
     @Test
@@ -559,7 +245,7 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
         //Sun, 08 Feb 2015 00:00:00 GMT
         setDate(new Date(1423353600000L));
         setFirstDayOfWeek(Calendar.SATURDAY);
-        capture("testItDrawsSaturdayAsFirstDayOfMonthRtl");
+        takeScreenShot();
     }
 
     @Test
@@ -570,7 +256,7 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
         setFirstDayOfWeek(Calendar.WEDNESDAY);
         onView(withId(R.id.set_locale)).perform(clickXY(0, 0));
         setUseThreeLetterAbbreviation(true);
-        capture("testItDrawsWedAsFirstDayWithFrenchLocaleRtl");
+        takeScreenShot();
     }
 
 
@@ -579,7 +265,7 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
         //Sun, 08 Feb 2015 00:00:00 GMT
         setDate(new Date(1423353600000L));
         setFirstDayOfWeek(Calendar.SUNDAY);
-        capture("testItDrawsSundayAsFirstDayOfMonth");
+        takeScreenShot();
     }
 
     @Test
@@ -587,7 +273,7 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
         // defaults to Monday
         //Sun, 08 Feb 2015 00:00:00 GMT
         setDate(new Date(1423353600000L));
-        capture("testItDrawsMondayAsFirstDayOfMonth");
+        takeScreenShot();
     }
 
     @Test
@@ -595,7 +281,7 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
         //Sun, 08 Feb 2015 00:00:00 GMT
         setDate(new Date(1423353600000L));
         setFirstDayOfWeek(Calendar.TUESDAY);
-        capture("testItDrawsTuesdayAsFirstDayOfMonth");
+        takeScreenShot();
     }
 
     @Test
@@ -603,7 +289,7 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
         //Sun, 08 Feb 2015 00:00:00 GMT
         setDate(new Date(1423353600000L));
         setFirstDayOfWeek(Calendar.WEDNESDAY);
-        capture("testItDrawsWednesdayAsFirstDayOfMonth");
+        takeScreenShot();
     }
 
     @Test
@@ -611,7 +297,7 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
         //Sun, 08 Feb 2015 00:00:00 GMT
         setDate(new Date(1423353600000L));
         setFirstDayOfWeek(Calendar.THURSDAY);
-        capture("testItDrawsThursdayAsFirstDayOfMonth");
+        takeScreenShot();
     }
 
     @Test
@@ -619,7 +305,7 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
         //Sun, 08 Feb 2015 00:00:00 GMT
         setDate(new Date(1423353600000L));
         setFirstDayOfWeek(Calendar.FRIDAY);
-        capture("testItDrawsFridayAsFirstDayOfMonth");
+        takeScreenShot();
     }
 
     @Test
@@ -627,7 +313,7 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
         //Sun, 08 Feb 2015 00:00:00 GMT
         setDate(new Date(1423353600000L));
         setFirstDayOfWeek(Calendar.SATURDAY);
-        capture("testItDrawsSaturdayAsFirstDayOfMonth");
+        takeScreenShot();
     }
 
     @Test
@@ -637,7 +323,7 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
         setFirstDayOfWeek(Calendar.WEDNESDAY);
         onView(withId(R.id.set_locale)).perform(clickXY(0, 0));
         setUseThreeLetterAbbreviation(true);
-        capture("testItDrawsWednesdayAsFirstDayWithFrenchLocale");
+        takeScreenShot();
     }
 
     @Test
@@ -664,7 +350,7 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
         //Thr, 05 Feb 2015 00:00:00 GMT - expected
         verify(listener).onDayClick(instance.getTime());
         verifyNoMoreInteractions(listener);
-        capture("testOnDayClickListenerIsCalledWhenLocaleIsFranceWithWedAsFirstDayOFWeek");
+        takeScreenShot();
     }
 
     // Using mocks for listener causes espresso to throw an error because the callback is called from within animation handler.
@@ -754,7 +440,7 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
         setDate(new Date(1423353600000L));
         compactCalendarView.setCurrentDayTextColor(Color.BLACK);
         compactCalendarView.setCurrentSelectedDayTextColor(Color.BLUE);
-        capture("testItDrawsDifferentColorsForCurrentSelectedDay");
+        takeScreenShot();
     }
 
     // Nasty hack to get the toolbar to update the current month
@@ -1010,5 +696,24 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
         } catch (InterruptedException e) {
             Log.e(APPLICATION_TEST_TAG, "Error occurred while sleeping.", e);
         }
+    }
+
+    private void takeScreenShot(final int height) {
+        activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                ViewHelpers.setupView(compactCalendarView)
+                        .setExactHeightDp(height)
+                        .setExactWidthPx(mainContent.getWidth())
+                        .layout();
+            }
+        });
+
+        Screenshot.snap(compactCalendarView)
+                .record();
+    }
+
+    private void takeScreenShot() {
+        takeScreenShot(250);
     }
 }

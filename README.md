@@ -20,12 +20,12 @@ Android 19 emulator is used because it seems to be a fast enough on travis-ci an
 
 Install the abi and accept:
  ```bash
-$ android update sdk --no-ui --all --filter sys-img-armeabi-v7a-android-19
+$ $ANDROID_HOME/tools/bin/sdkmanager 'system-images;android-24;default;x86'
  ```
 
 Create the emulator:
 ```bash
-$ echo no | android create avd --force -n testCompactCalendarEmulator -t android-19 --abi armeabi-v7a
+$ echo no | $ANDROID_HOME/tools/bin/avdmanager create avd --force -n testCompactCalendarEmulator -k "system-images;android-24;default;x86"
 ```
 
 Create sd card (creating in current dir):
@@ -36,12 +36,12 @@ $ mksdcard -l sdcard 100M sdcard
 
 Run emulator (with out audio and window):
 ```bash
-$ emulator -avd testCompactCalendarEmulator -no-audio -no-window -sdcard sdcard &
+$ $ANDROID_HOME/emulator/emulator -avd testCompactCalendarEmulator -no-audio -no-window -sdcard sdcard &
 ```
 
 Run emulator and watch(with audio and window):
 ```bash
-$ emulator -avd testCompactCalendarEmulator -sdcard sdcard 
+$ $ANDROID_HOME/emulator/emulator -avd testCompactCalendarEmulator -sdcard sdcard 
 ```
 
 Running the tests to verify that the current tests pass and to check which tests are not producing the same screenshot:

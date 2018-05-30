@@ -8,7 +8,7 @@ buildscript {
 
     dependencies {
         classpath 'com.android.tools.build:gradle:3.1.2'
-        classpath 'com.facebook.testing.screenshot:plugin:0.4.3'
+        classpath 'com.facebook.testing.screenshot:plugin:0.6.0'
     }
 }
 
@@ -34,6 +34,7 @@ android {
         }
     }
 }
+
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
