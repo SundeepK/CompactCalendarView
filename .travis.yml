@@ -29,10 +29,10 @@ before_install:
   - sudo pip install Pillow
   - yes | sdkmanager tools
   - yes | sdkmanager --licenses
-  - sdkmanager 'system-images;android-24;default;x86'
+  - sdkmanager 'system-images;android-24;google_apis;armeabi-v7a'
 
 before_script:
-  - echo no | avdmanager create avd --force -n testCompactCalendarEmulator -k "system-images;android-24;default;x86"
+  - echo no | avdmanager create avd --force -n testCompactCalendarEmulator -k "system-images;android-24;google_apis;armeabi-v7a"
   - mksdcard -l sdcard 100M sdcard
   - $ANDROID_HOME/emulator/emulator -avd testCompactCalendarEmulator -no-audio -no-window -sdcard sdcard &
   - android-wait-for-emulator
