@@ -28,6 +28,7 @@ android:
 before_install:
   - sudo pip install Pillow
   - yes | sdkmanager tools
+  - yes | sdkmanager --licenses
   - sdkmanager 'system-images;android-24;default;x86'
 
 before_script:
