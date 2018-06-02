@@ -20,12 +20,12 @@ Android 19 emulator is used because it seems to be a fast enough on travis-ci an
 
 Install the abi and accept:
  ```bash
-$ $ANDROID_HOME/tools/bin/sdkmanager 'system-images;android-24;default;x86'
+$ $ANDROID_HOME/tools/bin/sdkmanager 'system-images;android-19;google_apis;armeabi-v7a'
  ```
 
 Create the emulator:
 ```bash
-$ echo no | $ANDROID_HOME/tools/bin/avdmanager create avd --force -n testCompactCalendarEmulator -k "system-images;android-24;default;x86"
+$ echo no | $ANDROID_HOME/tools/bin/avdmanager create avd --force -n testCompactCalendarEmulator -k "system-images;android-19;google_apis;armeabi-v7a"
 ```
 
 Create sd card (creating in current dir):
