@@ -135,7 +135,7 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
         setDate(new Date(1423353600000L));
         addEvents(Calendar.FEBRUARY, 2015);
         onView(withId(R.id.compactcalendar_view)).perform(clickXY(60, 120));
-        takeScreenShot(400);
+        takeScreenShot(800);
     }
 
     @Test
@@ -317,7 +317,7 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
     }
 
     @Test
-    public void testItDrawsWedAsFirstDayWithFrenchLocale(){
+    public void testItDrawsWednesdayAsFirstDayWithFrenchLocale(){
         //Sun, 08 Feb 2015 00:00:00 GMT
         setDate(new Date(1423353600000L));
         setFirstDayOfWeek(Calendar.WEDNESDAY);
@@ -440,6 +440,14 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
         setDate(new Date(1423353600000L));
         compactCalendarView.setCurrentDayTextColor(Color.BLACK);
         compactCalendarView.setCurrentSelectedDayTextColor(Color.BLUE);
+        takeScreenShot();
+    }
+
+    @Test
+    public void testWhenShouldSelectFirstDayOfMonthOnScrollIsFalseItDoesNotSelectFIrstDayOfMonth()  {
+        compactCalendarView.shouldSelectFirstDayOfMonthOnScroll(false);
+        setDate(new Date(1423353600000L));
+        scrollCalendarForwardBy(1);
         takeScreenShot();
     }
 
@@ -702,18 +710,18 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
         activity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                ViewHelpers.setupView(compactCalendarView)
+                ViewHelpers.setupView(mainContent)
                         .setExactHeightDp(height)
                         .setExactWidthPx(mainContent.getWidth())
                         .layout();
             }
         });
 
-        Screenshot.snap(compactCalendarView)
+        Screenshot.snap(mainContent)
                 .record();
     }
 
     private void takeScreenShot() {
-        takeScreenShot(250);
+        takeScreenShot(600);
     }
 }
