@@ -3,7 +3,6 @@ package sundeepk.github.com.sample;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
-import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.ViewAction;
 import android.support.test.espresso.action.CoordinatesProvider;
 import android.support.test.espresso.action.GeneralClickAction;
@@ -11,9 +10,9 @@ import android.support.test.espresso.action.GeneralSwipeAction;
 import android.support.test.espresso.action.Press;
 import android.support.test.espresso.action.Swipe;
 import android.support.test.espresso.action.Tap;
-import android.support.test.rule.UiThreadTestRule;
+import android.support.test.rule.ActivityTestRule;
+import android.support.test.runner.AndroidJUnit4;
 import android.support.v7.app.ActionBar;
-import android.test.ActivityInstrumentationTestCase2;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
@@ -30,6 +29,7 @@ import com.github.sundeepk.compactcalendarview.domain.Event;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -41,43 +41,39 @@ import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 
+import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static com.github.sundeepk.compactcalendarview.CompactCalendarView.CompactCalendarViewListener;
 import static com.github.sundeepk.compactcalendarview.CompactCalendarView.FILL_LARGE_INDICATOR;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
-public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivity> {
+@RunWith(AndroidJUnit4.class)
+public class ApplicationTest {
 
     private static final String APPLICATION_TEST_TAG = "ApplicationTest";
-    @Rule
-    public UiThreadTestRule uiThreadTestRule = new UiThreadTestRule();
 
     private SimpleDateFormat dateFormatForMonth;
     private CompactCalendarView compactCalendarView;
-    private MainActivity activity;
+
+    @Rule
+    public ActivityTestRule<MainActivity> activityRule = new ActivityTestRule<>(MainActivity.class);
+
     private View mainContent;
     private int onClosedCallCount = 0;
     private int onOpenedCallCount = 0;
 
-    public ApplicationTest() {
-        super(MainActivity.class);
-    }
-
     @Before
     public void setUp() throws Exception {
-        super.setUp();
-        getInstrumentation().waitForIdleSync();
         Locale.setDefault(Locale.ENGLISH);
         TimeZone.setDefault(TimeZone.getTimeZone("GMT"));
         dateFormatForMonth = new SimpleDateFormat("MMM - yyyy", Locale.getDefault());
-        injectInstrumentation(InstrumentationRegistry.getInstrumentation());
-        activity = getActivity();
-        compactCalendarView = (CompactCalendarView) activity.findViewById(R.id.compactcalendar_view);
-        mainContent = (View) activity.findViewById(R.id.parent);
+        compactCalendarView = (CompactCalendarView) activityRule.getActivity().findViewById(R.id.compactcalendar_view);
+        mainContent = activityRule.getActivity().findViewById(R.id.parent);
         onClosedCallCount = 0;
         onOpenedCallCount = 0;
     }
@@ -454,17 +450,17 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
     // Nasty hack to get the toolbar to update the current month
     // TODO sample code should be refactored to do this
     private void syncToolbarDate(){
-        InstrumentationRegistry.getInstrumentation().runOnMainSync(new Runnable() {
+        getInstrumentation().runOnMainSync(new Runnable() {
             @Override
             public void run() {
-                ActionBar toolbar = activity.getSupportActionBar();
+                ActionBar toolbar = activityRule.getActivity().getSupportActionBar();
                 toolbar.setTitle(dateFormatForMonth.format(compactCalendarView.getFirstDayOfCurrentMonth()));
             }
         });
     }
 
     private void setFirstDayOfWeek(final int dayOfWeek) {
-        InstrumentationRegistry.getInstrumentation().runOnMainSync(new Runnable() {
+        getInstrumentation().runOnMainSync(new Runnable() {
             @Override
             public void run() {
                 compactCalendarView.setFirstDayOfWeek(dayOfWeek);
@@ -473,7 +469,7 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
     }
 
     private void setUseThreeLetterAbbreviation(final boolean useThreeLetterAbbreviation) {
-        InstrumentationRegistry.getInstrumentation().runOnMainSync(new Runnable() {
+        getInstrumentation().runOnMainSync(new Runnable() {
             @Override
             public void run() {
                 compactCalendarView.setUseThreeLetterAbbreviation(useThreeLetterAbbreviation);
@@ -482,7 +478,7 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
     }
 
     private void setShouldDrawDaysFromOtherMonths(final boolean shouldDrawEventsBelowDayIndicators) {
-        InstrumentationRegistry.getInstrumentation().runOnMainSync(new Runnable() {
+        getInstrumentation().runOnMainSync(new Runnable() {
             @Override
             public void run() {
                 compactCalendarView.displayOtherMonthDays(shouldDrawEventsBelowDayIndicators);
@@ -491,7 +487,7 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
     }
 
     private void setDrawEventsBelowDayIndicators(final boolean shouldDrawEventsBelowDayIndicators) {
-        InstrumentationRegistry.getInstrumentation().runOnMainSync(new Runnable() {
+        getInstrumentation().runOnMainSync(new Runnable() {
             @Override
             public void run() {
                 compactCalendarView.shouldDrawIndicatorsBelowSelectedDays(shouldDrawEventsBelowDayIndicators);
@@ -500,7 +496,7 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
     }
 
     private void setIndicatorType(final int currentSelectedDayStyle, final int eventStyle, final int currentDayStyle) {
-        InstrumentationRegistry.getInstrumentation().runOnMainSync(new Runnable() {
+        getInstrumentation().runOnMainSync(new Runnable() {
             @Override
             public void run() {
                 compactCalendarView.setCurrentSelectedDayIndicatorStyle(currentSelectedDayStyle);
@@ -511,7 +507,7 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
     }
 
     private void capture(final String name) {
-        InstrumentationRegistry.getInstrumentation().runOnMainSync(new Runnable() {
+        getInstrumentation().runOnMainSync(new Runnable() {
             @Override
             public void run() {
                 compactCalendarView.requestLayout();
@@ -528,29 +524,29 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
     }
 
     private void setDate(final Date date) {
-        InstrumentationRegistry.getInstrumentation().runOnMainSync(new Runnable() {
+        getInstrumentation().runOnMainSync(new Runnable() {
             @Override
             public void run() {
                 compactCalendarView.setCurrentDate(date);
-                ActionBar toolbar = activity.getSupportActionBar();
+                ActionBar toolbar = activityRule.getActivity().getSupportActionBar();
                 toolbar.setTitle(dateFormatForMonth.format(compactCalendarView.getFirstDayOfCurrentMonth()));
             }
         });
     }
 
     private void shouldSelectFirstDayOfMonthOnScroll(final boolean shouldSelectFirstDay) {
-        InstrumentationRegistry.getInstrumentation().runOnMainSync(new Runnable() {
+        getInstrumentation().runOnMainSync(new Runnable() {
             @Override
             public void run() {
                 compactCalendarView.shouldSelectFirstDayOfMonthOnScroll(shouldSelectFirstDay);
-                ActionBar toolbar = activity.getSupportActionBar();
+                ActionBar toolbar = activityRule.getActivity().getSupportActionBar();
                 toolbar.setTitle(dateFormatForMonth.format(compactCalendarView.getFirstDayOfCurrentMonth()));
             }
         });
     }
 
     public ViewAction clickXY(final float x, final float y){
-        final DisplayMetrics dm = activity.getResources().getDisplayMetrics() ;
+        final DisplayMetrics dm = activityRule.getActivity().getResources().getDisplayMetrics() ;
         final float spX = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, x, dm);
         final float spY = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, y, dm);
         return new GeneralClickAction(
@@ -573,7 +569,7 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
     }
 
     public ViewAction scroll(final int startX, final int startY, final int endX, final int endY){
-        final DisplayMetrics dm = activity.getResources().getDisplayMetrics() ;
+        final DisplayMetrics dm = activityRule.getActivity().getResources().getDisplayMetrics() ;
         final float spStartX = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, startX, dm);
         final float spStartY = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, startY, dm);
         final float spEndX = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, endX, dm);
@@ -707,7 +703,7 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<MainActivi
     }
 
     private void takeScreenShot(final int height) {
-        activity.runOnUiThread(new Runnable() {
+        activityRule.getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 ViewHelpers.setupView(mainContent)
