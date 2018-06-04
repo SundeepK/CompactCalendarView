@@ -1,8 +1,11 @@
-sudo: true
-
 language: android
+sudo: required
+env:
+  global:
+    - ADB_INSTALL_TIMEOUT=15 # 8 minutes (2 minutes by default)
 
-jdk: oraclejdk8
+jdk:
+  - oraclejdk8
 
 cache:
   directories:
@@ -14,51 +17,34 @@ cache:
     # python
     - $HOME/.cache/pip/
 
-env:
-  global:
-    - GRADLE_OPTS='-Dorg.gradle.daemon=false -Dorg.gradle.parallel=false -Dkotlin.incremental=false -DdisablePreDex'
-    - ANDROID_TARGET=android-27
-    - ANDROID_BUILD_TOOLS_VERSION=27.0.3
-    - ANDROID_ABI=armeabi-v7a
-    - ANDROID_EMULATOR_TARGET=android-22
-
 android:
   components:
     - tools
-    - build-tools-$ANDROID_BUILD_TOOLS_VERSION
-    - $ANDROID_TARGET
-    - $ANDROID_EMULATOR_TARGET
+    - build-tools-27.0.3
+    - android-27
+    - android-22
     - extra-google-google_play_services
     - extra-android-support
     - extra
-    - sys-img-$ANDROID_ABI-$ANDROID_EMULATOR_TARGET
-
-licenses:
-  - 'android-sdk-license-.+'
 
 before_install:
   - sudo pip install Pillow
   - yes | sdkmanager tools
   - yes | sdkmanager --licenses
-  - echo yes | sdkmanager "system-images;android-22;default;armeabi-v7a"
+  - sdkmanager 'system-images;android-22;default;armeabi-v7a'
 
 before_script:
-  - sudo service postgresql stop || true
-  - sudo service mysql stop || true
-  - sudo service memcached stop || true
-  - sudo service bootlogd stop || true
-  - sudo service elasticsearch stop || true
-  - sudo service mongodb stop || true
-  - sudo service cassandra stop || true
-  - sudo service rsync stop || true
-  - sudo service x11-common stop || true
-
-script:
   - echo no | avdmanager create avd --force -n testCompactCalendarEmulator -k "system-images;android-22;default;armeabi-v7a"
   - mksdcard -l sdcard 100M sdcard
-  - $ANDROID_HOME/emulator/emulator -avd testCompactCalendarEmulator -sdcard sdcard
+  - $ANDROID_HOME/emulator/emulator -avd testCompactCalendarEmulator -no-audio -no-window -sdcard sdcard &
   - android-wait-for-emulator
+  - adb shell settings put global window_animation_scale 0 &
+  - adb shell settings put global transition_animation_scale 0 &
+  - adb shell settings put global animator_duration_scale 0 &
   - adb shell input keyevent 82 &
+
+script:
   - ./gradlew verifyMode screenshotTests -Pcom.android.build.threadPoolSize=1 -Dorg.gradle.parallel=false -Dorg.gradle.jvmargs="-Xms1024m -Xmx1024m" -Dorg.gradle.daemon=false
   - ./gradlew test
+
 
