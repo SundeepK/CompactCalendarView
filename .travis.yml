@@ -4,6 +4,16 @@ language: android
 
 jdk: oraclejdk8
 
+cache:
+  directories:
+
+    # Gradle dependencies
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/
+
+    # python
+    - $HOME/.cache/pip/
+
 env:
   global:
     - GRADLE_OPTS='-Dorg.gradle.daemon=false -Dorg.gradle.parallel=false -Dkotlin.incremental=false -DdisablePreDex'
@@ -27,6 +37,9 @@ licenses:
   - 'android-sdk-license-.+'
 
 before_install:
+  - sudo pip install Pillow
+  - yes | sdkmanager tools
+  - yes | sdkmanager --licenses
   - echo yes | sdkmanager "platforms;$ANDROID_TARGET" "build-tools;$ANDROID_BUILD_TOOLS_VERSION"
 
 before_script:
