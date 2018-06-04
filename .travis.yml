@@ -40,7 +40,7 @@ before_install:
   - sudo pip install Pillow
   - yes | sdkmanager tools
   - yes | sdkmanager --licenses
-  - echo yes | sdkmanager "platforms;$ANDROID_TARGET" "build-tools;$ANDROID_BUILD_TOOLS_VERSION"
+  - echo yes | sdkmanager "system-images;android-22;default;armeabi-v7a"
 
 before_script:
   - sudo service postgresql stop || true
@@ -54,8 +54,8 @@ before_script:
   - sudo service x11-common stop || true
 
 script:
-  - echo no | android create avd --force -n test -t $ANDROID_EMULATOR_TARGET --abi $ANDROID_ABI
-  - emulator -avd test -no-window &
+  - echo no | avdmanager create avd --force -n testCompactCalendarEmulator -k "system-images;android-22;default;armeabi-v7a"
+  - $ANDROID_HOME/emulator/emulator -avd testCompactCalendarEmulator -sdcard sdcard
   - android-wait-for-emulator
   - adb shell input keyevent 82 &
   - ./gradlew verifyMode screenshotTests -Pcom.android.build.threadPoolSize=1 -Dorg.gradle.parallel=false -Dorg.gradle.jvmargs="-Xms1024m -Xmx1024m" -Dorg.gradle.daemon=false
