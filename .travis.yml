@@ -1,45 +1,50 @@
+sudo: true
+
 language: android
-sudo: required
+
+jdk: oraclejdk8
+
 env:
   global:
-    - ADB_INSTALL_TIMEOUT=8 # 8 minutes (2 minutes by default)
-
-jdk:
-  - oraclejdk8
-
-cache:
-  directories:
-
-    # Gradle dependencies
-    - $HOME/.gradle/caches/
-    - $HOME/.gradle/wrapper/
-
-    # python
-    - $HOME/.cache/pip/
+    - GRADLE_OPTS='-Dorg.gradle.daemon=false -Dorg.gradle.parallel=false -Dkotlin.incremental=false -DdisablePreDex'
+    - ANDROID_TARGET=android-27
+    - ANDROID_BUILD_TOOLS_VERSION=27.0.3
+    - ANDROID_ABI=armeabi-v7a
+    - ANDROID_EMULATOR_TARGET=android-22
 
 android:
   components:
     - tools
-    - build-tools-27.0.3
-    - android-19
+    - build-tools-$ANDROID_BUILD_TOOLS_VERSION
+    - $ANDROID_TARGET
+    - $ANDROID_EMULATOR_TARGET
+    - extra-google-google_play_services
+    - extra-android-support
+    - extra
+    - sys-img-$ANDROID_ABI-$ANDROID_EMULATOR_TARGET
+
+licenses:
+  - 'android-sdk-license-.+'
 
 before_install:
-  - sudo pip install Pillow
-  - yes | sdkmanager tools
-  - yes | sdkmanager --licenses
-  - sdkmanager 'system-images;android-19;google_apis;armeabi-v7a'
+  - echo yes | sdkmanager "platforms;$ANDROID_TARGET" "build-tools;$ANDROID_BUILD_TOOLS_VERSION"
 
 before_script:
-  - echo no | avdmanager create avd --force -n testCompactCalendarEmulator -k "system-images;android-19;google_apis;armeabi-v7a"
-  - mksdcard -l sdcard 100M sdcard
-  - $ANDROID_HOME/emulator/emulator -avd testCompactCalendarEmulator -no-audio -no-window -sdcard sdcard &
-  - android-wait-for-emulator
-  - adb shell settings put global window_animation_scale 0 &
-  - adb shell settings put global transition_animation_scale 0 &
-  - adb shell settings put global animator_duration_scale 0 &
-  - adb shell input keyevent 82 &
+  - sudo service postgresql stop || true
+  - sudo service mysql stop || true
+  - sudo service memcached stop || true
+  - sudo service bootlogd stop || true
+  - sudo service elasticsearch stop || true
+  - sudo service mongodb stop || true
+  - sudo service cassandra stop || true
+  - sudo service rsync stop || true
+  - sudo service x11-common stop || true
 
 script:
+  - echo no | android create avd --force -n test -t $ANDROID_EMULATOR_TARGET --abi $ANDROID_ABI
+  - emulator -avd test -no-window &
+  - android-wait-for-emulator
+  - adb shell input keyevent 82 &
   - ./gradlew verifyMode screenshotTests -Pcom.android.build.threadPoolSize=1 -Dorg.gradle.parallel=false -Dorg.gradle.jvmargs="-Xms1024m -Xmx1024m" -Dorg.gradle.daemon=false
   - ./gradlew test
 
