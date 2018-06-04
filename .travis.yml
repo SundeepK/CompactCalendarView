@@ -55,6 +55,7 @@ before_script:
 
 script:
   - echo no | avdmanager create avd --force -n testCompactCalendarEmulator -k "system-images;android-22;default;armeabi-v7a"
+  - mksdcard -l sdcard 100M sdcard
   - $ANDROID_HOME/emulator/emulator -avd testCompactCalendarEmulator -sdcard sdcard
   - android-wait-for-emulator
   - adb shell input keyevent 82 &
