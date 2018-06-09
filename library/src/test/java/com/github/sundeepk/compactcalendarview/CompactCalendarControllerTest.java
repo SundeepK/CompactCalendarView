@@ -80,7 +80,7 @@ public class CompactCalendarControllerTest {
         //Sun, 08 Feb 2015 00:00:00 GMT
         underTest.setCurrentDate(new Date(setTimeToMidnightAndGet(cal, 1423353600000L)));
 
-        underTest.showNextMonth();
+        underTest.scrollRight();
 
         //Sun, 01 Mar 2015 00:00:00 GMT - expected
         assertEquals(new Date(setTimeToMidnightAndGet(cal, 1425168000000L)), underTest.getFirstDayOfCurrentMonth());
@@ -101,7 +101,7 @@ public class CompactCalendarControllerTest {
         //Sun, 08 Feb 2015 00:00:00 GMT
         underTest.setCurrentDate(new Date(1423353600000L));
 
-        underTest.showNextMonth();
+        underTest.scrollRight();
         Date actualDate = underTest.getFirstDayOfCurrentMonth();
 
         //Sun, 01 Mar 2015 00:00:00 GMT - expected
@@ -113,11 +113,37 @@ public class CompactCalendarControllerTest {
         //Sun, 08 Feb 2015 00:00:00 GMT
         underTest.setCurrentDate(new Date(1423353600000L));
 
-        underTest.showPreviousMonth();
+        underTest.scrollLeft();
         Date actualDate = underTest.getFirstDayOfCurrentMonth();
 
         // Thu, 01 Jan 2015 00:00:00 GMT - expected
         assertEquals(new Date(1420070400000L), actualDate);
+    }
+
+    @Test
+    public void testItScrollsToNextMonthWhenRtl(){
+        //Sun, 08 Feb 2015 00:00:00 GMT
+        underTest.setCurrentDate(new Date(1423353600000L));
+        underTest.setIsRtl(true);
+
+        underTest.scrollRight();
+        Date actualDate = underTest.getFirstDayOfCurrentMonth();
+
+        // Thu, 01 Jan 2015 00:00:00 GMT - expected
+        assertEquals(new Date(1420070400000L), actualDate);
+    }
+
+    @Test
+    public void testItScrollsToPreviousMonthWhenRtl(){
+        //Sun, 08 Feb 2015 00:00:00 GMT
+        underTest.setCurrentDate(new Date(1423353600000L));
+        underTest.setIsRtl(true);
+
+        underTest.scrollLeft();
+        Date actualDate = underTest.getFirstDayOfCurrentMonth();
+
+        //Sun, 01 Mar 2015 00:00:00 GMT - expected
+        assertEquals(new Date(1425168000000L), actualDate);
     }
 
     @Test

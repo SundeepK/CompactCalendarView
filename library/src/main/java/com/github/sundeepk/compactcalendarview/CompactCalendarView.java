@@ -362,13 +362,13 @@ public class CompactCalendarView extends View {
         animationHandler.closeCalendarWithAnimation();
     }
 
-    public void showNextMonth(){
-        compactCalendarController.showNextMonth();
+    public void scrollRight(){
+        compactCalendarController.scrollRight();
         invalidate();
     }
 
-    public void showPreviousMonth(){
-        compactCalendarController.showPreviousMonth();
+    public void scrollLeft(){
+        compactCalendarController.scrollLeft();
         invalidate();
     }
 

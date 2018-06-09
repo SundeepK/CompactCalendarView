@@ -28,7 +28,7 @@
         android:layout_below="@+id/compactcalendar_view"
         android:layout_alignParentLeft="true"
         android:id="@+id/prev_button"
-        android:text="Previous"
+        android:text="Scroll Left"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
 
@@ -37,7 +37,7 @@
         android:layout_below="@+id/compactcalendar_view"
         android:layout_alignParentRight="true"
         android:id="@+id/next_button"
-        android:text="Next"
+        android:text="Scroll Right"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
 

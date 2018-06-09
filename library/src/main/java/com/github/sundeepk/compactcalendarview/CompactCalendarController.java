@@ -338,7 +338,7 @@ class CompactCalendarController {
         this.currentDayTextColor = currentDayTextColor;
     }
 
-    void showNextMonth() {
+    void scrollRight() {
         if (isRtl) {
             scrollPrev();
         } else {
@@ -346,7 +346,7 @@ class CompactCalendarController {
         }
     }
 
-    void showPreviousMonth() {
+    void scrollLeft() {
         if (isRtl) {
             scrollNext();
         } else {

@@ -117,14 +117,14 @@ public class CompactCalendarTab extends Fragment {
         showPreviousMonthBut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                compactCalendarView.showPreviousMonth();
+                compactCalendarView.scrollLeft();
             }
         });
 
         showNextMonthBut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                compactCalendarView.showNextMonth();
+                compactCalendarView.scrollRight();
             }
         });
 
