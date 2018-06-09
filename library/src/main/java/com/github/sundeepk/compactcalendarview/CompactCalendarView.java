@@ -362,11 +362,19 @@ public class CompactCalendarView extends View {
         animationHandler.closeCalendarWithAnimation();
     }
 
+    /**
+     * Moves the calendar to the right. This will show the next month when {@link #setIsRtl(boolean)}
+     * is set to true. If in rtl mode, it will show the next month.
+     */
     public void scrollRight(){
         compactCalendarController.scrollRight();
         invalidate();
     }
 
+    /**
+     * Moves the calendar to the left. This will show the previous month when  {@link #setIsRtl(boolean)}
+     * is set to false. If in rtl mode, it will show the previous month.
+     */
     public void scrollLeft(){
         compactCalendarController.scrollLeft();
         invalidate();
