@@ -349,6 +349,51 @@ public class ApplicationTest {
         takeScreenShot();
     }
 
+    @Test
+    public void testOnDayClickListenerIsCalled(){
+        CompactCalendarViewListener listener = mock(CompactCalendarViewListener.class);
+        compactCalendarView.setListener(listener);
+
+        Calendar instance = Calendar.getInstance();
+        // Thu, 03 Feb 2015 12:00:00 GMT - then set to midnight
+        instance.setTimeInMillis(1422921600000L);
+        instance.set(Calendar.HOUR_OF_DAY, 0);
+        instance.set(Calendar.MINUTE, 0);
+        instance.set(Calendar.SECOND, 0);
+        instance.set(Calendar.MILLISECOND, 0);
+
+        //Sun, 08 Feb 2015 00:00:00 GMT
+        setDate(new Date(1423353600000L));
+        onView(withId(R.id.compactcalendar_view)).perform(clickXY(60, 100));
+
+        //Thr, 03 Feb 2015 00:00:00 GMT - expected
+        verify(listener).onDayClick(instance.getTime());
+        verifyNoMoreInteractions(listener);
+    }
+
+    @Test
+    public void testOnDayClickListenerIsCalledInRtl(){
+        CompactCalendarViewListener listener = mock(CompactCalendarViewListener.class);
+        compactCalendarView.setListener(listener);
+        compactCalendarView.setIsRtl(true);
+
+        Calendar instance = Calendar.getInstance();
+        // Thu, 07 Feb 2015 12:00:00 GMT - then set to midnight
+        instance.setTimeInMillis(1423267200000L);
+        instance.set(Calendar.HOUR_OF_DAY, 0);
+        instance.set(Calendar.MINUTE, 0);
+        instance.set(Calendar.SECOND, 0);
+        instance.set(Calendar.MILLISECOND, 0);
+
+        //Sun, 08 Feb 2015 00:00:00 GMT
+        setDate(new Date(1423353600000L));
+        onView(withId(R.id.compactcalendar_view)).perform(clickXY(60, 100));
+
+        //Thr, 07 Feb 2015 00:00:00 GMT - expected
+        verify(listener).onDayClick(instance.getTime());
+        verifyNoMoreInteractions(listener);
+    }
+
     // Using mocks for listener causes espresso to throw an error because the callback is called from within animation handler.
     // Maybe a problem with espresso, for now manually check count.
     @Test
