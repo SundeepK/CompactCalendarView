@@ -43,21 +43,21 @@ public class CompactCalendarTab extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.main_tab,container,false);
+        View mainTabView = inflater.inflate(R.layout.main_tab,container,false);
 
         final List<String> mutableBookings = new ArrayList<>();
 
-        final ListView bookingsListView = (ListView) v.findViewById(R.id.bookings_listview);
-        final Button showPreviousMonthBut = (Button) v.findViewById(R.id.prev_button);
-        final Button showNextMonthBut = (Button) v.findViewById(R.id.next_button);
-        final Button slideCalendarBut = (Button) v.findViewById(R.id.slide_calendar);
-        final Button showCalendarWithAnimationBut = (Button) v.findViewById(R.id.show_with_animation_calendar);
-        final Button setLocaleBut = (Button) v.findViewById(R.id.set_locale);
-        final Button removeAllEventsBut = (Button) v.findViewById(R.id.remove_all_events);
+        final ListView bookingsListView = mainTabView.findViewById(R.id.bookings_listview);
+        final Button showPreviousMonthBut = mainTabView.findViewById(R.id.prev_button);
+        final Button showNextMonthBut = mainTabView.findViewById(R.id.next_button);
+        final Button slideCalendarBut = mainTabView.findViewById(R.id.slide_calendar);
+        final Button showCalendarWithAnimationBut = mainTabView.findViewById(R.id.show_with_animation_calendar);
+        final Button setLocaleBut = mainTabView.findViewById(R.id.set_locale);
+        final Button removeAllEventsBut = mainTabView.findViewById(R.id.remove_all_events);
 
         final ArrayAdapter adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, mutableBookings);
         bookingsListView.setAdapter(adapter);
-        compactCalendarView = (CompactCalendarView) v.findViewById(R.id.compactcalendar_view);
+        compactCalendarView = mainTabView.findViewById(R.id.compactcalendar_view);
 
         // below allows you to configure color for the current day in the month
         // compactCalendarView.setCurrentDayBackgroundColor(getResources().getColor(R.color.black));
@@ -175,7 +175,7 @@ public class CompactCalendarTab extends Fragment {
         // uncomment below to open onCreate
         //openCalendarOnCreate(v);
 
-        return v;
+        return mainTabView;
     }
 
     @NonNull
@@ -213,7 +213,7 @@ public class CompactCalendarTab extends Fragment {
     }
 
     private void openCalendarOnCreate(View v) {
-        final RelativeLayout layout = (RelativeLayout)v.findViewById(R.id.main_content);
+        final RelativeLayout layout = v.findViewById(R.id.main_content);
         ViewTreeObserver vto = layout.getViewTreeObserver();
         vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
