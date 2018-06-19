@@ -154,21 +154,14 @@ It's possible to set the locale so that weekday column names are automatically s
 
 ```gradle
 dependencies {
-    compile 'com.github.sundeepk:compact-calendar-view:2.0.2.3'
-}
-```
-
-RTL support beta for right-to-left languages
-```gradle
-dependencies {
-    compile 'com.github.sundeepk:compact-calendar-view:2.0.3-beta'
+    compile 'com.github.sundeepk:compact-calendar-view:3.0.0'
 }
 ```
 
 ```
 The MIT License (MIT)
 
-Copyright (c) [2017] [Sundeepk]
+Copyright (c) [2018] [Sundeepk]
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
