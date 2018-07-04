@@ -20,7 +20,7 @@
         <attr name="compactCalendarCurrentDayTextColor" format="color"/>
         <attr name="compactCalendarCurrentSelectedDayBackgroundColor" format="color"/>
         <attr name="compactCalendarCurrentSelectedDayTextColor" format="color"/>
-        <attr name="compactCalendarTextColor" format="color"/>
+        <attr name="compactCalendarTextColor" format="reference|color"/>
         <attr name="compactCalendarMultiEventIndicatorColor" format="color"/>
         <attr name="compactCalendarTargetHeight" format="dimension"/>
         <attr name="compactCalendarEventIndicatorStyle"/>

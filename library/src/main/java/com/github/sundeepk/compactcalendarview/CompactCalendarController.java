@@ -1,6 +1,7 @@
 package com.github.sundeepk.compactcalendarview;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -143,8 +144,21 @@ class CompactCalendarController {
         if (attrs != null && context != null) {
             TypedArray typedArray = context.getTheme().obtainStyledAttributes(attrs, R.styleable.CompactCalendarView, 0, 0);
             try {
+
+                int id = typedArray.getResourceId(R.styleable.CompactCalendarView_compactCalendarTextColor, -1);
+                if (id != -1) {
+                    TypedArray app = context.getTheme().obtainStyledAttributes(id, new int[]{ android.R.attr.textColor, android.R.attr.typeface, android.R.attr.textStyle});
+                    if (app != null){
+                        calenderTextColor = app.getColor(0, 0);
+                        app.recycle();
+                    }
+                } else {
+                    calenderTextColor = typedArray.getColor(R.styleable.CompactCalendarView_compactCalendarTextColor, calenderTextColor);
+                }
+
+                //ColorStateList textColorStateList = typedArray.getColorStateList(R.styleable.CompactCalendarView_compactCalendarTextColor);
                 currentDayBackgroundColor = typedArray.getColor(R.styleable.CompactCalendarView_compactCalendarCurrentDayBackgroundColor, currentDayBackgroundColor);
-                calenderTextColor = typedArray.getColor(R.styleable.CompactCalendarView_compactCalendarTextColor, calenderTextColor);
+
                 currentDayTextColor = typedArray.getColor(R.styleable.CompactCalendarView_compactCalendarCurrentDayTextColor, calenderTextColor);
                 otherMonthDaysTextColor = typedArray.getColor(R.styleable.CompactCalendarView_compactCalendarOtherMonthDaysTextColor, otherMonthDaysTextColor);
                 currentSelectedDayBackgroundColor = typedArray.getColor(R.styleable.CompactCalendarView_compactCalendarCurrentSelectedDayBackgroundColor, currentSelectedDayBackgroundColor);
