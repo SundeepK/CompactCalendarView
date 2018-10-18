@@ -121,8 +121,8 @@ public class CompactCalendarView extends View {
         invalidate();
     }
 
-    public void setCalendarBackgroundColor(final int calenderBackgroundColor) {
-        compactCalendarController.setCalenderBackgroundColor(calenderBackgroundColor);
+    public void setCalendarBackgroundColor(final int calendarBackgroundColor) {
+        compactCalendarController.setCalendarBackgroundColor(calendarBackgroundColor);
         invalidate();
     }
 
