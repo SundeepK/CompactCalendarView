@@ -86,7 +86,7 @@ public class CompactCalendarControllerTest {
 
         when(motionEvent.getAction()).thenReturn(MotionEvent.ACTION_UP);
 
-        //Scroll enough to push calender to next month
+        //Scroll enough to push calendar to next month
         underTest.onScroll(motionEvent, motionEvent, 600, 0);
         underTest.onDraw(canvas);
         underTest.onTouch(motionEvent);
@@ -180,7 +180,7 @@ public class CompactCalendarControllerTest {
         //Sun, 08 Feb 2015 00:00:00 GMT
         underTest.setCurrentDate(new Date(1423353600000L));
 
-        //Scroll enough to push calender to next month
+        //Scroll enough to push calendar to next month
         underTest.onScroll(motionEvent, motionEvent, 600, 0);
         underTest.onDraw(canvas);
         underTest.onTouch(motionEvent);
@@ -228,13 +228,13 @@ public class CompactCalendarControllerTest {
 
     @Test
     public void testItReturnsFirstDayOfMonth(){
-        Calendar currentCalender =  Calendar.getInstance();
-        currentCalender.set(Calendar.DAY_OF_MONTH, 1);
-        currentCalender.set(Calendar.HOUR_OF_DAY, 0);
-        currentCalender.set(Calendar.MINUTE, 0);
-        currentCalender.set(Calendar.SECOND, 0);
-        currentCalender.set(Calendar.MILLISECOND, 0);
-        Date expectFirstDayOfMonth = currentCalender.getTime();
+        Calendar currentCalendar =  Calendar.getInstance();
+        currentCalendar.set(Calendar.DAY_OF_MONTH, 1);
+        currentCalendar.set(Calendar.HOUR_OF_DAY, 0);
+        currentCalendar.set(Calendar.MINUTE, 0);
+        currentCalendar.set(Calendar.SECOND, 0);
+        currentCalendar.set(Calendar.MILLISECOND, 0);
+        Date expectFirstDayOfMonth = currentCalendar.getTime();
 
         Date actualDate = underTest.getFirstDayOfCurrentMonth();
 
@@ -284,7 +284,7 @@ public class CompactCalendarControllerTest {
     }
 
     @Test
-    public void testItDrawsDaysOnCalender(){
+    public void testItDrawsDaysOnCalendar(){
         //simulate Feb month
         underTest.setGrowProgress(1000); //set grow progress so that it simulates the calendar being open
         when(calendar.get(Calendar.DAY_OF_WEEK)).thenReturn(1);

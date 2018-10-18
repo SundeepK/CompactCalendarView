@@ -80,11 +80,11 @@ public class ApplicationTest {
 
     @Test
     public void testItDrawsEventsRtl(){
-        Calendar currentCalender = Calendar.getInstance();
-        currentCalender.set(Calendar.DAY_OF_MONTH, 1);
-        currentCalender.set(Calendar.ERA, GregorianCalendar.AD);
-        currentCalender.set(Calendar.YEAR, 2015);
-        currentCalender.set(Calendar.MONTH, Calendar.MARCH);
+        Calendar currentCalendar = Calendar.getInstance();
+        currentCalendar.set(Calendar.DAY_OF_MONTH, 1);
+        currentCalendar.set(Calendar.ERA, GregorianCalendar.AD);
+        currentCalendar.set(Calendar.YEAR, 2015);
+        currentCalendar.set(Calendar.MONTH, Calendar.MARCH);
 
         compactCalendarView.setIsRtl(true);
         //Sun, 08 Feb 2015 00:00:00 GMT
@@ -93,7 +93,7 @@ public class ApplicationTest {
         addEvents(Calendar.MARCH, 2015);
         scrollCalendarBackwardsBy(1);
 
-        assertEquals(getEventsFor(Calendar.MARCH, 2015), compactCalendarView.getEventsForMonth(currentCalender.getTime()));
+        assertEquals(getEventsFor(Calendar.MARCH, 2015), compactCalendarView.getEventsForMonth(currentCalendar.getTime()));
 
         syncToolbarDate();
 
@@ -663,23 +663,23 @@ public class ApplicationTest {
     }
 
     private List<Event> getEventsFor(final int month, final int year){
-        Calendar currentCalender = Calendar.getInstance();
-        currentCalender.setTime(new Date());
-        currentCalender.set(Calendar.DAY_OF_MONTH, 1);
-        Date firstDayOfMonth = currentCalender.getTime();
+        Calendar currentCalendar = Calendar.getInstance();
+        currentCalendar.setTime(new Date());
+        currentCalendar.set(Calendar.DAY_OF_MONTH, 1);
+        Date firstDayOfMonth = currentCalendar.getTime();
         List<Event> events = new ArrayList<>();
         for (int i = 0; i < 6; i++) {
-            currentCalender.setTime(firstDayOfMonth);
+            currentCalendar.setTime(firstDayOfMonth);
             if (month > -1) {
-                currentCalender.set(Calendar.MONTH, month);
+                currentCalendar.set(Calendar.MONTH, month);
             }
             if (year > -1) {
-                currentCalender.set(Calendar.ERA, GregorianCalendar.AD);
-                currentCalender.set(Calendar.YEAR, year);
+                currentCalendar.set(Calendar.ERA, GregorianCalendar.AD);
+                currentCalendar.set(Calendar.YEAR, year);
             }
-            currentCalender.add(Calendar.DATE, i);
-            setToMidnight(currentCalender);
-            long timeInMillis = currentCalender.getTimeInMillis();
+            currentCalendar.add(Calendar.DATE, i);
+            setToMidnight(currentCalendar);
+            long timeInMillis = currentCalendar.getTimeInMillis();
             events.addAll(getEvents(timeInMillis, i));
         }
         return events;

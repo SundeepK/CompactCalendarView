@@ -21,23 +21,23 @@ public class CompactCalendarHelper {
 
     //generate one event per a day for a month
     public static List<Event> getOneEventPerDayForMonth(int start, int days, long timeStamp, int color) {
-        Calendar currentCalender = Calendar.getInstance(Locale.getDefault());
+        Calendar currentCalendar = Calendar.getInstance(Locale.getDefault());
         List<Event> events = new ArrayList<>();
         for(int i = start; i < days; i++){
-            setDateTime(timeStamp, currentCalender, i);
-            events.add(new Event(color, currentCalender.getTimeInMillis()));
+            setDateTime(timeStamp, currentCalendar, i);
+            events.add(new Event(color, currentCalendar.getTimeInMillis()));
         }
         return events;
     }
 
     public static List<Events> getEvents(int start, int days, long timeStamp) {
-        Calendar currentCalender = Calendar.getInstance(Locale.getDefault());
+        Calendar currentCalendar = Calendar.getInstance(Locale.getDefault());
         List<Events> events = new ArrayList<>();
         for(int i = start; i < days; i++){
-            setDateTime(timeStamp, currentCalender, i);
+            setDateTime(timeStamp, currentCalendar, i);
             List<Event> eventList = new ArrayList<>();
-            eventList.add(new Event(Color.BLUE, currentCalender.getTimeInMillis()));
-            Events eventsObject = new Events(currentCalender.getTimeInMillis(), eventList);
+            eventList.add(new Event(Color.BLUE, currentCalendar.getTimeInMillis()));
+            Events eventsObject = new Events(currentCalendar.getTimeInMillis(), eventList);
             events.add(eventsObject);
         }
         return events;
@@ -45,58 +45,58 @@ public class CompactCalendarHelper {
 
 
     public static List<Events> getDayEventWith2EventsPerDay(int start, int days, long timeStamp) {
-        Calendar currentCalender = Calendar.getInstance(Locale.getDefault());
+        Calendar currentCalendar = Calendar.getInstance(Locale.getDefault());
         List<Events> events = new ArrayList<>();
         for(int i = start; i < days; i++){
-            setDateTime(timeStamp, currentCalender, i);
+            setDateTime(timeStamp, currentCalendar, i);
             List<Event> eventList = new ArrayList<>();
-            eventList.add(new Event(Color.BLUE, currentCalender.getTimeInMillis()));
-            eventList.add(new Event(Color.RED, currentCalender.getTimeInMillis() + 3600 * 1000));
-            Events eventsObject = new Events(currentCalender.getTimeInMillis(), eventList);
+            eventList.add(new Event(Color.BLUE, currentCalendar.getTimeInMillis()));
+            eventList.add(new Event(Color.RED, currentCalendar.getTimeInMillis() + 3600 * 1000));
+            Events eventsObject = new Events(currentCalendar.getTimeInMillis(), eventList);
             events.add(eventsObject);
         }
         return events;
     }
 
     public static List<Events> getDayEventWithMultipleEventsPerDay(int start, int days, long timeStamp) {
-        Calendar currentCalender = Calendar.getInstance(Locale.getDefault());
+        Calendar currentCalendar = Calendar.getInstance(Locale.getDefault());
         List<Events> events = new ArrayList<>();
         for(int i = start; i < days; i++){
-            setDateTime(timeStamp, currentCalender, i);
-            List<Event> eventsList = Arrays.asList(new Event(Color.BLUE, currentCalender.getTimeInMillis()),
-                    new Event(Color.RED, currentCalender.getTimeInMillis() + 3600 * 1000),
-                    new Event(Color.RED, currentCalender.getTimeInMillis() + (3600 * 2) * 1000),
-                    new Event(Color.RED, currentCalender.getTimeInMillis() + (3600 * 3) * 1000));
-            Events eventsObject = new Events(currentCalender.getTimeInMillis(), eventsList);
+            setDateTime(timeStamp, currentCalendar, i);
+            List<Event> eventsList = Arrays.asList(new Event(Color.BLUE, currentCalendar.getTimeInMillis()),
+                    new Event(Color.RED, currentCalendar.getTimeInMillis() + 3600 * 1000),
+                    new Event(Color.RED, currentCalendar.getTimeInMillis() + (3600 * 2) * 1000),
+                    new Event(Color.RED, currentCalendar.getTimeInMillis() + (3600 * 3) * 1000));
+            Events eventsObject = new Events(currentCalendar.getTimeInMillis(), eventsList);
             events.add(eventsObject);
         }
         return events;
     }
 
     public static Map<Long, List<Event>> getMultipleEventsForEachDayAsMap(int start, int days, long timeStamp) {
-        Calendar currentCalender = Calendar.getInstance(Locale.getDefault());
+        Calendar currentCalendar = Calendar.getInstance(Locale.getDefault());
         Map<Long, List<Event>> epochMillisToEvents = new HashMap<>();
         for(int i = start; i < days; i++){
-            setDateTime(timeStamp, currentCalender, i);
+            setDateTime(timeStamp, currentCalendar, i);
             List<Event> eventList = new ArrayList<>();
-            List<Event> events = Arrays.asList(new Event(Color.BLUE, currentCalender.getTimeInMillis()),
-                    new Event(Color.RED, currentCalender.getTimeInMillis() + 3600 * 1000),
-                    new Event(Color.RED, currentCalender.getTimeInMillis() + (3600 * 2) * 1000),
-                    new Event(Color.RED, currentCalender.getTimeInMillis() + (3600 * 3) * 1000));
+            List<Event> events = Arrays.asList(new Event(Color.BLUE, currentCalendar.getTimeInMillis()),
+                    new Event(Color.RED, currentCalendar.getTimeInMillis() + 3600 * 1000),
+                    new Event(Color.RED, currentCalendar.getTimeInMillis() + (3600 * 2) * 1000),
+                    new Event(Color.RED, currentCalendar.getTimeInMillis() + (3600 * 3) * 1000));
             eventList.addAll(events);
-            epochMillisToEvents.put(currentCalender.getTimeInMillis(), eventList);
+            epochMillisToEvents.put(currentCalendar.getTimeInMillis(), eventList);
         }
         return epochMillisToEvents;
     }
 
-    public static void setDateTime(long timeStamp, Calendar currentCalender, int i) {
-        currentCalender.setTimeInMillis(timeStamp);
-        currentCalender.set(Calendar.DATE, 1);
-        currentCalender.set(Calendar.HOUR_OF_DAY, 0);
-        currentCalender.set(Calendar.MINUTE, 0);
-        currentCalender.set(Calendar.SECOND, 0);
-        currentCalender.set(Calendar.MILLISECOND, 0);
-        currentCalender.add(Calendar.DATE, i);
+    public static void setDateTime(long timeStamp, Calendar currentCalendar, int i) {
+        currentCalendar.setTimeInMillis(timeStamp);
+        currentCalendar.set(Calendar.DATE, 1);
+        currentCalendar.set(Calendar.HOUR_OF_DAY, 0);
+        currentCalendar.set(Calendar.MINUTE, 0);
+        currentCalendar.set(Calendar.SECOND, 0);
+        currentCalendar.set(Calendar.MILLISECOND, 0);
+        currentCalendar.add(Calendar.DATE, i);
     }
 
     public static long setTimeToMidnightAndGet(Calendar cal, long epoch) {
