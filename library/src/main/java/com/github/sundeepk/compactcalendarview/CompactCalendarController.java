@@ -70,6 +70,8 @@ class CompactCalendarController {
     private float growfactorIndicator;
     private float distanceX;
     private long lastAutoScrollFromFling;
+    private int heightAnimDurationMillis;
+    private int indicatorAnimDurationMillis;
 
     private boolean useThreeLetterAbbreviation = false;
     private boolean isSmoothScrolling;
@@ -160,6 +162,8 @@ class CompactCalendarController {
                 currentSelectedDayIndicatorStyle = typedArray.getInt(R.styleable.CompactCalendarView_compactCalendarCurrentSelectedDayIndicatorStyle, FILL_LARGE_INDICATOR);
                 displayOtherMonthDays = typedArray.getBoolean(R.styleable.CompactCalendarView_compactCalendarDisplayOtherMonthDays, displayOtherMonthDays);
                 shouldSelectFirstDayOfMonthOnScroll = typedArray.getBoolean(R.styleable.CompactCalendarView_compactCalendarShouldSelectFirstDayOfMonthOnScroll, shouldSelectFirstDayOfMonthOnScroll);
+                heightAnimDurationMillis = typedArray.getInteger(R.styleable.CompactCalendarView_compactCalendarHeightAnimDuration, -1);
+                indicatorAnimDurationMillis = typedArray.getInteger(R.styleable.CompactCalendarView_compactCalendarIndicatorAnimDuration, -1);
             } finally {
                 typedArray.recycle();
             }
@@ -291,6 +295,14 @@ class CompactCalendarController {
 
     int getTargetHeight() {
         return targetHeight;
+    }
+
+    int getHeightAnimDurationMillis() {
+        return heightAnimDurationMillis;
+    }
+
+    int getIndicatorAnimDurationMillis() {
+        return indicatorAnimDurationMillis;
     }
 
     int getWidth(){

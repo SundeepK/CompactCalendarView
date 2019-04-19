@@ -29,5 +29,7 @@
         <attr name="compactCalendarDisplayOtherMonthDays" format="boolean"/>
         <attr name="compactCalendarShouldSelectFirstDayOfMonthOnScroll" format="boolean"/>
         <attr name="compactCalendarOtherMonthDaysTextColor" format="color"/>
+        <attr name="compactCalendarHeightAnimDuration" format="integer"/>
+        <attr name="compactCalendarIndicatorAnimDuration" format="integer"/>
     </declare-styleable>
 </resources>

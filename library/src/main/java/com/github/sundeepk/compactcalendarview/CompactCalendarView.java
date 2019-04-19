@@ -103,6 +103,14 @@ public class CompactCalendarView extends View {
         animationHandler.setCompactCalendarAnimationListener(compactCalendarAnimationListener);
     }
 
+    public void setHeightAnimDuration(int durationMillis) {
+        animationHandler.setHeightAnimDuration(durationMillis);
+    }
+
+    public void setIndicatorAnimDuration(int durationMillis) {
+        animationHandler.setIndicatorAnimDuration(durationMillis);
+    }
+
     /*
     Use a custom locale for compact calendar and reinitialise the view.
      */
