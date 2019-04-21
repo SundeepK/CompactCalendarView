@@ -7,7 +7,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.1.2'
+        classpath 'com.android.tools.build:gradle:3.4.0'
         classpath 'com.facebook.testing.screenshot:plugin:0.6.0'
     }
 }
@@ -16,13 +16,13 @@ apply plugin: 'com.android.application'
 apply plugin: 'com.facebook.testing.screenshot'
 
 android {
-    compileSdkVersion 27
-    buildToolsVersion '27.0.3'
+    compileSdkVersion 28
+    buildToolsVersion '28.0.3'
 
     defaultConfig {
         applicationId "sundeepk.github.com.sample"
         minSdkVersion 16
-        targetSdkVersion 27
+        targetSdkVersion 28
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "sundeepk.github.com.sample.TestRunner"
@@ -35,22 +35,17 @@ android {
     }
 }
 
-configurations.all {
-    resolutionStrategy.force 'com.android.support:support-annotations:27.1.1'
-}
-
 dependencies {
-    api fileTree(include: ['*.jar'], dir: 'libs')
-    api 'com.android.support:appcompat-v7:27.1.1'
-    api 'com.android.support:support-v4:27.1.1'
-    api project(':library')
-    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation 'androidx.appcompat:appcompat:1.0.2'
+    implementation project(':library')
+    androidTestImplementation 'androidx.test:runner:1.1.1'
     androidTestImplementation 'com.azimolabs.conditionwatcher:conditionwatcher:0.1'
-    androidTestImplementation 'com.android.support.test:rules:1.0.2'
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+    androidTestImplementation 'androidx.test:rules:1.1.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
     androidTestImplementation 'com.google.dexmaker:dexmaker-mockito:1.0'
     androidTestImplementation 'com.google.dexmaker:dexmaker:1.0'
-    androidTestImplementation 'org.mockito:mockito-core:1.10.17'
-    androidTestImplementation 'com.android.support:support-annotations:27.1.1'
+    androidTestImplementation 'org.mockito:mockito-core:2.15.0'
+    androidTestImplementation 'androidx.annotation:annotation:1.0.2'
 
 }
