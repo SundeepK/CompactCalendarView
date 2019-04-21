@@ -5,13 +5,14 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import androidx.core.view.GestureDetectorCompat;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
 import android.widget.OverScroller;
+
+import androidx.core.view.GestureDetectorCompat;
 
 import com.github.sundeepk.compactcalendarview.domain.Event;
 
@@ -174,6 +175,10 @@ public class CompactCalendarView extends View {
     }
 
     public void setCurrentDate(Date dateTimeMonth){
+        setCurrentDate(dateTimeMonth.getTime());
+    }
+
+    public void setCurrentDate(long dateTimeMonth) {
         compactCalendarController.setCurrentDate(dateTimeMonth);
         invalidate();
     }
