@@ -86,6 +86,9 @@ public class CompactCalendarTab extends Fragment {
         // show Sunday as first day of month
         // compactCalendarView.setShouldShowMondayAsFirstDay(false);
 
+        // set animation duration
+        // compactCalendarView.setHeightAnimDuration(300);
+
         //set initial title
         toolbar = ((AppCompatActivity) getActivity()).getSupportActionBar();
         toolbar.setTitle(dateFormatForMonth.format(compactCalendarView.getFirstDayOfCurrentMonth()));

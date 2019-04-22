@@ -22,6 +22,8 @@
         app:compactCalendarEventIndicatorStyle="small_indicator"
         app:compactCalendarOtherMonthDaysTextColor="#534c4c"
         app:compactCalendarShouldSelectFirstDayOfMonthOnScroll="true"
+        app:compactCalendarHeightAnimDuration="300"
+        app:compactCalendarIndicatorAnimDuration="300"
         />
 
     <Button
