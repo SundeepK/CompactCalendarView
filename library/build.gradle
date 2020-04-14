@@ -1,6 +1,4 @@
 apply plugin: 'com.android.library'
-apply plugin: 'kotlin-android-extensions'
-apply plugin: 'kotlin-android'
 apply plugin: 'idea'
 
 idea {
@@ -19,11 +17,12 @@ repositories {
 
 
 android {
-    compileSdkVersion 29
+    compileSdkVersion 27
+    buildToolsVersion '27.0.3'
 
     defaultConfig {
-        minSdkVersion 14
-        targetSdkVersion 29
+        minSdkVersion 11
+        targetSdkVersion 27
         versionCode 1
         versionName "1.0"
     }
@@ -37,14 +36,10 @@ android {
 
 dependencies {
     api fileTree(include: ['*.jar'], dir: 'libs')
-    //noinspection GradleCompatible
-    api 'androidx.appcompat:appcompat:1.1.0'
-
+    api 'com.android.support:appcompat-v7:27.1.1'
     //mockito dependencies
     testImplementation 'junit:junit:4.12'
-    testImplementation 'org.mockito:mockito-core:2.16.0'
-    implementation 'androidx.core:core-ktx:+'
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    testImplementation 'org.mockito:mockito-core:2.15.0'
 }
 
 //apply from: 'https://raw.github.com/chrisbanes/gradle-mvn-push/master/gradle-mvn-push.gradle'
