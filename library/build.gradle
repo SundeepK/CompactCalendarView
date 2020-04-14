@@ -17,12 +17,11 @@ repositories {
 
 
 android {
-    compileSdkVersion 27
-    buildToolsVersion '27.0.3'
+    compileSdkVersion 29
 
     defaultConfig {
-        minSdkVersion 11
-        targetSdkVersion 27
+        minSdkVersion 14
+        targetSdkVersion 29
         versionCode 1
         versionName "1.0"
     }
@@ -36,10 +35,11 @@ android {
 
 dependencies {
     api fileTree(include: ['*.jar'], dir: 'libs')
-    api 'com.android.support:appcompat-v7:27.1.1'
+    //noinspection GradleCompatible
+    api 'androidx.appcompat:appcompat:1.1.0'
     //mockito dependencies
     testImplementation 'junit:junit:4.12'
-    testImplementation 'org.mockito:mockito-core:2.15.0'
+    testImplementation 'org.mockito:mockito-core:2.16.0'
 }
 
 //apply from: 'https://raw.github.com/chrisbanes/gradle-mvn-push/master/gradle-mvn-push.gradle'

@@ -7,7 +7,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.1.2'
+        classpath 'com.android.tools.build:gradle:3.6.2'
         classpath 'com.facebook.testing.screenshot:plugin:0.6.0'
     }
 }
@@ -16,13 +16,12 @@ apply plugin: 'com.android.application'
 apply plugin: 'com.facebook.testing.screenshot'
 
 android {
-    compileSdkVersion 27
-    buildToolsVersion '27.0.3'
+    compileSdkVersion 29
 
     defaultConfig {
         applicationId "sundeepk.github.com.sample"
         minSdkVersion 16
-        targetSdkVersion 27
+        targetSdkVersion 29
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "sundeepk.github.com.sample.TestRunner"
@@ -41,16 +40,16 @@ configurations.all {
 
 dependencies {
     api fileTree(include: ['*.jar'], dir: 'libs')
-    api 'com.android.support:appcompat-v7:27.1.1'
-    api 'com.android.support:support-v4:27.1.1'
+    api 'androidx.appcompat:appcompat:1.1.0'
+    api 'androidx.legacy:legacy-support-v4:1.0.0'
     api project(':library')
-    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'com.azimolabs.conditionwatcher:conditionwatcher:0.1'
-    androidTestImplementation 'com.android.support.test:rules:1.0.2'
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+    androidTestImplementation 'androidx.test:rules:1.2.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
     androidTestImplementation 'com.google.dexmaker:dexmaker-mockito:1.0'
     androidTestImplementation 'com.google.dexmaker:dexmaker:1.0'
-    androidTestImplementation 'org.mockito:mockito-core:1.10.17'
-    androidTestImplementation 'com.android.support:support-annotations:27.1.1'
+    androidTestImplementation 'org.mockito:mockito-core:2.16.0'
+    androidTestImplementation 'androidx.annotation:annotation:1.1.0'
 
 }
