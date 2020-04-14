@@ -1,4 +1,6 @@
 apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-android'
 apply plugin: 'idea'
 
 idea {
@@ -37,9 +39,12 @@ dependencies {
     api fileTree(include: ['*.jar'], dir: 'libs')
     //noinspection GradleCompatible
     api 'androidx.appcompat:appcompat:1.1.0'
+
     //mockito dependencies
     testImplementation 'junit:junit:4.12'
     testImplementation 'org.mockito:mockito-core:2.16.0'
+    implementation 'androidx.core:core-ktx:+'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }
 
 //apply from: 'https://raw.github.com/chrisbanes/gradle-mvn-push/master/gradle-mvn-push.gradle'

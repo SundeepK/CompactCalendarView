@@ -1,3 +1,4 @@
+
 buildscript {
     repositories {
         google()
@@ -13,6 +14,8 @@ buildscript {
 }
 
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-android'
 apply plugin: 'com.facebook.testing.screenshot'
 
 android {
@@ -43,6 +46,7 @@ dependencies {
     api 'androidx.appcompat:appcompat:1.1.0'
     api 'androidx.legacy:legacy-support-v4:1.0.0'
     api project(':library')
+
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'com.azimolabs.conditionwatcher:conditionwatcher:0.1'
     androidTestImplementation 'androidx.test:rules:1.2.0'
@@ -51,5 +55,10 @@ dependencies {
     androidTestImplementation 'com.google.dexmaker:dexmaker:1.0'
     androidTestImplementation 'org.mockito:mockito-core:2.16.0'
     androidTestImplementation 'androidx.annotation:annotation:1.1.0'
+    implementation 'androidx.core:core-ktx:1.2.0'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
+}
+repositories {
+    mavenCentral()
 }
