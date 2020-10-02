@@ -12,11 +12,12 @@ import android.support.test.espresso.action.Swipe;
 import android.support.test.espresso.action.Tap;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
-import android.support.v7.app.ActionBar;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
+
+import androidx.appcompat.app.ActionBar;
 
 import com.azimolabs.conditionwatcher.ConditionWatcher;
 import com.azimolabs.conditionwatcher.Instruction;
