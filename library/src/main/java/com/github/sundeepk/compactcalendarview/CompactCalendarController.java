@@ -28,7 +28,7 @@ import static com.github.sundeepk.compactcalendarview.CompactCalendarView.NO_FIL
 import static com.github.sundeepk.compactcalendarview.CompactCalendarView.SMALL_INDICATOR;
 
 
-class CompactCalendarController {
+class CompactCalendarController { 
 
     public static final int IDLE = 0;
     public static final int EXPOSE_CALENDAR_ANIMATION = 1;
@@ -809,6 +809,9 @@ class CompactCalendarController {
                             drawEventIndicatorCircle(canvas, xPosition, yPosition, event.getColor());
                         }
                     } else {
+                        if(animationStatus != EXPOSE_CALENDAR_ANIMATION)
+                            drawCircleRing(canvas, xPosition, yPosition, event.getColor());
+                        
                         yPosition += indicatorOffset;
                         // offset event indicators to draw below selected day indicators
                         // this makes sure that they do no overlap
@@ -997,4 +1000,38 @@ class CompactCalendarController {
     private void drawCircle(Canvas canvas, float radius, float x, float y) {
         canvas.drawCircle(x, y, radius, dayPaint);
     }
-}
+    
+    private void drawCircleRing(Canvas canvas, float x, float y, int color){
+        drawDayCircleIndicator(NO_FILL_LARGE_INDICATOR, canvas, x, y, color, 1.2f);
+    }
+    
+    void addEventForDateRange(Event event) {
+        eventsContainer.addEventForDateRange(event);
+    }
+
+    void addEventsForDateRange(List<Event> events) {
+        eventsContainer.addEventsForDateRange(events);
+    }
+
+    List<Event> getCalendarEventsForForDateRange(long epochMillis) {
+        return eventsContainer.getEventsForForDateRange(epochMillis);
+    }
+
+    List<Event> getCalendarEventsForMonthForDateRange(long epochMillis) {
+        return eventsContainer.getEventsForMonthForPeriod(epochMillis);
+    }
+
+    void removeEventsForForDateRange(long epochMillis) {
+        eventsContainer.removeEventByEpochMillis(epochMillis);
+    }
+
+    void removeEventForDateRange(Event event) {
+        eventsContainer.removeEventForPeriod(event);
+    }
+
+    void removeEventsForDateRange(List<Event> events) {
+        eventsContainer.removeEventsForPeriod(events);
+    }
+    
+    
+} 
